@@ -13,8 +13,7 @@ from __future__ import annotations
 import json
 import math
 import warnings
-from datetime import datetime, timezone
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import sys
 
@@ -651,6 +650,14 @@ def build_report(metrics, country_metrics, product_metrics, churn_metrics, segme
 
 def main():
     sales, rfm, segments_source, products, countries, kpis, pipeline_manifest = load_inputs()
+    phase3_manifest_path = OUT / "phase3_manifest.json"
+    write_json_atomic(phase3_manifest_path, {
+        "schema_version": 1,
+        "status": "building",
+        "pipeline_run_id": pipeline_manifest["run_id"],
+        "source_sha256": pipeline_manifest["source"]["sha256"],
+        "started_at_utc": datetime.now(timezone.utc).isoformat(),
+    })
     # Check primary reconciliation before generating advanced outputs.
     sale_revenue = float(sales["revenue"].sum())
     identified_revenue = float(rfm["monetary"].sum())
@@ -684,6 +691,11 @@ def main():
         "important_caveat": "Historical analysis only; no profit/cost data and no current customer activity after 2011-12-09.",
     }
     write_json_atomic(OUT / "phase3_summary.json", summary)
+    current_pipeline_manifest = read_json_object(DATA / "pipeline_manifest.json")
+    if current_pipeline_manifest.get("run_id") != pipeline_manifest.get("run_id"):
+        raise RuntimeError(
+            "The core pipeline changed while Phase 3 was running. Re-run Phase 3 against the latest core outputs."
+        )
     phase3_manifest = {
         "schema_version": 1,
         "status": "complete",
@@ -691,7 +703,7 @@ def main():
         "source_sha256": pipeline_manifest["source"]["sha256"],
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
     }
-    write_json_atomic(OUT / "phase3_manifest.json", phase3_manifest)
+    write_json_atomic(phase3_manifest_path, phase3_manifest)
     print(json.dumps({
         "status": "SUCCESS",
         "output_dir": str(OUT),

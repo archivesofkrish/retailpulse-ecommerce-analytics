@@ -528,7 +528,10 @@ with tab_quality:
     st.json({k: kpis[k] for k in quality_keys if k in kpis})
     validation_path = ROOT / "test-results" / "real_data_validation.json"
     if validation_path.exists():
-        validation = read_json(str(validation_path))
+        validation_stat = validation_path.stat()
+        validation = read_json(
+            str(validation_path), validation_stat.st_mtime_ns, validation_stat.st_size
+        )
         v1, v2, v3 = st.columns(3)
         v1.metric("Real-data checks passed", f"{validation.get('checks_passed', 0)}")
         v2.metric("Checks failed", f"{validation.get('checks_failed', 0)}")

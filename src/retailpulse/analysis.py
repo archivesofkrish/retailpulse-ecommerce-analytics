@@ -7,7 +7,7 @@ import re
 import uuid
 from datetime import datetime, timezone
 
-from retailpulse.provenance import build_pipeline_manifest, write_json_atomic
+from retailpulse.provenance import build_pipeline_manifest, file_fingerprint, write_json_atomic
 
 import numpy as np
 import pandas as pd
@@ -358,20 +358,19 @@ def calculate_analytics(df: pd.DataFrame, stats: dict) -> dict[str, pd.DataFrame
 def run_pipeline(input_path: str | Path, output_dir: str | Path) -> dict:
     """Run the complete data pipeline and persist reusable analysis outputs."""
     source_path = Path(input_path).resolve()
-    source_stat_before = source_path.stat()
+    source_fingerprint_before = file_fingerprint(source_path)
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
     raw = read_source(source_path)
     prepared, stats = prepare_transactions(raw)
     result = calculate_analytics(prepared, stats)
 
-    source_stat_after = source_path.stat()
-    if (source_stat_before.st_size, source_stat_before.st_mtime_ns) != (
-        source_stat_after.st_size, source_stat_after.st_mtime_ns
-    ):
+    source_fingerprint_after = file_fingerprint(source_path)
+    if source_fingerprint_before != source_fingerprint_after:
         raise RuntimeError("The source dataset changed while the analytics pipeline was running.")
 
     manifest = build_pipeline_manifest(source_path, stats, result["kpis"], uuid.uuid4().hex)
+    manifest["source"] = source_fingerprint_before
     manifest_path = output_dir / "pipeline_manifest.json"
     write_json_atomic(manifest_path, manifest)
 
