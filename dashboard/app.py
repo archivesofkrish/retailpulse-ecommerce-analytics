@@ -1241,7 +1241,7 @@ with tab_experiments:
             repeat90_reference.get("second_order_within_window_pct")
             if repeat90_reference else None
         )
-        if candidate is not None and np.isfinite(float(candidate)) and 0 <= float(candidate) < 100:
+        if candidate is not None and np.isfinite(float(candidate)) and 0 <= float(candidate) < 99.9:
             historical_baseline = float(candidate)
 
     baseline_options = ["Manual planning assumption"]

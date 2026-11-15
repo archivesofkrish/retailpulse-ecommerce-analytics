@@ -2,7 +2,7 @@
 
 ## 30-second project summary
 
-RetailPulse is an end-to-end business intelligence project using UCI Online Retail II (1.067M invoice-line rows, Dec 2009–Dec 2011). It combines a Python data pipeline, SQL analysis, customer RFM segmentation, cohort activity, product and country concentration, a time-ordered historical inactivity backtest, basket associations, a transparent business decision brief, a configurable repeat-purchase Scenario Lab, source-to-output lineage checks, and an ten-section Streamlit/Plotly dashboard.
+RetailPulse is an end-to-end business intelligence project using UCI Online Retail II (1.067M invoice-line rows, Dec 2009–Dec 2011). It combines a Python data pipeline, SQL analysis, customer RFM segmentation, cohort activity, product and country concentration, a time-ordered historical inactivity backtest, basket associations, a transparent business decision brief, a configurable repeat-purchase Scenario Lab, source-to-output lineage checks, and a ten-section Streamlit/Plotly dashboard.
 
 ## What to demonstrate
 
@@ -29,4 +29,4 @@ RetailPulse is an end-to-end business intelligence project using UCI Online Reta
 
 ## Suggested portfolio description
 
-**RetailPulse — E-commerce Business Intelligence:** Built a reproducible Python/SQL analytics pipeline and eight-section interactive Streamlit dashboard over 1.067M retail invoice lines. Delivered revenue reconciliation, customer RFM segmentation, Pareto concentration, repeat-purchase and right-censored cohort analysis, merchandise classification, geographic concentration, an assumption-driven repeat-purchase Scenario Lab and a time-ordered 90-day inactivity backtest with a 90-day embargo. Added automated validation, output-integrity controls, regression tests, executive reporting and explicit governance of data/model limitations.
+**RetailPulse — E-commerce Business Intelligence:** Built a reproducible Python/SQL analytics pipeline and ten-section interactive Streamlit dashboard over 1.067M retail invoice lines. Delivered revenue reconciliation, customer RFM segmentation, Pareto concentration, repeat-purchase and right-censored cohort analysis, merchandise classification, geographic concentration, an assumption-driven repeat-purchase Scenario Lab, a two-proportion A/B-test Experiment Studio, and a time-ordered 90-day inactivity backtest with a 90-day embargo. Added automated validation, output-integrity controls, regression tests, executive reporting and explicit governance of data/model limitations.

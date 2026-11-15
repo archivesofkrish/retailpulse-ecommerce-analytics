@@ -14,30 +14,26 @@ It does not assign participants, record exposures, monitor a running experiment,
 
 Let:
 
-- (p_1) be the assumed control conversion proportion;
-- (p_2) be the target variant proportion ((p_2=p_1+delta));
-- (delta) be the minimum detectable effect expressed as an absolute proportion (not a relative percentage);
-- (ar p=(p_1+p_2)/2);
-- (alpha) be the two-sided significance level; and
-- (1-eta) be the target statistical power.
+- `p1` be the assumed control conversion proportion;
+- `p2` be the target variant proportion (`p2 = p1 + delta`);
+- `delta` be the minimum detectable effect as an absolute proportion, not a relative percentage;
+- `p_bar = (p1 + p2) / 2`;
+- `alpha` be the two-sided significance level; and
+- `power = 1 - beta` be the target statistical power.
 
-For equal allocation, the normal-approximation planning formula used per arm is:
+The normal-approximation planning formula for each arm is:
 
-[
-n = leftlceil
-rac{
-left[
-z_{1-alpha/2}sqrt{2ar p(1-ar p)}
-+
-z_{1-eta}sqrt{p_1(1-p_1)+p_2(1-p_2)}
-ight]^2
-}{
-(p_2-p_1)^2
-}
-ightceil
-]
+```text
+n = ceil(
+    (
+        z_(1 - alpha/2) * sqrt(2 * p_bar * (1 - p_bar))
+        + z_(power) * sqrt(p1 * (1 - p1) + p2 * (1 - p2))
+    ) ** 2
+    / (p2 - p1) ** 2
+)
+```
 
-The total target sample is (2n), before any allowance for attrition or ineligible observations. Enrollment duration is estimated as total sample divided by the user-entered number of eligible participants available per day. That traffic input is never inferred from the historical workbook.
+The total target sample is `2 * n`, before any allowance for attrition or ineligible observations. Enrollment duration is estimated as total sample divided by the user-entered number of eligible participants available per day. That traffic input is never inferred from the historical workbook.
 
 ## Post-test readout
 
