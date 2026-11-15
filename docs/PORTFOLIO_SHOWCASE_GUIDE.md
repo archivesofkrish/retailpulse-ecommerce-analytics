@@ -2,7 +2,7 @@
 
 ## 30-second project summary
 
-RetailPulse is an end-to-end business intelligence project using UCI Online Retail II (1.067M invoice-line rows, Dec 2009–Dec 2011). It combines a Python data pipeline, SQL analysis, customer RFM segmentation, cohort activity, product and country concentration, a time-ordered historical inactivity backtest, basket associations, a transparent business decision brief, source-to-output lineage checks, and a Streamlit/Plotly dashboard.
+RetailPulse is an end-to-end business intelligence project using UCI Online Retail II (1.067M invoice-line rows, Dec 2009–Dec 2011). It combines a Python data pipeline, SQL analysis, customer RFM segmentation, cohort activity, product and country concentration, a time-ordered historical inactivity backtest, basket associations, a transparent business decision brief, a configurable repeat-purchase Scenario Lab, source-to-output lineage checks, and an eight-section Streamlit/Plotly dashboard.
 
 ## What to demonstrate
 
@@ -12,7 +12,8 @@ RetailPulse is an end-to-end business intelligence project using UCI Online Reta
 4. **Retention:** explain the 90-day second-purchase rate among eligible first-time customers (47.1%) and how cohort right-censoring is handled.
 5. **Product intelligence:** compare customer concentration with less concentrated merchandise stock-code revenue; discuss the unusual single-invoice bulk line.
 6. **Decision intelligence:** demonstrate how historical customer, country, repeat-purchase and product metrics trigger auditable recommendations, each with an evidence statement, threshold and guardrail.
-7. **Model governance:** explain the 90-day inactivity proxy, chronological split, 90-day embargo and temporal prevalence shift. Do not call it a production churn predictor.
+7. **Commercial scenario planning:** use the Scenario Lab to change the assumed 90-day repeat-rate uplift and average order value; compare conservative, base and stretch outcomes, then explain why the resulting gross-revenue values are scenarios rather than forecasts.
+8. **Model governance:** explain the 90-day inactivity proxy, chronological split, 90-day embargo and temporal prevalence shift. Do not call it a production churn predictor.
 
 ## Honest limitations to state
 
@@ -26,4 +27,4 @@ RetailPulse is an end-to-end business intelligence project using UCI Online Reta
 
 ## Suggested portfolio description
 
-**RetailPulse — E-commerce Business Intelligence:** Built a reproducible Python/SQL analytics pipeline and interactive Streamlit dashboard over 1.067M retail invoice lines. Delivered revenue reconciliation, customer RFM segmentation, Pareto concentration, repeat-purchase and right-censored cohort analysis, merchandise classification, geographic concentration and a time-ordered 90-day inactivity backtest with a 90-day embargo. Added automated validation, regression tests, executive reporting and explicit governance of data/model limitations.
+**RetailPulse — E-commerce Business Intelligence:** Built a reproducible Python/SQL analytics pipeline and eight-section interactive Streamlit dashboard over 1.067M retail invoice lines. Delivered revenue reconciliation, customer RFM segmentation, Pareto concentration, repeat-purchase and right-censored cohort analysis, merchandise classification, geographic concentration, an assumption-driven repeat-purchase Scenario Lab and a time-ordered 90-day inactivity backtest with a 90-day embargo. Added automated validation, output-integrity controls, regression tests, executive reporting and explicit governance of data/model limitations.
