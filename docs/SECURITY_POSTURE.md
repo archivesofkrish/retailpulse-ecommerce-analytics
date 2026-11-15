@@ -5,9 +5,9 @@
 | Control | Repository implementation | Operational expectation |
 |---|---|---|
 | Static code analysis | CodeQL Python workflow | Review and resolve actionable code-scanning alerts |
-| Dependency update proposals | Dependabot for pip and GitHub Actions | Review, test and merge update PRs |
-| Runtime support | Python 3.11, 3.12 and 3.13 CI matrix | Do not use end-of-life Python releases |
-| Dependency consistency | pip check in CI | Investigate incompatible dependency sets |
+| Dependency update proposals | Dependabot for pip, GitHub Actions and Docker | Review, test and merge update PRs |
+| Runtime support | Python 3.11, 3.12, 3.13 and 3.14 CI matrix | Do not use end-of-life Python releases |
+| Dependency consistency | pip check in CI | Investigate incompatible dependency sets |\n| Vulnerability scanning | pip-audit against resolved requirements | Review, remediate or document every actionable finding |
 | Regression assurance | Pytest matrix with strict deprecation warnings | Keep all jobs green before merge |
 | Test evidence | JUnit XML uploaded as GitHub Actions artifacts | Download per-runtime reports from workflow runs |
 | Container security | Non-root image, read-only data mounts, loopback port, dropped capabilities | Do not expose the demo app directly to the internet |
@@ -18,7 +18,7 @@
 The GitHub main branch was not protected when this posture was reviewed. Workflow files do not turn on repository branch protection automatically. Configure a branch protection rule or repository ruleset for main with these settings:
 
 1. Require pull requests before merging; require at least one approval when collaborators are available.
-2. Require the successful status checks: Tests (Python 3.11), Tests (Python 3.12), Tests (Python 3.13), Docker build and dashboard health smoke test, and the CodeQL analysis job.
+2. Require the successful status checks: Tests (Python 3.11), Tests (Python 3.12), Tests (Python 3.13), Tests (Python 3.14), Docker build and dashboard health smoke test, CodeQL analysis, and Python dependency vulnerability audit.
 3. Require conversation resolution.
 4. Block force pushes and deletion of main.
 5. Restrict bypass permissions to repository administrators and explicitly designated release automation only.
