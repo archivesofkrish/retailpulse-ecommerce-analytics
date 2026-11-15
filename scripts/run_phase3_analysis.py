@@ -533,9 +533,9 @@ def make_cohort_outputs(sales: pd.DataFrame):
     """
     x = sales.dropna(subset=["customer_id_key", "invoice_date"]).copy()
     if x.empty:
-        empty = pd.DataFrame()
-        empty.to_csv(OUT / "cohort_retention_recomputed.csv")
-        empty.to_csv(OUT / "cohort_active_customer_counts.csv")
+        empty = pd.DataFrame(columns=["cohort_month"])
+        empty.to_csv(OUT / "cohort_retention_recomputed.csv", index=False)
+        empty.to_csv(OUT / "cohort_active_customer_counts.csv", index=False)
         return pd.DataFrame(columns=[
             "months_since_first_purchase", "eligible_cohorts", "eligible_customers",
             "active_in_that_calendar_month", "weighted_monthly_active_retention_pct",
@@ -1209,7 +1209,10 @@ def main():
         "output_dir": str(OUT),
         "identified_customers": customer_metrics["identified_customers"],
         "repeat_customer_share_pct": round(customer_metrics["repeat_customer_share_pct"], 2),
-        "customer_revenue_gini": round(customer_metrics["customer_revenue_gini"], 3),
+        "customer_revenue_gini": (
+            round(customer_metrics["customer_revenue_gini"], 3)
+            if customer_metrics["customer_revenue_gini"] is not None else None
+        ),
         "top_country": country_metrics["top_country"],
         "top_country_revenue_share_pct": round(country_metrics["top_country_revenue_share_pct"], 2),
         "historical_inactivity_model_status": churn_metrics.get("status"),
