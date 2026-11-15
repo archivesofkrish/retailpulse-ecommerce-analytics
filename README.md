@@ -66,7 +66,7 @@ The repository includes a small **synthetic demonstration sample** for smoke tes
 
 ## Quick start
 
-Requires Python 3.10 or newer. The full six-section Professional Edition uses the full UCI workbook.
+Requires Python 3.10 or newer. The full seven-section Professional Edition uses the full UCI workbook.
 
 ### Linux / macOS
 
