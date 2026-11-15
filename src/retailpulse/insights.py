@@ -8,6 +8,8 @@ from __future__ import annotations
 import math
 from typing import Any, Mapping, Sequence
 
+from retailpulse.metric_validation import finite_number, non_negative_count, percentage
+
 INSIGHT_COLUMNS = [
     "insight_id",
     "priority",
@@ -22,13 +24,7 @@ INSIGHT_COLUMNS = [
 
 def _number(value: Any) -> float | None:
     """Return a finite float, or None for absent/invalid/non-finite inputs."""
-    if value is None:
-        return None
-    try:
-        parsed = float(value)
-    except (TypeError, ValueError):
-        return None
-    return parsed if math.isfinite(parsed) else None
+    return finite_number(value)
 
 
 def _find_record(
@@ -83,7 +79,7 @@ def generate_business_insights(
         })
 
     # 1. Customer identity coverage: anonymous lines weaken customer economics.
-    anonymous_share = _number(kpis.get("unidentified_customer_revenue_share_pct"))
+    anonymous_share = percentage(kpis.get("unidentified_customer_revenue_share_pct"))
     if anonymous_share is not None and anonymous_share >= 10.0:
         priority = "High" if anonymous_share >= 20.0 else "Medium"
         add(
@@ -98,7 +94,7 @@ def generate_business_insights(
         )
 
     # 2. Geographic concentration: high dependence deserves market-risk review.
-    country_share = _number(country_metrics.get("top_country_revenue_share_pct"))
+    country_share = percentage(country_metrics.get("top_country_revenue_share_pct"))
     top_country = country_metrics.get("top_country")
     if country_share is not None and top_country and country_share >= 75.0:
         priority = "High" if country_share >= 85.0 else "Medium"
@@ -119,10 +115,10 @@ def generate_business_insights(
         "top_customer_share_pct",
         20.0,
     )
-    top20_share = _number(top20.get("identified_revenue_share_pct")) if top20 else None
+    top20_share = percentage(top20.get("identified_revenue_share_pct")) if top20 else None
     if top20_share is not None and top20_share >= 50.0:
         priority = "High" if top20_share >= 60.0 else "Medium"
-        customer_count = int(_number(top20.get("customers")) or 0)
+        customer_count = non_negative_count(top20.get("customers")) or 0
         add(
             "customer_revenue_concentration",
             priority,
@@ -137,8 +133,8 @@ def generate_business_insights(
     # 4. Repeat purchase friction: only surface with a meaningful eligible base.
     repeat90 = _find_record(repeat_purchase_windows, "follow_up_days", 90)
     if repeat90:
-        repeat_rate = _number(repeat90.get("second_order_within_window_pct"))
-        eligible = int(_number(repeat90.get("eligible_customers")) or 0)
+        repeat_rate = percentage(repeat90.get("second_order_within_window_pct"))
+        eligible = non_negative_count(repeat90.get("eligible_customers")) or 0
         if repeat_rate is not None and eligible >= minimum_repeat_eligible_customers and repeat_rate <= 40.0:
             priority = "High" if repeat_rate <= 25.0 else "Medium"
             add(
@@ -156,7 +152,7 @@ def generate_business_insights(
     qualified_rules = []
     for rule in affinity_rules:
         lift = _number(rule.get("lift"))
-        joint = int(_number(rule.get("joint_orders")) or 0)
+        joint = non_negative_count(rule.get("joint_orders")) or 0
         if lift is not None and joint >= minimum_affinity_joint_orders:
             qualified_rules.append((lift, joint, rule))
     if qualified_rules:
@@ -165,8 +161,8 @@ def generate_business_insights(
             key=lambda item: (item[0], item[1], str(item[2].get("antecedent_stock_code", ""))),
         )
         if lift >= 1.5:
-            confidence = _number(rule.get("confidence_pct"))
-            support = _number(rule.get("support_pct"))
+            confidence = percentage(rule.get("confidence_pct"))
+            support = percentage(rule.get("support_pct"))
             anchor = f"{rule.get('antecedent_stock_code', '')} — {rule.get('antecedent_description', 'Product')}"
             paired = f"{rule.get('consequent_stock_code', '')} — {rule.get('consequent_description', 'Product')}"
             confidence_text = f", confidence {confidence:.1f}%" if confidence is not None else ""
@@ -183,8 +179,8 @@ def generate_business_insights(
             )
 
     # 6. Product assortment concentration: only compare meaningful catalogues.
-    sku_count = int(_number(product_metrics.get("merchandise_stock_codes")) or 0)
-    top10_share = _number(product_metrics.get("top_10_merchandise_stock_code_revenue_share_pct"))
+    sku_count = non_negative_count(product_metrics.get("merchandise_stock_codes")) or 0
+    top10_share = percentage(product_metrics.get("top_10_merchandise_stock_code_revenue_share_pct"))
     if sku_count >= 20 and top10_share is not None and top10_share >= 60.0:
         priority = "High" if top10_share >= 75.0 else "Medium"
         add(

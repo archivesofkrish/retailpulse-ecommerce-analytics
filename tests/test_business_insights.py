@@ -87,3 +87,62 @@ def test_affinity_rule_requires_both_frequency_and_lift_thresholds():
     insights = generate_business_insights(**kwargs)
 
     assert "product_cross_sell_candidate" not in {item["insight_id"] for item in insights}
+
+
+def test_rules_ignore_percentages_outside_the_valid_domain():
+    kwargs = _base_inputs()
+    kwargs["kpis"]["unidentified_customer_revenue_share_pct"] = 140
+    kwargs["country_metrics"]["top_country_revenue_share_pct"] = -1
+    kwargs["customer_metrics"]["top_customer_concentration"][0]["identified_revenue_share_pct"] = 130
+    kwargs["product_metrics"]["top_10_merchandise_stock_code_revenue_share_pct"] = 101
+
+    insights = generate_business_insights(**kwargs)
+    ids = {item["insight_id"] for item in insights}
+
+    assert "customer_identity_gap" not in ids
+    assert "geographic_concentration" not in ids
+    assert "customer_revenue_concentration" not in ids
+    assert "merchandise_assortment_concentration" not in ids
+
+
+def test_rules_reject_boolean_counts_and_boolean_percentages():
+    kwargs = _base_inputs()
+    kwargs["kpis"]["unidentified_customer_revenue_share_pct"] = True
+    kwargs["repeat_purchase_windows"][0]["eligible_customers"] = True
+    kwargs["affinity_rules"][0]["joint_orders"] = True
+    kwargs["product_metrics"]["merchandise_stock_codes"] = True
+
+    insights = generate_business_insights(**kwargs)
+    ids = {item["insight_id"] for item in insights}
+
+    assert "customer_identity_gap" not in ids
+    assert "second_purchase_conversion" not in ids
+    assert "product_cross_sell_candidate" not in ids
+    assert "merchandise_assortment_concentration" not in ids
+
+
+def test_rules_reject_negative_and_fractional_count_fields():
+    kwargs = _base_inputs()
+    kwargs["repeat_purchase_windows"][0]["eligible_customers"] = -10
+    kwargs["affinity_rules"][0]["joint_orders"] = 250.5
+    kwargs["product_metrics"]["merchandise_stock_codes"] = -1
+
+    insights = generate_business_insights(**kwargs)
+    ids = {item["insight_id"] for item in insights}
+
+    assert "second_purchase_conversion" not in ids
+    assert "product_cross_sell_candidate" not in ids
+    assert "merchandise_assortment_concentration" not in ids
+
+
+def test_repeat_purchase_rule_rejects_rates_outside_percentage_domain():
+    kwargs = _base_inputs()
+    kwargs["repeat_purchase_windows"] = [
+        {"follow_up_days": 90, "eligible_customers": 4000, "second_order_within_window_pct": 125.0}
+    ]
+
+    insights = generate_business_insights(**kwargs)
+
+    assert "second_purchase_conversion" not in {
+        item["insight_id"] for item in insights
+    }
