@@ -6,6 +6,7 @@ import json
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from retailpulse.analysis import prepare_transactions, calculate_analytics, build_cohort_retention, run_pipeline, _quintile_score
+from retailpulse.provenance import verify_artifact_manifest
 
 
 def tiny_frame():
@@ -55,6 +56,11 @@ def test_demo_pipeline_writes_expected_outputs(tmp_path):
     assert manifest["run_id"] == result["pipeline_manifest"]["run_id"]
     assert manifest["source"]["file_name"] == sample.name
     assert len(manifest["source"]["sha256"]) == 64
+    assert manifest["schema_version"] == 2
+    assert "sales_lines.csv" in manifest["artifacts"]
+    assert "kpis.json" in manifest["artifacts"]
+    integrity_valid, integrity_message = verify_artifact_manifest(tmp_path, manifest["artifacts"])
+    assert integrity_valid, integrity_message
     assert result["kpis"]["sales_orders"] > 0
     saved_cohorts = pd.read_csv(tmp_path / "cohort_retention.csv")
     assert saved_cohorts.columns[0] == "cohort_month"
