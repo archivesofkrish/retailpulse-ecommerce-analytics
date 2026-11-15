@@ -326,8 +326,6 @@ def make_product_outputs(sales: pd.DataFrame, products: pd.DataFrame):
     product_columns = [
         "stock_code", "revenue_gbp", "units", "orders", "description",
         "revenue_share_pct", "cumulative_revenue_share_pct",
-        "distinct_invoices", "max_single_invoice_units",
-        "max_single_invoice_revenue_gbp",
     ]
     if merchandise_rows.empty:
         product_codes = pd.DataFrame(columns=product_columns)
