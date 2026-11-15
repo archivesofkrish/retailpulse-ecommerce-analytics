@@ -160,7 +160,7 @@ def test_sample_ratio_diagnostic_respects_predeclared_non_equal_allocation():
         control_trials=9_000, variant_trials=1_000, expected_control_share=0.9
     )
     assert result["status"] == "OK"
-    assert result["p_value"] == 1
+    assert result["p_value"] == pytest.approx(1)
     assert result["expected_variant_share_pct"] == pytest.approx(10)
 
 
