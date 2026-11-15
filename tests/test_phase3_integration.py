@@ -46,6 +46,8 @@ def test_synthetic_pipeline_runs_through_phase3_with_complete_lineage(tmp_path, 
     assert summary["pipeline_run_id"] == core_result["pipeline_manifest"]["run_id"]
     assert summary["source_sha256"] == pipeline_manifest["source"]["sha256"]
     assert summary["historical_inactivity_model"]["status"] in {"COMPLETED", "SKIPPED"}
+    assert summary["business_insight_count"] == len(summary["business_insights"])
+    assert (output_dir / "business_insights.csv").exists()
 
     required_outputs = [
         "customer_segment_value.csv",
@@ -53,6 +55,7 @@ def test_synthetic_pipeline_runs_through_phase3_with_complete_lineage(tmp_path, 
         "repeat_purchase_windows.csv",
         "merchandise_product_concentration.csv",
         "product_associations.csv",
+        "business_insights.csv",
         "country_concentration.csv",
         "historical_inactivity_monthly_backtest.csv",
         "historical_inactivity_feature_importance.csv",

@@ -38,6 +38,7 @@ from sklearn.metrics import (
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 from retailpulse.provenance import read_json_object, write_json_atomic
+from retailpulse.insights import generate_business_insights, INSIGHT_COLUMNS
 
 DATA = ROOT / "data" / "processed"
 OUT = ROOT / "reports" / "phase3"
@@ -622,7 +623,7 @@ def make_charts(cust, seg, countries, products, repeat_windows, churn_metrics):
         fig.savefig(FIG / "inactivity_model_monthly_auc.png", dpi=160); plt.close(fig)
 
 
-def build_report(metrics, country_metrics, product_metrics, affinity_metrics, affinity_rules, churn_metrics, segments, windows, cohort_summary, kpis):
+def build_report(metrics, country_metrics, product_metrics, affinity_metrics, affinity_rules, business_insights, churn_metrics, segments, windows, cohort_summary, kpis):
     total_sales = float(kpis["gross_sales_revenue_gbp"])
     identified = float(metrics["identified_customer_historical_revenue_gbp"])
     unknown = float(kpis.get("unidentified_customer_sales_revenue_gbp", total_sales - identified))
@@ -760,7 +761,29 @@ def build_report(metrics, country_metrics, product_metrics, affinity_metrics, af
         "- The training and test inactivity rates differ materially, indicating temporal/seasonal distribution shift.",
         "- Predicted scores are not calibrated for expected revenue loss or campaign economics.",
         "- This historical dataset ends on 9 December 2011; it cannot estimate current customer risk in 2026.",
-        "", "## 6. Recommended business actions", "",
+        "", "## 6. Business decision brief", "",
+    ]
+    if business_insights:
+        lines += [
+            "The following rules were triggered by the observed historical metrics. Each action is a testable hypothesis, not an automatic decision.",
+            "",
+            "| Priority | Area | Finding | Evidence | Recommended next action |",
+            "|---|---|---|---|---|",
+        ]
+        for insight in business_insights:
+            headline = insight["headline"].replace("|", "\\|")
+            evidence = insight["evidence"].replace("|", "\\|")
+            action = insight["recommended_action"].replace("|", "\\|")
+            lines.append(
+                f"| {insight['priority']} | {insight['area']} | {headline} | {evidence} | {action} |"
+            )
+        lines += ["", "### Interpretation guardrails", ""]
+        for insight in business_insights:
+            lines.append(f"- **{insight['insight_id']}** — {insight['guardrail']}")
+    else:
+        lines.append("No pre-defined decision rule crossed its evidence threshold in this run. This is not evidence that no business risk or opportunity exists.")
+    lines += [
+        "", "## 7. Recommended business actions", "",
         "1. **Protect the Champions segment.** Use service and loyalty experiments, measure incremental repeat revenue and margin, and avoid assuming all Champions need discounts.",
         "2. **Create a win-back test for Cannot Lose Them and At Risk.** Prioritise historically valuable customers with long recency, but use a randomised control group to measure incremental reactivation.",
         "3. **Improve second-purchase conversion.** Test onboarding, replenishment reminders and product recommendations during the first 30–90 days.",
@@ -768,14 +791,14 @@ def build_report(metrics, country_metrics, product_metrics, affinity_metrics, af
         "5. **Audit the one-invoice bulk product record.** Validate the Paper Craft, Little Birdie transaction before using its one-off volume as a demand forecast.",
         "6. **Reduce geographic dependence carefully.** Evaluate international markets using margin, shipping, returns, customer repeat rates and acquisition costs—not revenue alone.",
         "7. **Add cost and margin data.** Product profitability and economic CLV cannot be calculated from sales prices alone.",
-        "", "## 7. Definitions and caveats", "",
+        "", "## 8. Definitions and caveats", "",
         "- **Gross sales-line revenue:** Sum of included positive-quantity, positive-price sales-line values. It is not profit and is not net of recorded returns/cancellations.",
         "- **Historical customer revenue:** Recorded sales revenue associated with a known customer ID over the source period. It is not a forecast of future lifetime value.",
         "- **Repeat purchase:** A second distinct invoice associated with the same customer ID.",
         "- **90-day inactivity:** No identified-customer invoice during the 90 days following a historical monthly snapshot.",
         "- **RFM segments:** Rule-based recency/frequency/monetary groups; the segment label is not itself a churn probability.",
         "- **Merchandise stock-code concentration:** Product revenue aggregated to one row per stock code after excluding operational/non-merchandise types.",
-        "", "## 8. Reproducibility", "",
+        "", "## 9. Reproducibility", "",
         "Run from the RetailPulse project root:", "```bash", "source .venv/bin/activate", "python scripts/run_phase3_analysis.py", "```",
         "Outputs are written to `reports/phase3/`. The script uses the processed exports already generated by the main RetailPulse pipeline.", "",
     ]
@@ -805,10 +828,21 @@ def main():
     product_table, operational, product_metrics = make_product_outputs(sales, products)
     affinity_rules, affinity_metrics = make_product_affinity(sales, products)
     cohort_summary = make_cohort_outputs(sales)
+    business_insights = generate_business_insights(
+        kpis=kpis,
+        customer_metrics=customer_metrics,
+        country_metrics=country_metrics,
+        product_metrics=product_metrics,
+        repeat_purchase_windows=customer_metrics["repeat_purchase_windows"],
+        affinity_rules=affinity_rules.to_dict(orient="records"),
+    )
+    pd.DataFrame(business_insights, columns=INSIGHT_COLUMNS).to_csv(
+        OUT / "business_insights.csv", index=False
+    )
     churn_metrics = make_churn_backtest(orders, sales["invoice_date"].max().normalize())
     windows = pd.read_csv(OUT / "repeat_purchase_windows.csv")
     make_charts(cust, seg, country_table, product_table, windows, churn_metrics)
-    build_report(customer_metrics, country_metrics, product_metrics, affinity_metrics, affinity_rules, churn_metrics, seg, windows, cohort_summary, kpis)
+    build_report(customer_metrics, country_metrics, product_metrics, affinity_metrics, affinity_rules, business_insights, churn_metrics, seg, windows, cohort_summary, kpis)
 
     summary = {
         "source": pipeline_manifest["source"]["file_name"],
@@ -823,6 +857,11 @@ def main():
         "country_metrics": country_metrics,
         "product_metrics": product_metrics,
         "product_affinity_metrics": affinity_metrics,
+        "business_insights": business_insights,
+        "business_insight_count": len(business_insights),
+        "high_priority_business_insight_count": sum(
+            item["priority"] == "High" for item in business_insights
+        ),
         "historical_inactivity_model": churn_metrics,
         "important_caveat": "Historical analysis only; no profit/cost data and no current customer activity after 2011-12-09.",
     }
