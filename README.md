@@ -6,9 +6,9 @@
 [![Python](https://img.shields.io/badge/Python-3.11--3.14-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**RetailPulse is a reproducible, end-to-end business intelligence project** built around the UCI Online Retail II transaction dataset. It combines Python data engineering, SQL analytics, customer segmentation, cohort activity, merchandise and market analysis, a historical inactivity-model backtest, and an nine-section Streamlit dashboard.
+**RetailPulse is a reproducible, end-to-end business intelligence project** built around the UCI Online Retail II transaction dataset. It combines Python data engineering, SQL analytics, customer segmentation, cohort activity, merchandise and market analysis, a historical inactivity-model backtest, and a nine-section Streamlit dashboard.
 
-**Current release:** `1.4.0` — includes the interactive Repeat-Purchase Scenario Lab, validated scenario calculations, and gross-revenue sensitivity analysis.
+**Current release:** `1.4.0` — adds the Customer Value Studio, observed cohort revenue-yield analysis, a cohort heatmap, and a refreshed nine-section dashboard alongside the Repeat-Purchase Scenario Lab.
 
 > **Historical-data notice:** The source workbook covers **1 December 2009–9 December 2011**. RetailPulse is an analytical case study, not a live retailer feed. Its reported revenue is not profit, historical customer spend and cohort revenue yield are not projected customer lifetime value, and the inactivity model is not a production churn score.
 
@@ -80,11 +80,12 @@ The Professional Edition dashboard has nine sections:
 
 1. **Overview** — filter-aware sales KPIs, revenue trend, country sales, merchandise rankings and weekday activity.
 2. **Customer Intelligence** — historical customer spend, Pareto concentration, Gini and RFM segment economics.
-3. **Retention** — repeat-purchase windows and right-censored cohort activity.
-4. **Products & Markets** — merchandise-only rankings, SKU concentration, country concentration, product affinity and unusual one-invoice product records.
-5. **Decision Brief** — transparent business insights, evidence thresholds, suggested experiments and interpretation guardrails.
-6. **Scenario Lab** — conservative, base and stretch repeat-purchase scenarios, configurable conversion uplift and average-order-value assumptions, and a gross-revenue sensitivity curve.
-7. **Inactivity Model** — historical 90-day inactivity backtest, monthly holdout AUC, feature importance and interpretation limits.
+3. **Customer Value Studio** — monthly cohort revenue yield, cumulative observed revenue per acquired customer, retention curves, a value heatmap and 12-period mature-cohort comparisons.
+4. **Retention** — repeat-purchase windows and right-censored cohort activity.
+5. **Products & Markets** — merchandise-only rankings, SKU concentration, country concentration, product affinity and unusual one-invoice product records.
+6. **Decision Brief** — transparent business insights, evidence thresholds, suggested experiments and interpretation guardrails.
+7. **Scenario Lab** — conservative, base and stretch repeat-purchase scenarios, configurable conversion uplift and average-order-value assumptions, and a gross-revenue sensitivity curve.
+8. **Inactivity Model** — historical 90-day inactivity backtest, monthly holdout AUC, feature importance and interpretation limits.
 9. **Data Quality** — row classification, revenue reconciliation, definitions and reproducibility instructions.
 
 Overview charts respond to the sidebar filters. The advanced Phase 3 panels use the full source period and are labelled accordingly; they do not silently change with the overview filters.
@@ -200,7 +201,7 @@ Generated raw workbooks, processed transaction exports, per-customer outputs and
 ```text
 RetailPulse/
 ├── .github/workflows/        # Continuous integration
-├── dashboard/app.py          # Seven-section Streamlit dashboard
+├── dashboard/app.py          # Nine-section Streamlit dashboard
 ├── data/
 │   ├── raw/                  # Downloaded UCI workbook (git-ignored)
 │   ├── sample/               # Synthetic smoke-test data
@@ -254,7 +255,7 @@ The held-out ROC-AUC is 0.791 and average precision is 0.843. Training and test 
 
 ## Commercial scenario planning
 
-The dashboard's Scenario Lab uses the historical 90-day eligible first-time-customer base, observed second-purchase rate and average order value across identified-customer invoices. It lets a user define conservative, base and stretch conversion improvements, adjust the historical order-value assumption, and inspect the resulting expected additional second orders and gross revenue. The calculations are transparent and deterministic. They are scenario arithmetic—not predictive modelling, causal lift, profit forecasts or current-customer estimates. See [Scenario Lab methodology](docs/SCENARIO_LAB.md).
+The dashboard's Scenario Lab uses the historical 90-day eligible first-time-customer base, observed second-purchase rate and average order value across identified-customer invoices. It lets a user define conservative, base and stretch conversion improvements, adjust the historical order-value assumption, and inspect the resulting expected additional second orders and gross revenue. The calculations are transparent and deterministic. They are scenario arithmetic—not predictive modelling, causal lift, profit forecasts or current-customer estimates. See [Scenario Lab methodology](docs/SCENARIO_LAB.md). The Customer Value Studio complements this with descriptive cohort economics: it measures observed gross revenue per originally acquired customer and customer activity over time, without projecting future lifetime value. See [Customer Value Studio methodology](docs/CUSTOMER_VALUE_STUDIO.md).
 
 ## Business decision intelligence
 
