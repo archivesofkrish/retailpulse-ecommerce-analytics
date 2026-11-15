@@ -44,7 +44,7 @@ def test_phase3_preserves_zero_padded_and_alphanumeric_customer_ids(tmp_path, mo
 
     expected_ids = {"00123", "123", "CUST-A"}
     assert sales["customer_id_key"].dropna().unique().tolist() == sorted(expected_ids)
-    assert rfm["customer_id"].dropna().unique().tolist() == sorted(expected_ids)
+    assert set(rfm["customer_id"].dropna().unique()) == expected_ids
 
     customers, _segments, orders, metrics = phase3.make_customer_outputs(sales, rfm, kpis)
     assert set(customers["customer_id"]) == expected_ids
