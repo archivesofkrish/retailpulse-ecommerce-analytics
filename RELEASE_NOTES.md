@@ -11,11 +11,11 @@
 - Added the Decision Brief dashboard section with six transparent business-insight rules, evidence, thresholds, recommended actions and guardrails.
 - Added a non-root Docker dashboard image, read-only data mounts and automated container health smoke test.
 - Expanded CI to a supported Python runtime matrix, with package builds and downloadable JUnit reports.
-- Added CodeQL, Dependabot, security guidance and updated project status documentation.
+- Added CodeQL static analysis, a dependency vulnerability audit, Dependabot updates for Python/GitHub Actions/Docker, security guidance and updated project status documentation.
 
 ## Runtime support
 
-RetailPulse requires Python 3.11 or newer. Python 3.10 is no longer supported by the upstream Python project as of 1 October 2026. The CI matrix validates Python 3.11, 3.12 and 3.13. The Docker dashboard runtime uses Python 3.12.
+RetailPulse requires Python 3.11 or newer. Python 3.10 is no longer supported by the upstream Python project as of 1 October 2026. The CI matrix validates Python 3.11, 3.12, 3.13 and 3.14. The Docker dashboard runtime uses Python 3.12.
 
 ## Important data and model limitations
 
