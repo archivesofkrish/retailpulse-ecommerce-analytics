@@ -19,7 +19,7 @@
 - Historical 90-day inactivity backtest with chronological split, temporal embargo and interpretation limits.
 - Source SHA-256, pipeline run IDs and core/Phase 3 manifest consistency checks.
 - Output-level SHA-256 manifests for generated core exports and Phase 3 tables, reports, summaries and figures.
-- Standalone `scripts/verify_outputs.py` command for machine-readable checksum and cross-manifest validation.
+- Standalone `scripts/verify_outputs.py` command for machine-readable checksum and cross-manifest validation; the Python 3.14 CI job runs it after a fresh synthetic core + Phase 3 build.
 - Phase 3 rejects modified core exports; the dashboard verifies both output manifests before enabling advanced panels.
 - Seven-section Streamlit dashboard, including an evidence-based Decision Brief.
 - Non-root Docker deployment with read-only data mounts and health-check CI.
@@ -29,7 +29,7 @@
 
 - Python package metadata and supported-runtime configuration.
 - Python 3.11–3.14 CI matrix, strict deprecation-warning tests, package build and dependency consistency checks.
-- 41 automated tests passing on each supported Python version in PR #12 (164 test executions).
+- 45 automated tests passing on each supported Python version in the v1.2.0 release candidate (180 test executions across Python 3.11–3.14).
 - Synthetic end-to-end analytics tests, including anonymous-only and operational-only data.
 - Docker image build and Streamlit health smoke test.
 - JUnit test-result artifacts retained in GitHub Actions.
@@ -38,7 +38,7 @@
 
 ## Validation evidence
 
-- PR #12 passed all eight checks before merge: four Python test/build jobs, Docker health, CodeQL, dependency audit and the CodeQL analysis check.
+- PR #12 passed all eight checks before merge. PR #13 release validation passed 45 tests on each of Python 3.11–3.14, the synthetic CLI integrity run, Docker health, CodeQL and dependency audit.
 - The complete UCI workbook validator was previously run by the project owner against a local workbook. The workbook is not stored in GitHub, so GitHub Actions does not freshly rerun that full-data validation.
 - The latest merged main-branch workflows are rerunning after the merge; consult GitHub Actions for final default-branch results.
 
