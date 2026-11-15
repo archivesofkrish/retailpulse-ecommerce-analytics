@@ -25,7 +25,12 @@ from retailpulse.analysis import (  # noqa: E402
     prepare_transactions,
     read_source,
 )
-from retailpulse.provenance import file_fingerprint, phase3_freshness, read_json_object
+from retailpulse.provenance import (
+    file_fingerprint,
+    phase3_freshness,
+    read_json_object,
+    verify_artifact_manifest,
+)
 
 PROCESSED = ROOT / "data" / "processed"
 PHASE3 = ROOT / "reports" / "phase3"
@@ -119,8 +124,28 @@ def phase3_ready(source_path: Path) -> tuple[bool, str]:
         )
     except (OSError, ValueError, json.JSONDecodeError):
         return False, "Pipeline provenance files or the source dataset are invalid. Re-run core and Phase 3 analytics."
-    return phase3_freshness(
+    fresh, freshness_message = phase3_freshness(
         pipeline_manifest, phase3_manifest, source_path, fingerprint
+    )
+    if not fresh:
+        return False, freshness_message
+
+    for label, directory, manifest in (
+        ("Core pipeline", PROCESSED, pipeline_manifest),
+        ("Phase 3", PHASE3, phase3_manifest),
+    ):
+        verified, integrity_message = verify_artifact_manifest(
+            directory, manifest.get("artifacts")
+        )
+        if not verified:
+            return False, (
+                f"{label} output integrity check failed. {integrity_message} "
+                "Re-run the corresponding analytics pipeline before using these results."
+            )
+
+    return True, (
+        "Source lineage and all generated-output SHA-256 checksums are valid. "
+        + freshness_message
     )
 
 

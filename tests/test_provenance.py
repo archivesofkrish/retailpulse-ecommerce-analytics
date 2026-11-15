@@ -6,7 +6,14 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from retailpulse.provenance import build_pipeline_manifest, phase3_freshness, read_json_object, write_json_atomic
+from retailpulse.provenance import (
+    build_artifact_manifest,
+    build_pipeline_manifest,
+    phase3_freshness,
+    read_json_object,
+    verify_artifact_manifest,
+    write_json_atomic,
+)
 
 
 def _complete_manifests(source: Path):
@@ -117,3 +124,50 @@ def test_content_change_with_same_size_and_timestamp_is_detected(tmp_path):
 
     assert current is False
     assert "fingerprint" in reason.lower()
+
+
+def test_artifact_manifest_is_portable_across_copy_locations(tmp_path):
+    source_dir = tmp_path / "source"
+    source_dir.mkdir()
+    (source_dir / "sales.csv").write_text("invoice,revenue\n1,12.5\n", encoding="utf-8")
+    (source_dir / "figures").mkdir()
+    (source_dir / "figures" / "trend.svg").write_text("<svg/>", encoding="utf-8")
+    (source_dir / "partial.tmp").write_text("ignored", encoding="utf-8")
+
+    manifest = build_artifact_manifest(source_dir)
+    mounted_copy = tmp_path / "mounted" / "processed"
+    mounted_copy.parent.mkdir()
+    shutil.copytree(source_dir, mounted_copy)
+
+    valid, message = verify_artifact_manifest(mounted_copy, manifest)
+
+    assert valid is True
+    assert "2 output artifacts" in message
+    assert set(manifest) == {"sales.csv", "figures/trend.svg"}
+
+
+def test_artifact_manifest_detects_same_size_content_change(tmp_path):
+    output_dir = tmp_path / "processed"
+    output_dir.mkdir()
+    artifact = output_dir / "kpis.json"
+    artifact.write_bytes(b'{"revenue": 100}')
+    manifest = build_artifact_manifest(output_dir)
+    original_stat = artifact.stat()
+
+    artifact.write_bytes(b'{"revenue": 999}')
+    os.utime(artifact, ns=(original_stat.st_atime_ns, original_stat.st_mtime_ns))
+
+    valid, message = verify_artifact_manifest(output_dir, manifest)
+
+    assert valid is False
+    assert "checksum mismatch" in message.lower()
+
+
+def test_artifact_manifest_rejects_path_traversal(tmp_path):
+    valid, message = verify_artifact_manifest(
+        tmp_path,
+        {"../outside.csv": {"size_bytes": 1, "sha256": "0" * 64}},
+    )
+
+    assert valid is False
+    assert "unsafe artifact path" in message.lower()

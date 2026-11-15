@@ -8,6 +8,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 from retailpulse.analysis import run_pipeline
+from retailpulse.provenance import verify_artifact_manifest
 import scripts.run_phase3_analysis as phase3
 
 
@@ -43,6 +44,13 @@ def test_synthetic_pipeline_runs_through_phase3_with_complete_lineage(tmp_path, 
     assert phase3_manifest["status"] == "complete"
     assert phase3_manifest["pipeline_run_id"] == pipeline_manifest["run_id"]
     assert phase3_manifest["source_sha256"] == pipeline_manifest["source"]["sha256"]
+    assert phase3_manifest["schema_version"] == 2
+    assert "phase3_summary.json" in phase3_manifest["artifacts"]
+    assert "business_insights.csv" in phase3_manifest["artifacts"]
+    core_valid, core_message = verify_artifact_manifest(data_dir, pipeline_manifest["artifacts"])
+    phase3_valid, phase3_message = verify_artifact_manifest(output_dir, phase3_manifest["artifacts"])
+    assert core_valid, core_message
+    assert phase3_valid, phase3_message
     assert summary["pipeline_run_id"] == core_result["pipeline_manifest"]["run_id"]
     assert summary["source_sha256"] == pipeline_manifest["source"]["sha256"]
     assert summary["historical_inactivity_model"]["status"] in {"COMPLETED", "SKIPPED"}
@@ -77,3 +85,34 @@ def test_phase3_refuses_core_outputs_marked_as_building(tmp_path, monkeypatch):
 
     with pytest.raises(RuntimeError, match="Core pipeline outputs are incomplete"):
         phase3.load_inputs()
+
+
+def test_phase3_refuses_tampered_core_export(tmp_path, monkeypatch):
+    data_dir, _output_dir = _configure_phase3(tmp_path, monkeypatch)
+    sample = ROOT / "data" / "sample" / "sample_retail_transactions.csv"
+    run_pipeline(sample, data_dir)
+
+    sales_path = data_dir / "sales_lines.csv"
+    original = sales_path.read_text(encoding="utf-8")
+    sales_path.write_text(original.replace("United Kingdom", "United States"), encoding="utf-8")
+
+    with pytest.raises(RuntimeError, match="Core pipeline export integrity failed"):
+        phase3.load_inputs()
+
+
+def test_phase3_manifest_detects_edited_advanced_output(tmp_path, monkeypatch):
+    _data_dir, output_dir = _configure_phase3(tmp_path, monkeypatch)
+    sample = ROOT / "data" / "sample" / "sample_retail_transactions.csv"
+    run_pipeline(sample, _data_dir)
+    phase3.main()
+
+    manifest = json.loads(
+        (output_dir / "phase3_manifest.json").read_text(encoding="utf-8")
+    )
+    report = output_dir / "PHASE3_ADVANCED_ANALYTICS.md"
+    report.write_text(report.read_text(encoding="utf-8") + "\\nEdited after generation.", encoding="utf-8")
+
+    valid, message = verify_artifact_manifest(output_dir, manifest["artifacts"])
+
+    assert valid is False
+    assert "checksum mismatch" in message.lower()

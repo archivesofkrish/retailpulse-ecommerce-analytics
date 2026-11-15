@@ -88,3 +88,10 @@ The source's absolute path is retained for audit traceability but is not require
 ## Business decision intelligence
 
 Phase 3 feeds validated KPI and analytical summaries into `src/retailpulse/insights.py`. This deterministic rules layer does not call an LLM or infer a recommendation from free-form prompts. It evaluates version-controlled thresholds, emits a structured finding with the exact evidence, trigger rule, recommended action and guardrail, and writes `reports/phase3/business_insights.csv` plus a JSON representation in `phase3_summary.json`. The dashboard renders those records in a dedicated Decision Brief tab. Rule definitions are documented in `docs/BUSINESS_INSIGHTS.md` and covered by unit and end-to-end tests.
+
+
+## Generated-artifact integrity
+
+The core pipeline manifest records a SHA-256 digest and byte size for every generated CSV and KPI JSON export. The Phase 3 manifest records the same for its generated tables, summary JSON, Markdown report and figures. These paths are relative to each output directory, so integrity checks remain valid when the outputs are copied or mounted at a different host/container path.
+
+Phase 3 refuses to consume core exports whose checksums do not match the core manifest. The dashboard verifies both core and Phase 3 artifact manifests before enabling advanced panels. Missing, edited, or path-unsafe artifacts are treated as stale and require the relevant pipeline to be rerun. The manifest files themselves are excluded from their own checksum lists to avoid recursive hashes.
