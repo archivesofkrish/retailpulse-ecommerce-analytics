@@ -1,6 +1,6 @@
 # RetailPulse — E-commerce Business Intelligence
 
-**RetailPulse is a reproducible, end-to-end business intelligence project** built around the UCI Online Retail II transaction dataset. It combines Python data engineering, SQL analytics, customer segmentation, cohort activity, merchandise and market analysis, a historical inactivity-model backtest, and a six-section Streamlit dashboard.
+**RetailPulse is a reproducible, end-to-end business intelligence project** built around the UCI Online Retail II transaction dataset. It combines Python data engineering, SQL analytics, customer segmentation, cohort activity, merchandise and market analysis, a historical inactivity-model backtest, and a seven-section Streamlit dashboard.
 
 > **Historical-data notice:** The source workbook covers **1 December 2009–9 December 2011**. RetailPulse is an analytical case study, not a live retailer feed. Its reported revenue is not profit, historical customer spend is not projected customer lifetime value, and the inactivity model is not a production churn score.
 
@@ -159,7 +159,7 @@ Generated raw workbooks, processed transaction exports, per-customer outputs and
 ```text
 RetailPulse/
 ├── .github/workflows/        # Continuous integration
-├── dashboard/app.py          # Six-section Streamlit dashboard
+├── dashboard/app.py          # Seven-section Streamlit dashboard
 ├── data/
 │   ├── raw/                  # Downloaded UCI workbook (git-ignored)
 │   ├── sample/               # Synthetic smoke-test data

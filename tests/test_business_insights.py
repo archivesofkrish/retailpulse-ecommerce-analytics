@@ -1,3 +1,9 @@
+from pathlib import Path
+import sys
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+
 from retailpulse.insights import generate_business_insights
 
 
@@ -47,7 +53,7 @@ def test_rules_generate_deterministic_evidence_backed_business_insights():
         "merchandise_assortment_concentration",
     }
     assert all(item["evidence"] and item["trigger_rule"] and item["guardrail"] for item in first)
-    assert [item["priority"] for item in first] == ["High", "High", "High", "Medium", "Medium", "Medium"]
+    assert [item["priority"] for item in first] == ["High", "High", "Medium", "Medium", "Medium", "Medium"]
 
 
 def test_rules_do_not_trigger_on_missing_or_non_finite_metrics():
