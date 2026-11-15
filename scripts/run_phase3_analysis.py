@@ -13,6 +13,8 @@ from __future__ import annotations
 import json
 import math
 import warnings
+from collections import Counter
+from itertools import combinations
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import sys
@@ -266,6 +268,96 @@ def make_product_outputs(sales: pd.DataFrame, products: pd.DataFrame):
     metrics["product_pareto_thresholds"] = pareto
     return product_codes, ops_summary, metrics
 
+
+
+
+def make_product_affinity(sales: pd.DataFrame, products: pd.DataFrame):
+    """Calculate invoice-level merchandise association rules.
+
+    Each SKU is counted at most once per invoice. Operational/non-merchandise
+    codes are excluded. Rules with fewer than max(5, 0.01% of baskets) joint
+    invoices are suppressed to reduce one-off noise.
+    """
+    columns = [
+        "antecedent_stock_code", "antecedent_description",
+        "consequent_stock_code", "consequent_description",
+        "joint_orders", "merchandise_baskets", "support_pct",
+        "antecedent_orders", "consequent_orders", "confidence_pct", "lift",
+    ]
+    product_rows = products.copy()
+    product_rows["stock_code"] = product_rows["stock_code"].astype(str)
+    product_rows["product_type_clean"] = product_rows["product_type"].astype(str).str.strip().str.lower()
+    merchandise = product_rows[product_rows["product_type_clean"].eq("merchandise")]
+    merchandise_codes = set(merchandise["stock_code"])
+    descriptions = (
+        merchandise.sort_values("revenue", ascending=False)
+        .drop_duplicates("stock_code")
+        .set_index("stock_code")["description"]
+        .astype(str)
+        .to_dict()
+    )
+
+    eligible_sales = sales.loc[
+        sales["stock_code_key"].astype(str).isin(merchandise_codes),
+        ["invoice_key", "stock_code_key"],
+    ].dropna()
+    baskets = (
+        eligible_sales.groupby("invoice_key")["stock_code_key"]
+        .agg(lambda values: sorted(set(values.astype(str))))
+        .tolist()
+    )
+
+    basket_count = len(baskets)
+    item_counts: Counter[str] = Counter()
+    pair_counts: Counter[tuple[str, str]] = Counter()
+    for basket in baskets:
+        item_counts.update(basket)
+        pair_counts.update(combinations(basket, 2))
+
+    minimum_joint_orders = max(5, math.ceil(basket_count * 0.0001))
+    rows = []
+    for (item_a, item_b), joint_count in pair_counts.items():
+        if joint_count < minimum_joint_orders:
+            continue
+        support = joint_count / basket_count if basket_count else 0.0
+        for antecedent, consequent in ((item_a, item_b), (item_b, item_a)):
+            antecedent_count = item_counts[antecedent]
+            consequent_count = item_counts[consequent]
+            confidence = joint_count / antecedent_count if antecedent_count else 0.0
+            consequent_support = consequent_count / basket_count if basket_count else 0.0
+            lift = confidence / consequent_support if consequent_support else np.nan
+            rows.append({
+                "antecedent_stock_code": antecedent,
+                "antecedent_description": descriptions.get(antecedent, "Unknown product"),
+                "consequent_stock_code": consequent,
+                "consequent_description": descriptions.get(consequent, "Unknown product"),
+                "joint_orders": int(joint_count),
+                "merchandise_baskets": int(basket_count),
+                "support_pct": support * 100,
+                "antecedent_orders": int(antecedent_count),
+                "consequent_orders": int(consequent_count),
+                "confidence_pct": confidence * 100,
+                "lift": float(lift),
+            })
+
+    rules = pd.DataFrame(rows, columns=columns)
+    if not rules.empty:
+        rules = rules.sort_values(
+            ["lift", "joint_orders", "confidence_pct"],
+            ascending=[False, False, False],
+        ).reset_index(drop=True)
+    rules.to_csv(OUT / "product_associations.csv", index=False)
+
+    metrics = {
+        "merchandise_baskets": int(basket_count),
+        "unique_item_pairs_observed": int(len(pair_counts)),
+        "qualified_item_pairs": int(sum(count >= minimum_joint_orders for count in pair_counts.values())),
+        "association_rule_count": int(len(rules)),
+        "minimum_joint_orders": int(minimum_joint_orders),
+        "minimum_support_pct": float(minimum_joint_orders / basket_count * 100) if basket_count else None,
+        "top_rule_lift": float(rules.iloc[0]["lift"]) if not rules.empty else None,
+    }
+    return rules, metrics
 
 def make_cohort_outputs(sales: pd.DataFrame):
     """Build point-in-time cohort activity with right-censored future months.
@@ -530,7 +622,7 @@ def make_charts(cust, seg, countries, products, repeat_windows, churn_metrics):
         fig.savefig(FIG / "inactivity_model_monthly_auc.png", dpi=160); plt.close(fig)
 
 
-def build_report(metrics, country_metrics, product_metrics, churn_metrics, segments, windows, cohort_summary, kpis):
+def build_report(metrics, country_metrics, product_metrics, affinity_metrics, affinity_rules, churn_metrics, segments, windows, cohort_summary, kpis):
     total_sales = float(kpis["gross_sales_revenue_gbp"])
     identified = float(metrics["identified_customer_historical_revenue_gbp"])
     unknown = float(kpis.get("unidentified_customer_sales_revenue_gbp", total_sales - identified))
@@ -610,6 +702,30 @@ def build_report(metrics, country_metrics, product_metrics, churn_metrics, segme
     ]
     for _, row in products_df.head(10).iterrows():
         lines.append(f"| {row['stock_code']} | {row['description']} | {pct_money(row['revenue_gbp'])} | {int(row['distinct_invoices']):,} | {int(row['units']):,} |")
+    lines += [
+        "",
+        "### Products frequently purchased together",
+        "",
+        f"Invoice-level baskets include **{affinity_metrics['merchandise_baskets']:,} merchandise invoices**. The minimum co-purchase threshold is **{affinity_metrics['minimum_joint_orders']:,} invoices**. Association rules are ranked by lift after this frequency filter.",
+    ]
+    if affinity_rules.empty:
+        lines.append("No product pairs met the minimum co-purchase threshold in this dataset.")
+    else:
+        lines += [
+            "",
+            "| Anchor product | Frequently paired with | Joint invoices | Support | Confidence | Lift |",
+            "|---|---|---:|---:|---:|---:|",
+        ]
+        for _, row in affinity_rules.head(10).iterrows():
+            lines.append(
+                f"| {row['antecedent_stock_code']} — {row['antecedent_description']} "
+                f"| {row['consequent_stock_code']} — {row['consequent_description']} "
+                f"| {int(row['joint_orders']):,} | {row['support_pct']:.3f}% "
+                f"| {row['confidence_pct']:.1f}% | {row['lift']:.2f}x |"
+            )
+        lines.append(
+            "These are historical co-purchase associations, not causal effects or proof that a bundle will increase profit. Validate merchandising changes with a controlled experiment and margin data."
+        )
     lines += ["", "## 4. Country concentration", "",
         f"The source includes **{country_metrics['country_count']} countries**. {country_metrics['top_country']} contributes **{country_metrics['top_country_revenue_share_pct']:.1f}%** of total sales-line revenue, and the top five countries contribute **{country_metrics['top_five_country_revenue_share_pct']:.1f}%**. This indicates substantial geographic concentration.",
         "", "| Country | Revenue | Revenue share | Orders | Identified customers |",
@@ -687,11 +803,12 @@ def main():
     cust, seg, orders, customer_metrics = make_customer_outputs(sales, rfm, kpis)
     country_table, country_metrics = make_country_outputs(countries)
     product_table, operational, product_metrics = make_product_outputs(sales, products)
+    affinity_rules, affinity_metrics = make_product_affinity(sales, products)
     cohort_summary = make_cohort_outputs(sales)
     churn_metrics = make_churn_backtest(orders, sales["invoice_date"].max().normalize())
     windows = pd.read_csv(OUT / "repeat_purchase_windows.csv")
     make_charts(cust, seg, country_table, product_table, windows, churn_metrics)
-    build_report(customer_metrics, country_metrics, product_metrics, churn_metrics, seg, windows, cohort_summary, kpis)
+    build_report(customer_metrics, country_metrics, product_metrics, affinity_metrics, affinity_rules, churn_metrics, seg, windows, cohort_summary, kpis)
 
     summary = {
         "source": pipeline_manifest["source"]["file_name"],
@@ -705,6 +822,7 @@ def main():
         "customer_metrics": customer_metrics,
         "country_metrics": country_metrics,
         "product_metrics": product_metrics,
+        "product_affinity_metrics": affinity_metrics,
         "historical_inactivity_model": churn_metrics,
         "important_caveat": "Historical analysis only; no profit/cost data and no current customer activity after 2011-12-09.",
     }
