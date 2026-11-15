@@ -123,6 +123,9 @@ python scripts/validate_real_data.py
 # Generate advanced customer, cohort, product, country and model outputs
 python scripts/run_phase3_analysis.py
 
+# Verify core and Phase 3 output checksums and lineage
+python scripts/verify_outputs.py
+
 # Run all tests with deprecation warnings treated as errors
 python -W error::DeprecationWarning -m pytest -q
 
@@ -184,7 +187,7 @@ The source queries are in `sql/analysis.sql` and use the CSV outputs under `data
 
 ## Reproduce the project
 
-The main pipeline writes core exports and a `pipeline_manifest.json` to `data/processed/`. The manifest records a run ID, source-file SHA-256 fingerprint, source file signature, reporting period, row counts, and SHA-256/size fingerprints for every generated CSV and KPI JSON export. The Phase 3 runner verifies the core exports before reading them, then writes advanced tables, figures, `phase3_summary.json` and a matching `phase3_manifest.json` with fingerprints for every generated Phase 3 artifact. The dashboard verifies source lineage and both output manifests before enabling advanced panels; edited, missing or incomplete exports are rejected rather than silently displayed. Re-run the core pipeline and then Phase 3 after replacing the source workbook. The SQL runner refuses incomplete core exports. The real-data validator writes `test-results/real_data_validation.json`.
+The main pipeline writes core exports and a `pipeline_manifest.json` to `data/processed/`. The manifest records a run ID, source-file SHA-256 fingerprint, source file signature, reporting period, row counts, and SHA-256/size fingerprints for every generated CSV and KPI JSON export. The Phase 3 runner verifies the core exports before reading them, then writes advanced tables, figures, `phase3_summary.json` and a matching `phase3_manifest.json` with fingerprints for every generated Phase 3 artifact. The dashboard verifies source lineage and both output manifests before enabling advanced panels; edited, missing or incomplete exports are rejected rather than silently displayed. Run `python scripts/verify_outputs.py` to print a machine-readable integrity report and return a non-zero exit code when any artifact or lineage check fails. Re-run the core pipeline and then Phase 3 after replacing the source workbook. The SQL runner refuses incomplete core exports. The real-data validator writes `test-results/real_data_validation.json`.
 
 Generated raw workbooks, processed transaction exports, per-customer outputs and machine-specific validation JSON are ignored by Git. They can be regenerated with the commands above. Aggregated executive reports, methodological notes, static charts and the presentation are included as portfolio artefacts.
 

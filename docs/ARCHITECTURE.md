@@ -95,3 +95,6 @@ Phase 3 feeds validated KPI and analytical summaries into `src/retailpulse/insig
 The core pipeline manifest records a SHA-256 digest and byte size for every generated CSV and KPI JSON export. The Phase 3 manifest records the same for its generated tables, summary JSON, Markdown report and figures. These paths are relative to each output directory, so integrity checks remain valid when the outputs are copied or mounted at a different host/container path.
 
 Phase 3 refuses to consume core exports whose checksums do not match the core manifest. The dashboard verifies both core and Phase 3 artifact manifests before enabling advanced panels. Missing, edited, or path-unsafe artifacts are treated as stale and require the relevant pipeline to be rerun. The manifest files themselves are excluded from their own checksum lists to avoid recursive hashes.
+
+
+A standalone `python scripts/verify_outputs.py` command verifies both manifests, all recorded artifact hashes, the shared pipeline run ID and source fingerprint. It prints a JSON summary and exits non-zero on any failed check, so the same integrity contract can be used in a terminal, CI job or pre-publication checklist without launching Streamlit.
