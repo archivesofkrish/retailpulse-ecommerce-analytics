@@ -86,6 +86,8 @@ A lift above 1 indicates the two items co-occur more frequently than expected un
 
 To reduce unstable one-off patterns, a pair must occur in at least `max(5, ceil(0.01% × merchandise invoice count))` distinct invoices. Both rule directions are reported because (A → B) and (B → A) have different confidence values. Revenue, gross margin, stock availability, promotion exposure and randomised experiment results are not part of the association calculation.
 
+Merchandise diagnostics use the **invoice + stock-code grain** before computing per-invoice maxima. Repeated source lines for the same SKU in one invoice are summed before calculating maximum units and revenue on a single invoice. Distinct invoice counts are also derived from this grain, avoiding double-counts when a stock code has multiple source descriptions.
+
 ## 9. Business insight rules
 
 The decision-support layer evaluates a fixed set of diagnostic thresholds against historical aggregated metrics. Current rules cover unidentified-customer revenue share (10%), leading-country revenue share (75%), top-20% identified-customer revenue share (50%), 90-day second-purchase conversion (40%, with at least 20 eligible customers), co-purchase lift (1.5, with at least 20 joint invoices), and top-10 SKU revenue share (60%, with at least 20 merchandise SKUs). Priority is raised at stricter documented cut-offs in the code and the generated insight record.
