@@ -112,6 +112,7 @@ def pct_money(x: float) -> str:
 
 
 def make_customer_outputs(sales: pd.DataFrame, rfm: pd.DataFrame, kpis: dict):
+    """Build customer concentration and repeat-purchase outputs, including empty-ID cases."""
     cust = rfm.copy()
     cust["customer_id"] = cust["customer_id"].astype("string").str.strip()
     cust["customer_id"] = cust["customer_id"].mask(cust["customer_id"].eq(""), pd.NA)
@@ -120,80 +121,179 @@ def make_customer_outputs(sales: pd.DataFrame, rfm: pd.DataFrame, kpis: dict):
     cust = cust.sort_values("monetary", ascending=False).reset_index(drop=True)
     n = len(cust)
     total = float(cust["monetary"].sum())
-    cust["revenue_rank"] = np.arange(1, n + 1)
-    cust["customer_share_cumulative"] = cust["revenue_rank"] / n
-    cust["revenue_share_cumulative"] = cust["monetary"].cumsum() / total
+
+    cust["revenue_rank"] = np.arange(1, n + 1, dtype=int)
+    cust["customer_share_cumulative"] = cust["revenue_rank"] / n if n else pd.Series(dtype=float)
+    cust["revenue_share_cumulative"] = (
+        cust["monetary"].cumsum() / total if total > 0 else pd.Series(dtype=float)
+    )
     cust.to_csv(OUT / "customer_revenue_concentration.csv", index=False)
 
     top_rows = []
-    for pct in [0.01, 0.05, 0.10, 0.20]:
-        k = max(1, math.ceil(n * pct))
-        value = float(cust.head(k)["monetary"].sum())
-        top_rows.append({"top_customer_share_pct": pct * 100, "customers": k,
-                         "historical_revenue_gbp": value, "identified_revenue_share_pct": value / total * 100})
     pareto_rows = []
-    for threshold in [0.50, 0.80, 0.90]:
-        k = int(np.argmax(cust["revenue_share_cumulative"].to_numpy() >= threshold) + 1)
-        pareto_rows.append({"revenue_threshold_pct": threshold * 100, "customers_required": k,
-                            "customer_base_share_pct": k / n * 100})
-    pd.DataFrame(top_rows).to_csv(OUT / "top_customer_concentration.csv", index=False)
-    pd.DataFrame(pareto_rows).to_csv(OUT / "customer_pareto_thresholds.csv", index=False)
+    if n and total > 0:
+        for pct in [0.01, 0.05, 0.10, 0.20]:
+            k = max(1, math.ceil(n * pct))
+            value = float(cust.head(k)["monetary"].sum())
+            top_rows.append({
+                "top_customer_share_pct": pct * 100,
+                "customers": k,
+                "historical_revenue_gbp": value,
+                "identified_revenue_share_pct": value / total * 100,
+            })
+        for threshold in [0.50, 0.80, 0.90]:
+            cumulative = cust["revenue_share_cumulative"].to_numpy()
+            reached = np.flatnonzero(cumulative >= threshold)
+            k = int(reached[0] + 1) if len(reached) else n
+            pareto_rows.append({
+                "revenue_threshold_pct": threshold * 100,
+                "customers_required": k,
+                "customer_base_share_pct": k / n * 100,
+            })
 
-    seg = (cust.groupby("rfm_segment", dropna=False)
-           .agg(customers=("customer_id", "size"), historical_revenue_gbp=("monetary", "sum"),
-                avg_recency_days=("recency_days", "mean"), median_recency_days=("recency_days", "median"),
-                avg_orders_per_customer=("frequency", "mean"), median_historical_revenue_gbp=("monetary", "median"))
-           .reset_index())
-    seg["customer_share_pct"] = seg["customers"] / n * 100
-    seg["identified_revenue_share_pct"] = seg["historical_revenue_gbp"] / total * 100
-    seg = seg.sort_values("historical_revenue_gbp", ascending=False)
+    top_columns = [
+        "top_customer_share_pct", "customers",
+        "historical_revenue_gbp", "identified_revenue_share_pct",
+    ]
+    pareto_columns = [
+        "revenue_threshold_pct", "customers_required", "customer_base_share_pct",
+    ]
+    pd.DataFrame(top_rows, columns=top_columns).to_csv(
+        OUT / "top_customer_concentration.csv", index=False
+    )
+    pd.DataFrame(pareto_rows, columns=pareto_columns).to_csv(
+        OUT / "customer_pareto_thresholds.csv", index=False
+    )
+
+    segment_columns = [
+        "rfm_segment", "customers", "historical_revenue_gbp",
+        "avg_recency_days", "median_recency_days", "avg_orders_per_customer",
+        "median_historical_revenue_gbp", "customer_share_pct",
+        "identified_revenue_share_pct",
+    ]
+    if n:
+        seg = (
+            cust.groupby("rfm_segment", dropna=False)
+            .agg(
+                customers=("customer_id", "size"),
+                historical_revenue_gbp=("monetary", "sum"),
+                avg_recency_days=("recency_days", "mean"),
+                median_recency_days=("recency_days", "median"),
+                avg_orders_per_customer=("frequency", "mean"),
+                median_historical_revenue_gbp=("monetary", "median"),
+            )
+            .reset_index()
+        )
+        seg["customer_share_pct"] = seg["customers"] / n * 100
+        seg["identified_revenue_share_pct"] = (
+            seg["historical_revenue_gbp"] / total * 100 if total > 0 else 0.0
+        )
+        seg = seg.sort_values("historical_revenue_gbp", ascending=False)
+    else:
+        seg = pd.DataFrame(columns=segment_columns)
     seg.to_csv(OUT / "customer_segment_value.csv", index=False)
 
-    # Customer-level order history and repeat purchase timing.
-    sales_known = sales.dropna(subset=["customer_id_key", "invoice_date", "invoice_key"]).copy()
-    orders = (sales_known.groupby(["customer_id_key", "invoice_key"], as_index=False)
-              .agg(order_date=("invoice_date", "min"), order_revenue=("revenue", "sum")))
-    orders = orders.sort_values(["customer_id_key", "order_date", "invoice_key"])
-    orders["order_number"] = orders.groupby("customer_id_key").cumcount() + 1
-    order_counts = orders.groupby("customer_id_key")["invoice_key"].nunique()
-    repeat_customers = int((order_counts >= 2).sum())
-    single_order_customers = int((order_counts == 1).sum())
-    first_orders = orders[orders["order_number"] == 1][["customer_id_key", "order_date"]].rename(columns={"order_date": "first_order_date"})
-    second_orders = orders[orders["order_number"] == 2][["customer_id_key", "order_date"]].rename(columns={"order_date": "second_order_date"})
-    first_second = first_orders.merge(second_orders, on="customer_id_key", how="left")
-    first_second["days_to_second_order"] = (first_second["second_order_date"] - first_second["first_order_date"]).dt.total_seconds() / 86400
+    # Customer-level order history is unavailable when no valid identifiers exist.
+    sales_known = sales.dropna(
+        subset=["customer_id_key", "invoice_date", "invoice_key"]
+    ).copy()
+    if sales_known.empty:
+        orders = pd.DataFrame(columns=[
+            "customer_id_key", "invoice_key", "order_date", "order_revenue", "order_number",
+        ])
+        first_second = pd.DataFrame(columns=[
+            "customer_id_key", "first_order_date", "second_order_date", "days_to_second_order",
+        ])
+    else:
+        orders = (
+            sales_known.groupby(["customer_id_key", "invoice_key"], as_index=False)
+            .agg(order_date=("invoice_date", "min"), order_revenue=("revenue", "sum"))
+        )
+        orders = orders.sort_values(["customer_id_key", "order_date", "invoice_key"])
+        orders["order_number"] = orders.groupby("customer_id_key").cumcount() + 1
+        first_orders = (
+            orders.loc[orders["order_number"].eq(1), ["customer_id_key", "order_date"]]
+            .rename(columns={"order_date": "first_order_date"})
+        )
+        second_orders = (
+            orders.loc[orders["order_number"].eq(2), ["customer_id_key", "order_date"]]
+            .rename(columns={"order_date": "second_order_date"})
+        )
+        first_second = first_orders.merge(second_orders, on="customer_id_key", how="left")
+        first_second["days_to_second_order"] = (
+            first_second["second_order_date"] - first_second["first_order_date"]
+        ).dt.total_seconds() / 86400
+
     first_second.to_csv(OUT / "customer_first_second_order.csv", index=False)
     observation_end = sales["invoice_date"].max().normalize()
+    order_counts = (
+        orders.groupby("customer_id_key")["invoice_key"].nunique()
+        if not orders.empty else pd.Series(dtype=int)
+    )
+    repeat_customers = int((order_counts >= 2).sum())
+    single_order_customers = int((order_counts == 1).sum())
     windows = []
     for days in [30, 60, 90, 180, 365]:
-        eligible = first_second[first_second["first_order_date"] <= observation_end - timedelta(days=days)]
-        returned = int((eligible["days_to_second_order"].notna() & (eligible["days_to_second_order"] <= days)).sum())
-        windows.append({"follow_up_days": days, "eligible_customers": len(eligible),
-                        "customers_with_second_order": returned,
-                        "second_order_within_window_pct": returned / len(eligible) * 100 if len(eligible) else np.nan})
+        eligible = first_second[
+            first_second["first_order_date"] <= observation_end - timedelta(days=days)
+        ]
+        returned = int((
+            eligible["days_to_second_order"].notna()
+            & eligible["days_to_second_order"].le(days)
+        ).sum())
+        windows.append({
+            "follow_up_days": days,
+            "eligible_customers": int(len(eligible)),
+            "customers_with_second_order": returned,
+            "second_order_within_window_pct": (
+                returned / len(eligible) * 100 if len(eligible) else np.nan
+            ),
+        })
     pd.DataFrame(windows).to_csv(OUT / "repeat_purchase_windows.csv", index=False)
 
     metrics = {
         "identified_customers": int(n),
         "identified_customer_historical_revenue_gbp": total,
-        "mean_historical_revenue_per_customer_gbp": float(cust["monetary"].mean()),
-        "median_historical_revenue_per_customer_gbp": float(cust["monetary"].median()),
-        "p90_historical_revenue_per_customer_gbp": float(cust["monetary"].quantile(.90)),
-        "p99_historical_revenue_per_customer_gbp": float(cust["monetary"].quantile(.99)),
-        "max_historical_revenue_per_customer_gbp": float(cust["monetary"].max()),
-        "mean_orders_per_customer": float(cust["frequency"].mean()),
-        "median_orders_per_customer": float(cust["frequency"].median()),
+        "mean_historical_revenue_per_customer_gbp": (
+            float(cust["monetary"].mean()) if n else None
+        ),
+        "median_historical_revenue_per_customer_gbp": (
+            float(cust["monetary"].median()) if n else None
+        ),
+        "p90_historical_revenue_per_customer_gbp": (
+            float(cust["monetary"].quantile(.90)) if n else None
+        ),
+        "p99_historical_revenue_per_customer_gbp": (
+            float(cust["monetary"].quantile(.99)) if n else None
+        ),
+        "max_historical_revenue_per_customer_gbp": (
+            float(cust["monetary"].max()) if n else None
+        ),
+        "mean_orders_per_customer": (
+            float(cust["frequency"].mean()) if n else None
+        ),
+        "median_orders_per_customer": (
+            float(cust["frequency"].median()) if n else None
+        ),
         "repeat_customers": repeat_customers,
-        "repeat_customer_share_pct": repeat_customers / n * 100,
+        "repeat_customer_share_pct": repeat_customers / n * 100 if n else 0.0,
         "single_order_customers": single_order_customers,
-        "single_order_customer_share_pct": single_order_customers / n * 100,
-        "customer_revenue_gini": gini(cust["monetary"]),
-        "median_days_to_second_order_among_repeaters": float(first_second["days_to_second_order"].dropna().median()),
-        "mean_days_to_second_order_among_repeaters": float(first_second["days_to_second_order"].dropna().mean()),
+        "single_order_customer_share_pct": (
+            single_order_customers / n * 100 if n else 0.0
+        ),
+        "customer_revenue_gini": gini(cust["monetary"]) if n else None,
+        "median_days_to_second_order_among_repeaters": (
+            float(first_second["days_to_second_order"].dropna().median())
+            if first_second["days_to_second_order"].notna().any() else None
+        ),
+        "mean_days_to_second_order_among_repeaters": (
+            float(first_second["days_to_second_order"].dropna().mean())
+            if first_second["days_to_second_order"].notna().any() else None
+        ),
+        "top_customer_concentration": top_rows,
+        "customer_pareto_thresholds": pareto_rows,
+        "repeat_purchase_windows": windows,
     }
-    metrics["top_customer_concentration"] = top_rows
-    metrics["customer_pareto_thresholds"] = pareto_rows
-    metrics["repeat_purchase_windows"] = windows
     return cust, seg, orders, metrics
 
 
@@ -215,28 +315,52 @@ def make_country_outputs(countries: pd.DataFrame):
 
 
 def make_product_outputs(sales: pd.DataFrame, products: pd.DataFrame):
+    """Build merchandise metrics without failing when no merchandise SKUs exist."""
     p = products.copy()
     p["product_type_clean"] = p["product_type"].astype(str).str.strip()
     for col in ["revenue", "units", "orders"]:
         p[col] = pd.to_numeric(p[col], errors="coerce").fillna(0)
-    merchandise_rows = p[p["product_type_clean"].str.lower() == "merchandise"].copy()
-    operational_rows = p[p["product_type_clean"].str.lower() != "merchandise"].copy()
+    merchandise_rows = p[p["product_type_clean"].str.lower().eq("merchandise")].copy()
+    operational_rows = p[~p["product_type_clean"].str.lower().eq("merchandise")].copy()
 
-    # Product performance is grouped by code + description in the source export;
-    # aggregate to one row per stock code for product-level concentration.
-    product_codes = (merchandise_rows.groupby("stock_code", as_index=False)
-                     .agg(revenue_gbp=("revenue", "sum"), units=("units", "sum"), orders=("orders", "sum")))
-    descriptions = (merchandise_rows.sort_values("revenue", ascending=False)
-                    .drop_duplicates("stock_code").set_index("stock_code")["description"])
-    product_codes["description"] = product_codes["stock_code"].map(descriptions)
-    product_codes = product_codes.sort_values("revenue_gbp", ascending=False).reset_index(drop=True)
-    total_merch = float(product_codes["revenue_gbp"].sum())
-    product_codes["revenue_share_pct"] = product_codes["revenue_gbp"] / total_merch * 100
-    product_codes["cumulative_revenue_share_pct"] = product_codes["revenue_gbp"].cumsum() / total_merch * 100
+    product_columns = [
+        "stock_code", "revenue_gbp", "units", "orders", "description",
+        "revenue_share_pct", "cumulative_revenue_share_pct",
+        "distinct_invoices", "max_single_invoice_units",
+        "max_single_invoice_revenue_gbp",
+    ]
+    if merchandise_rows.empty:
+        product_codes = pd.DataFrame(columns=product_columns)
+    else:
+        product_codes = (
+            merchandise_rows.groupby("stock_code", as_index=False)
+            .agg(
+                revenue_gbp=("revenue", "sum"),
+                units=("units", "sum"),
+                orders=("orders", "sum"),
+            )
+        )
+        descriptions = (
+            merchandise_rows.sort_values("revenue", ascending=False)
+            .drop_duplicates("stock_code")
+            .set_index("stock_code")["description"]
+        )
+        product_codes["description"] = product_codes["stock_code"].map(descriptions)
+        product_codes = product_codes.sort_values(
+            "revenue_gbp", ascending=False
+        ).reset_index(drop=True)
+
+    total_merch = float(product_codes["revenue_gbp"].sum()) if not product_codes.empty else 0.0
+    if not product_codes.empty and total_merch > 0:
+        product_codes["revenue_share_pct"] = product_codes["revenue_gbp"] / total_merch * 100
+        product_codes["cumulative_revenue_share_pct"] = (
+            product_codes["revenue_gbp"].cumsum() / total_merch * 100
+        )
+    elif not product_codes.empty:
+        product_codes["revenue_share_pct"] = 0.0
+        product_codes["cumulative_revenue_share_pct"] = 0.0
 
     # Aggregate at invoice + SKU grain before deriving one-invoice maxima.
-    # A SKU can appear on multiple source lines within one invoice, so taking the
-    # maximum source-line quantity would understate the actual invoice quantity.
     sale_rows = sales.copy()
     sale_rows["stock_code_key"] = sale_rows["stock_code"].astype(str)
     sale_rows["invoice_key"] = sale_rows["invoice"].astype(str)
@@ -257,29 +381,50 @@ def make_product_outputs(sales: pd.DataFrame, products: pd.DataFrame):
         .reset_index()
         .rename(columns={"stock_code_key": "stock_code"})
     )
-    product_codes = product_codes.drop(columns=["orders"]).merge(
+    product_codes = product_codes.drop(columns=["orders"], errors="ignore").merge(
         invoice_stats, on="stock_code", how="left"
     )
-    # The invoice-level distinct count is the authoritative order count for a SKU;
-    # summing order counts across multiple source descriptions can double-count.
-    product_codes["orders"] = product_codes["distinct_invoices"].fillna(0).astype(int)
+    product_codes["distinct_invoices"] = (
+        product_codes["distinct_invoices"].fillna(0).astype(int)
+    )
+    product_codes["orders"] = product_codes["distinct_invoices"]
     product_codes.to_csv(OUT / "merchandise_product_concentration.csv", index=False)
 
-    one_order = product_codes[product_codes["distinct_invoices"] <= 1].copy()
+    one_order = product_codes.loc[product_codes["distinct_invoices"].le(1)].copy()
     one_order = one_order.sort_values("revenue_gbp", ascending=False)
     one_order.to_csv(OUT / "single_invoice_merchandise_products.csv", index=False)
+
     ops_total = float(operational_rows["revenue"].sum())
-    ops_summary = (operational_rows.groupby("stock_code", as_index=False)
-                   .agg(description=("description", "first"), revenue_gbp=("revenue", "sum"), units=("units", "sum"), orders=("orders", "sum"))
-                   .sort_values("revenue_gbp", ascending=False))
+    ops_summary = (
+        operational_rows.groupby("stock_code", as_index=False)
+        .agg(
+            description=("description", "first"),
+            revenue_gbp=("revenue", "sum"),
+            units=("units", "sum"),
+            orders=("orders", "sum"),
+        )
+        .sort_values("revenue_gbp", ascending=False)
+    )
     ops_summary.to_csv(OUT / "operational_non_merchandise_codes.csv", index=False)
 
     pareto = []
-    for threshold in [.50, .80, .90]:
-        k = int(np.argmax(product_codes["cumulative_revenue_share_pct"].to_numpy() >= threshold * 100) + 1)
-        pareto.append({"revenue_threshold_pct": threshold * 100, "stock_codes_required": k,
-                       "share_of_merchandise_stock_codes_pct": k / len(product_codes) * 100})
-    top10 = float(product_codes.head(10)["revenue_gbp"].sum() / total_merch * 100)
+    if not product_codes.empty:
+        cumulative = product_codes["cumulative_revenue_share_pct"].to_numpy()
+        for threshold in [.50, .80, .90]:
+            reached = np.flatnonzero(cumulative >= threshold * 100)
+            k = int(reached[0] + 1) if len(reached) else len(product_codes)
+            pareto.append({
+                "revenue_threshold_pct": threshold * 100,
+                "stock_codes_required": k,
+                "share_of_merchandise_stock_codes_pct": (
+                    k / len(product_codes) * 100
+                ),
+            })
+
+    top10 = (
+        float(product_codes.head(10)["revenue_gbp"].sum() / total_merch * 100)
+        if total_merch > 0 else 0.0
+    )
     metrics = {
         "merchandise_stock_codes": int(product_codes["stock_code"].nunique()),
         "merchandise_revenue_gbp": total_merch,
@@ -289,10 +434,7 @@ def make_product_outputs(sales: pd.DataFrame, products: pd.DataFrame):
         "single_invoice_merchandise_code_count": int(len(one_order)),
         "product_pareto_thresholds": pareto,
     }
-    metrics["product_pareto_thresholds"] = pareto
     return product_codes, ops_summary, metrics
-
-
 
 
 def make_product_affinity(sales: pd.DataFrame, products: pd.DataFrame):
@@ -466,6 +608,13 @@ def make_churn_backtest(orders: pd.DataFrame, observation_end: pd.Timestamp):
             "orders_90d", "orders_180d", "orders_365d",
             "predicted_inactivity_score", "risk_rank_pct",
         ]).to_csv(OUT / "historical_inactivity_holdout_scores.csv", index=False)
+
+    if orders.empty:
+        write_skipped_outputs()
+        return {
+            "status": "SKIPPED",
+            "reason": "No identified-customer order history is available for a 90-day inactivity backtest.",
+        }
 
     start = orders["order_date"].min() + timedelta(days=90)
     end = observation_end - timedelta(days=90)
