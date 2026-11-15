@@ -4,8 +4,6 @@ Outputs are assumption-driven revenue scenarios, not forecasts or causal lift es
 """
 
 from __future__ import annotations
-
-import math
 from collections.abc import Mapping
 from typing import Any
 
