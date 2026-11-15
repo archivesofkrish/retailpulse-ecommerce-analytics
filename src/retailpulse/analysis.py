@@ -7,7 +7,7 @@ import re
 import uuid
 from datetime import datetime, timezone
 
-from retailpulse.provenance import build_pipeline_manifest, file_fingerprint, write_json_atomic
+from retailpulse.provenance import (\n    build_artifact_manifest,\n    build_pipeline_manifest,\n    file_fingerprint,\n    write_json_atomic,\n)
 
 import numpy as np
 import pandas as pd
@@ -407,6 +407,9 @@ def run_pipeline(input_path: str | Path, output_dir: str | Path) -> dict:
     for name, frame in exports.items():
         frame.to_csv(output_dir / name, index=(Path(name).stem == "cohort_retention"))
     write_json_atomic(output_dir / "kpis.json", result["kpis"])
+    manifest["artifacts"] = build_artifact_manifest(
+        output_dir, exclude={"pipeline_manifest.json"}
+    )
     manifest["status"] = "complete"
     manifest["completed_at_utc"] = datetime.now(timezone.utc).isoformat()
     write_json_atomic(manifest_path, manifest)
