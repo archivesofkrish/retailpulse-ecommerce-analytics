@@ -1,4 +1,5 @@
 from pathlib import Path
+import os
 import shutil
 import sys
 
@@ -100,3 +101,19 @@ def test_same_source_copy_at_a_different_path_remains_current(tmp_path):
 
     assert current is True
     assert "match" in reason.lower()
+
+
+
+def test_content_change_with_same_size_and_timestamp_is_detected(tmp_path):
+    source = tmp_path / "online_retail_II.xlsx"
+    source.write_bytes(b"12345")
+    pipeline, phase3 = _complete_manifests(source)
+    original_stat = source.stat()
+
+    source.write_bytes(b"abcde")
+    os.utime(source, ns=(original_stat.st_atime_ns, original_stat.st_mtime_ns))
+
+    current, reason = phase3_freshness(pipeline, phase3, source)
+
+    assert current is False
+    assert "fingerprint" in reason.lower()

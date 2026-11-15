@@ -77,6 +77,7 @@ def phase3_freshness(
     pipeline_manifest: dict[str, Any],
     phase3_manifest: dict[str, Any],
     source_path: str | Path,
+    current_fingerprint: dict[str, Any] | None = None,
 ) -> tuple[bool, str]:
     """Determine whether advanced outputs belong to the current source run."""
     if pipeline_manifest.get("status") != "complete":
@@ -90,15 +91,11 @@ def phase3_freshness(
     if phase3_manifest.get("source_sha256") != source.get("sha256"):
         return False, "The source fingerprint differs between core and advanced analytics. Re-run Phase 3."
     try:
-        current = Path(source_path).resolve()
-        stat = current.stat()
+        current = current_fingerprint or file_fingerprint(source_path)
     except OSError:
         return False, "The source dataset is unavailable. Restore it and rebuild the analytics."
-    # Absolute paths differ between host and container deployments. The source
-    # basename plus size/mtime signature identifies the mounted copy while the
-    # recorded SHA-256 remains the durable content identity in the manifests.
-    if source.get("file_name") != current.name:
-        return False, "The dashboard is using a different source file name from the core analytics run."
-    if source.get("size_bytes") != stat.st_size or source.get("modified_ns") != stat.st_mtime_ns:
+    if source.get("size_bytes") != current.get("size_bytes") or source.get("modified_ns") != current.get("modified_ns"):
         return False, "The source dataset changed after the last core run. Re-run scripts/run_analysis.py and Phase 3."
+    if source.get("sha256") != current.get("sha256"):
+        return False, "The source content fingerprint does not match the completed pipeline. Re-run the core pipeline and Phase 3."
     return True, "Advanced outputs match the current source dataset and core-pipeline run."

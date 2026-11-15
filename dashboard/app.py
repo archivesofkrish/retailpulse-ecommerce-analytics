@@ -25,7 +25,7 @@ from retailpulse.analysis import (  # noqa: E402
     prepare_transactions,
     read_source,
 )
-from retailpulse.provenance import phase3_freshness, read_json_object
+from retailpulse.provenance import file_fingerprint, phase3_freshness, read_json_object
 
 PROCESSED = ROOT / "data" / "processed"
 PHASE3 = ROOT / "reports" / "phase3"
@@ -67,6 +67,12 @@ def read_json(path: str, modified_ns: int, size_bytes: int) -> dict:
     return read_json_object(path)
 
 
+@st.cache_data(show_spinner=False)
+def source_fingerprint(path: str, modified_ns: int, size_bytes: int) -> dict:
+    """Cache the source SHA-256 until its path, size or modification time changes."""
+    return file_fingerprint(path)
+
+
 def gbp(value: float, decimals: int = 0) -> str:
     return f"£{value:,.{decimals}f}"
 
@@ -106,9 +112,15 @@ def phase3_ready(source_path: Path) -> tuple[bool, str]:
     try:
         pipeline_manifest = read_json_object(pipeline_path)
         phase3_manifest = read_json_object(PHASE3 / "phase3_manifest.json")
+        source_stat = source_path.stat()
+        fingerprint = source_fingerprint(
+            str(source_path), source_stat.st_mtime_ns, source_stat.st_size
+        )
     except (OSError, ValueError, json.JSONDecodeError):
-        return False, "Pipeline provenance files are invalid. Re-run core and Phase 3 analytics."
-    return phase3_freshness(pipeline_manifest, phase3_manifest, source_path)
+        return False, "Pipeline provenance files or the source dataset are invalid. Re-run core and Phase 3 analytics."
+    return phase3_freshness(
+        pipeline_manifest, phase3_manifest, source_path, fingerprint
+    )
 
 
 real_path = ROOT / "data" / "raw" / "online_retail_II.xlsx"
