@@ -17,6 +17,8 @@ def _configure_phase3(tmp_path, monkeypatch):
     monkeypatch.setattr(phase3, "DATA", data_dir)
     monkeypatch.setattr(phase3, "OUT", output_dir)
     monkeypatch.setattr(phase3, "FIG", output_dir / "figures")
+    data_dir.mkdir(parents=True, exist_ok=True)
+    (output_dir / "figures").mkdir(parents=True, exist_ok=True)
     return data_dir, output_dir
 
 
