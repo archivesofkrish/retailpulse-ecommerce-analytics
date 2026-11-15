@@ -713,7 +713,7 @@ def build_report(metrics, country_metrics, product_metrics, affinity_metrics, af
     else:
         lines += [
             "",
-            "| Bought first/with | Frequently paired with | Joint invoices | Support | Confidence | Lift |",
+            "| Anchor product | Frequently paired with | Joint invoices | Support | Confidence | Lift |",
             "|---|---|---:|---:|---:|---:|",
         ]
         for _, row in affinity_rules.head(10).iterrows():
