@@ -35,6 +35,10 @@ from retailpulse.scenarios import (
     build_repeat_purchase_scenarios,
     build_repeat_purchase_sensitivity,
 )
+from retailpulse.experiments import (
+    evaluate_two_proportion_experiment,
+    plan_two_proportion_experiment,
+)
 
 PROCESSED = ROOT / "data" / "processed"
 PHASE3 = ROOT / "reports" / "phase3"
@@ -117,6 +121,19 @@ st.markdown(
       }
       .rp-muted { color:#7b879b; font-size:.88rem; }
       .rp-kicker { text-transform:uppercase; letter-spacing:.09em; font-size:.72rem; color:#8a94a6; font-weight:700; }
+      .rp-experiment-arm {
+        border:1px solid #dce4f1; border-radius:17px; padding:17px 19px;
+        background:linear-gradient(145deg,#ffffff,#f4f7ff);
+        box-shadow:0 12px 34px rgba(25,42,77,.055); min-height:128px;
+      }
+      .rp-experiment-arm.variant {
+        background:linear-gradient(145deg,#f3fffc,#eaf8f7); border-color:#cbeae5;
+      }
+      .rp-experiment-arm-label { color:#7b879b; font-size:.69rem; font-weight:800; letter-spacing:.13em; }
+      .rp-experiment-arm-n { color:#172642; font-size:2rem; font-weight:850; letter-spacing:-.05em; margin:9px 0 1px; }
+      .rp-experiment-arm-caption { color:#77849b; font-size:.76rem; }
+      .rp-result-positive { border:1px solid #aee5d0; background:linear-gradient(110deg,#effcf6,#f4fbff); color:#25634d; border-radius:14px; padding:14px 16px; }
+      .rp-result-neutral { border:1px solid #e0e6f0; background:linear-gradient(110deg,#f4f7fc,#f8f7ff); color:#52627b; border-radius:14px; padding:14px 16px; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -233,7 +250,7 @@ st.markdown(
     <section class="rp-hero">
       <div class="rp-hero-top">
         <span class="rp-hero-badge">Retail Intelligence · Evidence First</span>
-        <span class="rp-hero-edition">PROFESSIONAL EDITION · v1.4.0</span>
+        <span class="rp-hero-edition">PROFESSIONAL EDITION · v1.5.0</span>
       </div>
       <div class="rp-hero-title">RetailPulse<span>✦</span></div>
       <div class="rp-hero-sub">See the story behind every order — from revenue performance to customer retention and historical value.</div>
@@ -287,8 +304,8 @@ if filtered.empty:
     st.stop()
 
 # Phase navigation
-labels = ["Overview", "Customer Intelligence", "Customer Value Studio", "Retention", "Products & Markets", "Decision Brief", "Scenario Lab", "Inactivity Model", "Data Quality"]
-tab_overview, tab_customer, tab_value, tab_retention, tab_products, tab_decisions, tab_scenarios, tab_model, tab_quality = st.tabs(labels)
+labels = ["Overview", "Customer Intelligence", "Customer Value Studio", "Retention", "Products & Markets", "Decision Brief", "Scenario Lab", "Inactivity Model", "Data Quality", "Experiment Studio"]
+tab_overview, tab_customer, tab_value, tab_retention, tab_products, tab_decisions, tab_scenarios, tab_model, tab_quality, tab_experiments = st.tabs(labels)
 
 # -----------------------------------------------------------------------------
 # OVERVIEW — filter-aware
@@ -1192,6 +1209,290 @@ python scripts/validate_real_data.py
 python scripts/run_phase3_analysis.py
 python -W error::DeprecationWarning -m pytest -q
 streamlit run dashboard/app.py""", language="bash")
+
+# -----------------------------------------------------------------------------
+# EXPERIMENT STUDIO — two-proportion sample-size planning and outcome review
+# -----------------------------------------------------------------------------
+with tab_experiments:
+    st.markdown(
+        '<div class="rp-section-head"><div><div class="rp-kicker">CONTROLLED TESTING · STATISTICAL DESIGN</div>'
+        '<div class="rp-section-title">Experiment Studio</div>'
+        '<div class="rp-section-sub">Design a binary-conversion experiment, understand its sample requirement, then evaluate the observed result.</div></div>'
+        '<span class="rp-section-tag">PLANNING · NOT LIVE TRACKING</span></div>',
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        '<div class="rp-note">A practical experiment-design workbench: choose a baseline and the smallest uplift worth detecting, '
+        'estimate the sample needed in each arm, and enter completed test counts for a transparent readout.</div>',
+        unsafe_allow_html=True,
+    )
+
+    historical_baseline = None
+    if p3:
+        customer_metrics = phase3_summary.get("customer_metrics", {})
+        repeat90_reference = next(
+            (
+                item for item in customer_metrics.get("repeat_purchase_windows", [])
+                if int(item.get("follow_up_days", 0)) == 90
+            ),
+            None,
+        )
+        candidate = (
+            repeat90_reference.get("second_order_within_window_pct")
+            if repeat90_reference else None
+        )
+        if candidate is not None and np.isfinite(float(candidate)) and 0 <= float(candidate) < 100:
+            historical_baseline = float(candidate)
+
+    baseline_options = ["Manual planning assumption"]
+    if historical_baseline is not None:
+        baseline_options.insert(0, "Historical 90-day repeat-purchase reference")
+    selected_baseline_source = st.radio(
+        "Baseline conversion rate",
+        baseline_options,
+        horizontal=True,
+        help="The historical rate is only a reference from the 2009–2011 UCI dataset. It is not a current business baseline.",
+    )
+    if historical_baseline is not None and selected_baseline_source.startswith("Historical"):
+        baseline_rate = historical_baseline
+        st.info(
+            f"Reference baseline: {baseline_rate:.2f}% second purchase within 90 days, "
+            "measured in the historical UCI observation window. Use a current measured baseline for a real experiment."
+        )
+    else:
+        baseline_rate = st.number_input(
+            "Assumed or externally measured control conversion rate (%)",
+            min_value=0.0, max_value=99.9, value=10.0, step=0.5,
+            key="experiment_baseline_rate",
+            help="Enter a recent, relevant control rate. The synthetic sample and historical workbook are not sources of current traffic or conversion.",
+        )
+
+    headroom = max(0.1, 100.0 - float(baseline_rate))
+    controls_left, controls_mid, controls_right = st.columns(3)
+    with controls_left:
+        mde = st.number_input(
+            "Minimum detectable effect (percentage points)",
+            min_value=0.1, max_value=float(headroom),
+            value=float(min(2.0, headroom)), step=0.1,
+            key="experiment_mde",
+            help="The smallest absolute conversion-rate increase that would be meaningful to detect.",
+        )
+    with controls_mid:
+        alpha_label = st.selectbox(
+            "Significance level (two-sided)",
+            options=["0.10", "0.05", "0.01"],
+            index=1,
+            key="experiment_alpha",
+        )
+        significance_level = float(alpha_label)
+    with controls_right:
+        power_label = st.selectbox(
+            "Target statistical power",
+            options=["80%", "90%", "95%"],
+            index=0,
+            key="experiment_power",
+        )
+        target_power = float(power_label.rstrip("%")) / 100
+
+    eligible_per_day = st.number_input(
+        "Eligible participants available per calendar day (both arms combined)",
+        min_value=1, max_value=1_000_000, value=100, step=10,
+        key="experiment_eligible_per_day",
+        help="This is your own current operational estimate. RetailPulse does not infer daily traffic from the historical dataset.",
+    )
+
+    experiment_plan = plan_two_proportion_experiment(
+        baseline_rate_pct=float(baseline_rate),
+        minimum_detectable_effect_pp=float(mde),
+        significance_level=significance_level,
+        target_power=target_power,
+    )
+    per_arm = int(experiment_plan["sample_size_per_arm"])
+    total_sample = int(experiment_plan["total_sample_size"])
+    duration_days = int(np.ceil(total_sample / int(eligible_per_day)))
+
+    st.markdown("### Your experiment blueprint")
+    k1, k2, k3, k4 = st.columns(4)
+    k1.metric("Participants per arm", f"{per_arm:,}")
+    k2.metric("Total participants", f"{total_sample:,}")
+    k3.metric("Estimated enrollment", f"{duration_days:,} days")
+    k4.metric(
+        "Target conversion",
+        f"{experiment_plan['target_rate_pct']:.1f}%",
+        delta=f"+{experiment_plan['minimum_detectable_effect_pp']:.1f} pp",
+    )
+    arm_left, arm_right = st.columns(2)
+    with arm_left:
+        st.markdown(
+            f'<div class="rp-experiment-arm"><div class="rp-experiment-arm-label">CONTROL · CURRENT EXPERIENCE</div>'
+            f'<div class="rp-experiment-arm-n">{per_arm:,}</div>'
+            f'<div class="rp-experiment-arm-caption">participants · assumed conversion {baseline_rate:.1f}%</div></div>',
+            unsafe_allow_html=True,
+        )
+    with arm_right:
+        st.markdown(
+            f'<div class="rp-experiment-arm variant"><div class="rp-experiment-arm-label">VARIANT · NEW EXPERIENCE</div>'
+            f'<div class="rp-experiment-arm-n">{per_arm:,}</div>'
+            f'<div class="rp-experiment-arm-caption">participants · target conversion {experiment_plan["target_rate_pct"]:.1f}%</div></div>',
+            unsafe_allow_html=True,
+        )
+
+    sensitivity_rows = []
+    for multiplier in [0.5, 0.75, 1.0, 1.25, 1.5]:
+        effect = min(float(headroom), max(0.1, float(mde) * multiplier))
+        if any(abs(effect - row["minimum_detectable_effect_pp"]) < 1e-9 for row in sensitivity_rows):
+            continue
+        sensitivity_plan = plan_two_proportion_experiment(
+            baseline_rate_pct=float(baseline_rate),
+            minimum_detectable_effect_pp=effect,
+            significance_level=significance_level,
+            target_power=target_power,
+        )
+        sensitivity_rows.append({
+            "minimum_detectable_effect_pp": effect,
+            "sample_size_per_arm": sensitivity_plan["sample_size_per_arm"],
+            "total_sample_size": sensitivity_plan["total_sample_size"],
+        })
+    sensitivity = pd.DataFrame(sensitivity_rows)
+    chart_left, chart_right = st.columns([1.35, 1])
+    with chart_left:
+        st.markdown("**How the detectable uplift changes sample size**")
+        fig = px.line(
+            sensitivity,
+            x="minimum_detectable_effect_pp",
+            y="sample_size_per_arm",
+            markers=True,
+            labels={
+                "minimum_detectable_effect_pp": "Minimum detectable uplift (percentage points)",
+                "sample_size_per_arm": "Participants required per arm",
+            },
+        )
+        fig.add_vline(x=float(mde), line_dash="dash", line_color="#6558d3")
+        fig.update_layout(
+            height=350, margin=dict(l=10, r=10, t=12, b=10),
+            paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(color="#475467"),
+        )
+        st.plotly_chart(fig, width="stretch")
+    with chart_right:
+        st.markdown("**Design assumptions**")
+        st.markdown(
+            f"- Control rate: **{baseline_rate:.2f}%**\n"
+            f"- Variant target: **{experiment_plan['target_rate_pct']:.2f}%**\n"
+            f"- Two-sided alpha: **{significance_level:.2f}**\n"
+            f"- Target power: **{target_power:.0%}**\n"
+            "- Allocation: **50 / 50**\n"
+            f"- Eligible participants/day: **{int(eligible_per_day):,}**"
+        )
+        st.caption(
+            "Enrollment duration is a rough planning estimate based on the participant/day input; "
+            "it excludes ramp-up, eligibility loss, and outcome-maturation time."
+        )
+
+    st.download_button(
+        "Download experiment plan (CSV)",
+        data=sensitivity.to_csv(index=False).encode("utf-8"),
+        file_name="retailpulse_experiment_sample_size_sensitivity.csv",
+        mime="text/csv",
+    )
+
+    with st.expander("Evaluate a completed A/B test", expanded=False):
+        st.caption(
+            "Enter the number of conversions and total eligible participants observed in each arm. "
+            "Use the same pre-specified binary outcome and observation window."
+        )
+        e1, e2 = st.columns(2)
+        with e1:
+            st.markdown("**Control arm**")
+            control_trials = st.number_input(
+                "Control participants", min_value=0, max_value=100_000_000,
+                value=0, step=100, key="experiment_control_trials",
+            )
+            control_successes = st.number_input(
+                "Control conversions", min_value=0, max_value=100_000_000,
+                value=0, step=10, key="experiment_control_successes",
+            )
+        with e2:
+            st.markdown("**Variant arm**")
+            variant_trials = st.number_input(
+                "Variant participants", min_value=0, max_value=100_000_000,
+                value=0, step=100, key="experiment_variant_trials",
+            )
+            variant_successes = st.number_input(
+                "Variant conversions", min_value=0, max_value=100_000_000,
+                value=0, step=10, key="experiment_variant_successes",
+            )
+
+        if int(control_trials) > 0 and int(variant_trials) > 0:
+            try:
+                outcome = evaluate_two_proportion_experiment(
+                    control_successes=int(control_successes),
+                    control_trials=int(control_trials),
+                    variant_successes=int(variant_successes),
+                    variant_trials=int(variant_trials),
+                    significance_level=significance_level,
+                )
+                o1, o2, o3, o4 = st.columns(4)
+                o1.metric("Control conversion", f"{outcome['control_conversion_rate_pct']:.2f}%")
+                o2.metric("Variant conversion", f"{outcome['variant_conversion_rate_pct']:.2f}%")
+                o3.metric("Absolute difference", f"{outcome['absolute_difference_pp']:+.2f} pp")
+                o4.metric("Two-sided p-value", f"{outcome['p_value']:.4f}")
+                ci_text = (
+                    f"{outcome['confidence_level_pct']:.0f}% CI for variant − control: "
+                    f"[{outcome['difference_ci_lower_pp']:+.2f}, "
+                    f"{outcome['difference_ci_upper_pp']:+.2f}] percentage points."
+                )
+                result_class = "rp-result-positive" if (
+                    outcome["statistically_significant"]
+                    and outcome["absolute_difference_pp"] > 0
+                ) else "rp-result-neutral"
+                st.markdown(
+                    f'<div class="{result_class}"><strong>{outcome["decision"]}</strong><br>{ci_text}</div>',
+                    unsafe_allow_html=True,
+                )
+                if outcome["statistically_significant"]:
+                    st.success(
+                        "The observed difference meets the selected statistical significance threshold. "
+                        "Review the confidence interval and experiment-quality checks before acting."
+                    )
+                else:
+                    st.info(
+                        "The observed data do not establish a difference at the selected significance level. "
+                        "This is not proof that the experiences are equivalent."
+                    )
+                with st.expander("Statistical interpretation and guardrails"):
+                    if outcome["relative_lift_pct"] is None:
+                        relative_text = "Undefined because the control conversion rate is zero."
+                    else:
+                        relative_text = f"{outcome['relative_lift_pct']:.2f}%"
+                    st.markdown(
+                        f"- Test: {outcome['method']}.\n"
+                        f"- z statistic: **{outcome['z_score']:.3f}**.\n"
+                        f"- Relative lift: **{relative_text}**."
+                    )
+                    for limitation in outcome["limitations"]:
+                        st.markdown(f"- {limitation}")
+            except ValueError as exc:
+                st.error(str(exc))
+        else:
+            st.info("Enter a positive participant count for both arms to see the experiment readout.")
+
+    with st.expander("Methodology and interpretation"):
+        st.markdown(
+            """
+            - **Primary metric:** a binary conversion outcome measured over one pre-defined window.
+            - **Sample-size design:** equal 50/50 allocation using a two-sided two-proportion normal-approximation formula.
+            - **Power:** the probability of detecting the specified minimum effect under the assumed alternative when that effect is present.
+            - **Absolute effect:** variant conversion minus control conversion, reported in percentage points.
+            - **Inference:** pooled-standard-error z-test for the null of equal proportions; the confidence interval uses the unpooled standard error.
+            """
+        )
+        st.warning(
+            "The planner assumes independent participants and a single binary primary outcome. "
+            "It does not handle clustering, repeated exposure, attrition, non-compliance, multiple testing "
+            "or sequential peeking. A statistical readout cannot confirm randomisation or instrumentation quality. "
+            "The historical UCI conversion reference is not a current baseline; eligible participants/day is always user-entered."
+        )
 
 # Global project footer / downloads
 st.divider()

@@ -1,7 +1,9 @@
 # RetailPulse — Project Status
 
-**Version:** 1.4.0  
-**Merged to main:** 15 November 2026  
+**Version:** 1.5.0  
+**Branch target:** `feat/experiment-studio-1.5` → `main`
+**Release candidate:** 1.5.0
+**Status:** Experiment Studio implementation and validation are in progress. Merge SHA and post-merge workflow evidence will be recorded after required checks pass.  
 **Repository:** [archivesofkrish/retailpulse-ecommerce-analytics](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics)  
 **Feature PR:** [#18 — Customer Value Studio and visual dashboard refresh](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/pull/18)  
 **Release merge commit:** 193e450274ec40543e1e2a51a0d49462be402787  
@@ -9,6 +11,16 @@
 **Post-merge CodeQL:** [Run 43742136498](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43742136498) — passed  
 **Post-merge dependency audit:** [Run 43742136522](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43742136522) — passed  
 **Status:** v1.4.0 is merged to main. The Customer Value Studio, cohort-value export and dashboard visual refresh passed the Python 3.11–3.14 matrix, synthetic end-to-end generation, six output-integrity checks, Docker dashboard health, CodeQL and dependency audit.
+
+## What is new in v1.5.0
+
+### Experiment Studio
+
+- Adds a two-proportion sample-size planner with configurable control rate, minimum detectable effect, two-sided significance level and target power.
+- Adds an equal-allocation experiment blueprint, sample-size sensitivity and enrollment-duration estimate using only user-entered eligible participants per day.
+- Adds completed-test evaluation with observed conversion rates, absolute/relative lift, p-value, confidence interval and an explicit inconclusive state.
+- Adds standalone statistical methodology, assumption notes, validation tests and a styled tenth dashboard section.
+- Does not randomise participants, monitor live tests or infer present-day traffic from historical UCI records.
 
 ## What changed in v1.4.0
 

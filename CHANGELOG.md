@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.5.0 - 2026-11-15
+
+- Add an Experiment Studio for two-proportion A/B-test sample-size planning with configurable baseline conversion, minimum detectable effect, alpha and power.
+- Add sample-size sensitivity analysis, equal-allocation control/variant blueprint cards and an enrollment-duration estimate based only on user-entered eligible participants per day.
+- Add post-test conversion comparison with a two-sided pooled z-test, unpooled confidence interval, p-value and explicit decision/limitations.
+- Add strict numeric/count validation, regression tests, methodology documentation and dashboard styling.
+- Label historical UCI repeat-purchase rates as reference-only; do not infer present-day conversion or traffic from the 2009–2011 dataset.
+
 ## 1.4.0 - 2026-11-15
 
 - Add a Customer Value Studio with cohort-comparable 12-calendar-month observed revenue yield, retention curves and a cohort value heatmap.

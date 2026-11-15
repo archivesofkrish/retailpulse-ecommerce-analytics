@@ -2,7 +2,7 @@
 
 ## 30-second project summary
 
-RetailPulse is an end-to-end business intelligence project using UCI Online Retail II (1.067M invoice-line rows, Dec 2009–Dec 2011). It combines a Python data pipeline, SQL analysis, customer RFM segmentation, cohort activity, product and country concentration, a time-ordered historical inactivity backtest, basket associations, a transparent business decision brief, a configurable repeat-purchase Scenario Lab, source-to-output lineage checks, and an nine-section Streamlit/Plotly dashboard.
+RetailPulse is an end-to-end business intelligence project using UCI Online Retail II (1.067M invoice-line rows, Dec 2009–Dec 2011). It combines a Python data pipeline, SQL analysis, customer RFM segmentation, cohort activity, product and country concentration, a time-ordered historical inactivity backtest, basket associations, a transparent business decision brief, a configurable repeat-purchase Scenario Lab, source-to-output lineage checks, and an ten-section Streamlit/Plotly dashboard.
 
 ## What to demonstrate
 
@@ -13,7 +13,8 @@ RetailPulse is an end-to-end business intelligence project using UCI Online Reta
 5. **Product intelligence:** compare customer concentration with less concentrated merchandise stock-code revenue; discuss the unusual single-invoice bulk line.
 6. **Decision intelligence:** demonstrate how historical customer, country, repeat-purchase and product metrics trigger auditable recommendations, each with an evidence statement, threshold and guardrail.
 7. **Commercial scenario planning:** use the Scenario Lab to change the assumed 90-day repeat-rate uplift and average order value; compare conservative, base and stretch outcomes, then explain why the resulting gross-revenue values are scenarios rather than forecasts.
-8. **Model governance:** explain the 90-day inactivity proxy, chronological split, 90-day embargo and temporal prevalence shift. Do not call it a production churn predictor.
+8. **Experiment design:** use Experiment Studio to calculate a two-arm sample-size requirement, inspect how the minimum detectable effect changes the required sample, then enter completed experiment counts to review the p-value and confidence interval. Explain the randomisation, independent-observation and no-peeking assumptions.
+9. **Model governance:** explain the 90-day inactivity proxy, chronological split, 90-day embargo and temporal prevalence shift. Do not call it a production churn predictor.
 
 ## Honest limitations to state
 
@@ -24,6 +25,7 @@ RetailPulse is an end-to-end business intelligence project using UCI Online Reta
 - Inactivity is not permanent churn; model probabilities are not calibrated for financial forecasting.
 - The decision brief uses transparent heuristics; it is not an autonomous decision maker or a causal model.
 - The product bulk transaction should be verified from the original source document.
+- Experiment Studio is a normal-approximation planning/evaluation calculator, not a randomisation service or live experiment monitor. Statistical significance does not certify implementation quality or causal validity.
 
 ## Suggested portfolio description
 
