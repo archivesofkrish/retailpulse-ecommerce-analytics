@@ -5,6 +5,7 @@ causality, profitability or expected financial returns.
 """
 from __future__ import annotations
 
+import math
 from typing import Any, Mapping, Sequence
 
 from retailpulse.metric_validation import finite_number, non_negative_count, percentage
