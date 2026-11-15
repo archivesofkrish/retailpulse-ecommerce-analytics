@@ -67,3 +67,7 @@ The full UCI workbook validator was previously run by the project owner against 
 The repository's `main` branch is still unprotected and has no configured rulesets. [Issue #14](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/issues/14) tracks the recommended branch protection, required status checks, blocked force pushes/deletions and private vulnerability reporting.
 
 A number of historical feature branches remain. Their changes are represented in the main history; pruning old branch references is a separate GitHub repository-maintenance task.
+
+## Additional reliability hardening in review
+
+A follow-up branch adds shared finite-value validation for business decision metrics. Percentages outside the inclusive 0–100 range, non-finite values, booleans masquerading as numbers, and invalid counts are treated as unavailable rather than triggering an insight. Focused regression tests cover these boundaries. This work is not part of the v1.2.0 release until its pull request is reviewed and merged.
