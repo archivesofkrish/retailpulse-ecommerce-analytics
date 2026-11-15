@@ -49,6 +49,21 @@ The release metadata, public verification CLI and end-to-end CI smoke test passe
 
 The CI workflow also now uses Node 24-compatible releases of checkout and upload-artifact, removing the prior Node 20 deprecation warnings from those steps.
 
+## Post-merge default-branch validation
+
+The merged v1.2.0 commit `be1ac79d2f81f10e587366be292f5281973ed1b5` was validated again on `main`. Every check passed.
+
+| Validation | Result | Evidence |
+|---|---:|---|
+| Python 3.11 | 45 passed | [Main CI run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715461163) |
+| Python 3.12 | 45 passed | [Main CI run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715461163) |
+| Python 3.13 | 45 passed | [Main CI run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715461163) |
+| Python 3.14 | 45 passed; build succeeded | [Main CI run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715461163) |
+| Public output-verification CLI | PASS — 6 checks; 13 core and 27 Phase 3 artifacts verified | Python 3.14 job in [main CI](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715461163) |
+| Docker build and dashboard health | PASS | [Main CI run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715461163) |
+| CodeQL Python | PASS | [Main CodeQL run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715461104) |
+| Dependency vulnerability audit | PASS | [Main dependency audit](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715461210) |
+
 ## Previous automated feature increments
 
 | Change set | Automated test result | Additional evidence |
