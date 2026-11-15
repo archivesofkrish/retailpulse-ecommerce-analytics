@@ -16,7 +16,7 @@ The following pull requests were merged only after their relevant checks passed.
 | PR #5 — Docker deployment | 28 passed per Python runtime | Docker image, container startup and Streamlit health probe |
 | PR #6 — business decision brief | 32 passed per Python runtime | Six rules, missing-data gates, full integration and Docker health probe |
 
-PR #1–#6 were validated on the then-current Python 3.10, 3.11 and 3.12 matrix. Python 3.10 reached upstream end-of-life on 1 October 2026; PR #7 updates the supported matrix to Python 3.11, 3.12 and 3.13. Its final results are recorded after that workflow completes.
+PR #1–#6 were validated on the then-current Python 3.10, 3.11 and 3.12 matrix. Python 3.10 reached upstream end-of-life on 1 October 2026. PR #8 replaces the retired runtime in CI with Python 3.11, 3.12, 3.13 and 3.14. Its final results are recorded after all matrix and security checks complete.
 
 ## Previously reported full-workbook checks
 
@@ -32,7 +32,7 @@ These results were supplied from the project owner's local environment during th
 
 ## Current validation scope
 
-The current GitHub Actions pipeline compiles application and test modules, runs the synthetic/regression suite with deprecation warnings treated as errors, builds source and wheel distributions on Python 3.13, checks dependency consistency, uploads JUnit reports, builds the Docker image and checks the Streamlit health endpoint.
+The current GitHub Actions pipeline compiles application and test modules, runs the synthetic/regression suite with deprecation warnings treated as errors, builds source and wheel distributions on Python 3.14, checks dependency consistency, uploads JUnit reports, runs CodeQL and pip-audit, builds the Docker image and checks the Streamlit health endpoint.
 
 The synthetic integration path validates core ingestion through Phase 3, including source lineage, affinity outputs and the Decision Brief. It does not replace a fresh full-workbook validation against the original UCI file.
 
