@@ -250,7 +250,7 @@ st.markdown(
     <section class="rp-hero">
       <div class="rp-hero-top">
         <span class="rp-hero-badge">Retail Intelligence · Evidence First</span>
-        <span class="rp-hero-edition">PROFESSIONAL EDITION · v1.5.0</span>
+        <span class="rp-hero-edition">PROFESSIONAL EDITION · v1.6.0</span>
       </div>
       <div class="rp-hero-title">RetailPulse<span>✦</span></div>
       <div class="rp-hero-sub">See the story behind every order — from revenue performance to customer retention and historical value.</div>

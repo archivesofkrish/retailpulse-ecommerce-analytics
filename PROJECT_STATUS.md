@@ -1,20 +1,19 @@
 # RetailPulse — Project Status
 
-**Version:** 1.6.0 (development candidate)  
-**Latest merged release:** 1.5.0 (15 November 2026)  
-**Current development branch:** `feat/experiment-integrity-1.6`  
+**Version:** 1.6.0  
+**Merged to main:** 16 November 2026  
 **Repository:** [archivesofkrish/retailpulse-ecommerce-analytics](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics)  
-**Feature PR:** [#19 — Experiment Studio and dashboard tab](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/pull/19)  
-**Release merge commit:** `86b61c8d34286d4a9886b887ae1b2d47cd7105e6`  
-**Pre-merge CI:** [Run 43744875767](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43744875767) — passed  
-**Pre-merge CodeQL:** [Run 43744875760](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43744875760) — passed  
-**Pre-merge dependency audit:** [Run 43744875879](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43744875879) — passed  
-**Post-merge CI:** [Run 43745056436](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43745056436) — passed  
-**Post-merge CodeQL:** [Run 43745056629](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43745056629) — passed  
-**Post-merge dependency audit:** [Run 43745056442](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43745056442) — passed  
-**Status:** v1.5.0 is merged to main. Experiment Studio passed the full pre-merge and post-merge quality/security checks.
+**Feature PR:** [#20 — Experiment Studio sample-ratio integrity checks](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/pull/20)  
+**Release merge commit:** `61595bea18312eb0ed1b5bb7a8e5c201a2266093`  
+**Pre-merge CI:** [Run 43748874636](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43748874636) — passed  
+**Pre-merge CodeQL:** [Run 43748874634](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43748874634) — passed  
+**Pre-merge dependency audit:** [Run 43748874648](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43748874648) — passed  
+**Post-merge CI:** [Run 43749045546](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43749045546) — passed  
+**Post-merge CodeQL:** [Run 43749045591](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43749045591) — passed  
+**Post-merge dependency audit:** [Run 43749045550](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43749045550) — passed  
+**Status:** v1.6.0 is merged to main. All Python 3.11–3.14 tests, Docker dashboard health, CodeQL and dependency audit passed on the merged code.
 
-## What is planned for v1.6.0
+## What changed in v1.6.0
 
 ### Experiment integrity diagnostics
 
@@ -23,6 +22,18 @@
 - Use p < 0.001 as the default mismatch alert threshold and flag expected arm counts below five as unsuitable for a dependable chi-square approximation.
 - Display expected versus observed arm shares next to the conversion effect, confidence interval and p-value.
 - Explain that an allocation mismatch is a diagnostic signal, not proof of faulty randomisation or instrumentation.
+
+## What changed in v1.6.0
+
+### Experiment integrity diagnostics
+
+- Adds a sample-ratio diagnostic using the Pearson chi-square goodness-of-fit test with one degree of freedom, comparing observed arm counts with the allocation declared before the experiment.
+- Supports pre-declared non-equal allocation ratios, including 90/10 tests; it does not assume every experiment must be 50/50.
+- Uses a conservative default mismatch alert threshold of p < 0.001.
+- Flags expected arm counts below five because the chi-square approximation may be unreliable for small expected counts.
+- Adds expected-versus-observed control/variant share metrics and a grouped allocation comparison chart to the completed-test readout.
+- Extends the experiment evaluator with the allocation diagnostic while preserving the existing conversion-rate z-test, confidence interval and scenario-planning functionality.
+- Documents that a mismatch is an investigation signal, not proof of faulty randomisation or instrumentation.
 
 ## What changed in v1.5.0
 
@@ -75,16 +86,16 @@
 
 ## Validation evidence
 
-The v1.5.0 release merge commit `86b61c8d34286d4a9886b887ae1b2d47cd7105e6` passed the following post-merge checks:
+The v1.6.0 merge commit `61595bea18312eb0ed1b5bb7a8e5c201a2266093` passed the following post-merge checks:
 
 | Validation | Result |
 |---|---|
-| Python 3.11 | 107 passed |
-| Python 3.12 | 107 passed |
-| Python 3.13 | 107 passed |
-| Python 3.14 | 107 passed |
+| Python 3.11 | 117 passed |
+| Python 3.12 | 117 passed |
+| Python 3.13 | 117 passed |
+| Python 3.14 | 117 passed |
 | Python 3.14 package build | Source distribution and wheel built successfully |
-| Synthetic Phase 3 pipeline | Passed; generated the experiment-compatible dashboard inputs |
+| Synthetic Phase 3 pipeline | Passed |
 | Output verification | 6 checks passed; 13 core and 28 Phase 3 artifacts verified against SHA-256 manifests |
 | Docker build and dashboard health | Passed; Streamlit health endpoint responded successfully |
 | CodeQL Python analysis | Passed |
@@ -92,7 +103,6 @@ The v1.5.0 release merge commit `86b61c8d34286d4a9886b887ae1b2d47cd7105e6` passe
 
 The pre-merge PR checks and the post-merge `main` checks both passed. The Python matrix jobs retain JUnit artifacts in GitHub Actions. The full UCI workbook is not stored in GitHub; GitHub Actions therefore validates the synthetic pipeline, while the separate full-workbook validation remains an operator-run check.
 
-The previous v1.4.0 release validation is retained in the repository history and its merge commit was separately validated on Python 3.11–3.14, synthetic Phase 3 generation, Docker health, CodeQL and dependency audit.
 
 ## Data and model boundaries
 
@@ -111,7 +121,7 @@ The repository's main branch remains unprotected and has no configured rulesets.
 
 A number of historical feature branches remain. Their changes are represented in the main history; pruning old branch references is a separate GitHub repository-maintenance task.
 
-No GitHub Release or version tag has been published for v1.5.0. The version and changelog are committed to main.
+No GitHub Release or version tag has been published for v1.6.0. The version and changelog are committed to main.
 
 ## Reliability hardening retained from earlier releases
 
