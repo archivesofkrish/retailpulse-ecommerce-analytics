@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "retailpulse"
+version = "1.0.0"
+description = "End-to-end e-commerce analytics: sales, customers, RFM, and cohorts"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "RetailPulse Project"}]
+dependencies = [
+  "pandas>=2.2,<3.0", "numpy>=1.26,<3.0", "openpyxl>=3.1,<4.0",
+  "matplotlib>=3.8,<4.0", "plotly>=5.20,<7.0", "streamlit>=1.49,<2.0",
+  "scikit-learn>=1.4,<2.0", "duckdb>=1.0,<2.0"
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"

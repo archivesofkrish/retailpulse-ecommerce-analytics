@@ -1,0 +1,36 @@
+# Python environments and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+
+# Credentials
+.streamlit/secrets.toml
+.env
+.env.*
+!.env.example
+
+# Downloaded source data and generated analytical exports
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Reproducible generated files (curated portfolio reports are tracked)
+reports/EXECUTIVE_REPORT.md
+reports/figures/*
+!reports/figures/.gitkeep
+reports/phase3/*.csv
+reports/phase3/*.json
+reports/phase3/historical_inactivity_holdout_scores.csv
+reports/phase3/figures/*
+!reports/phase3/figures/*.png
+
+test-results/real_data_validation.json

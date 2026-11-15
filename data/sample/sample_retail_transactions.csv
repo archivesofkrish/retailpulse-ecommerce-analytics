@@ -1,0 +1,1225 @@
+Invoice,StockCode,Description,Quantity,InvoiceDate,Price,Customer ID,Country
+700001,P006,Botanical Greeting Card,3,01/03/2011 19:50,1.25,12000.0,United Kingdom
+700001,P003,Decorative Candle Set,3,01/03/2011 19:50,7.88,12000.0,United Kingdom
+700002,P002,Linen Table Runner,10,24/07/2010 11:40,12.5,12000.0,United Kingdom
+700002,P009,Ceramic Planter,6,24/07/2010 11:40,7.25,12000.0,United Kingdom
+700003,P009,Ceramic Planter,3,22/12/2010 10:20,6.53,12000.0,United Kingdom
+700003,P001,Ceramic Tea Mug,2,22/12/2010 10:20,6.55,12000.0,United Kingdom
+700004,P002,Linen Table Runner,1,14/12/2010 17:20,11.25,12001.0,United Kingdom
+700004,P004,Cotton Tote Bag,2,14/12/2010 17:20,4.25,12001.0,United Kingdom
+700004,P010,Wooden Photo Frame,12,14/12/2010 17:20,12.1,12001.0,United Kingdom
+700005,P010,Wooden Photo Frame,1,02/09/2010 11:00,11.0,12001.0,United Kingdom
+700005,P006,Botanical Greeting Card,1,02/09/2010 11:00,1.25,12001.0,United Kingdom
+700005,P001,Ceramic Tea Mug,6,02/09/2010 11:00,5.95,12001.0,United Kingdom
+700006,P009,Ceramic Planter,1,23/04/2011 18:50,7.98,12001.0,United Kingdom
+700006,P010,Wooden Photo Frame,2,23/04/2011 18:50,12.1,12001.0,United Kingdom
+700007,P010,Wooden Photo Frame,2,21/02/2011 13:40,9.9,12002.0,Netherlands
+700008,P004,Cotton Tote Bag,6,29/07/2010 14:30,4.25,12002.0,United Kingdom
+700008,P009,Ceramic Planter,4,29/07/2010 14:30,6.53,12002.0,United Kingdom
+700009,P002,Linen Table Runner,2,03/02/2011 09:20,13.75,12002.0,Spain
+700010,P003,Decorative Candle Set,4,19/10/2010 17:10,8.75,12002.0,United Kingdom
+700010,P007,Woven Cushion Cover,10,19/10/2010 17:10,15.0,12002.0,United Kingdom
+700010,P008,Stainless Water Bottle,2,19/10/2010 17:10,10.95,12002.0,United Kingdom
+700011,P009,Ceramic Planter,12,08/03/2011 08:20,7.25,12002.0,United Kingdom
+700012,P008,Stainless Water Bottle,2,02/01/2011 18:10,8.96,12002.0,United Kingdom
+700012,P001,Ceramic Tea Mug,2,02/01/2011 18:10,5.36,12002.0,United Kingdom
+700012,P004,Cotton Tote Bag,2,02/01/2011 18:10,4.25,12002.0,United Kingdom
+700013,P006,Botanical Greeting Card,6,01/11/2010 12:50,1.25,12003.0,United Kingdom
+700013,P005,Glass Storage Jar,1,01/11/2010 12:50,6.5,12003.0,United Kingdom
+700013,P003,Decorative Candle Set,1,01/11/2010 12:50,7.88,12003.0,United Kingdom
+700014,P008,Stainless Water Bottle,1,03/03/2011 18:00,10.95,12004.0,United Kingdom
+700014,P003,Decorative Candle Set,12,03/03/2011 18:00,7.88,12004.0,United Kingdom
+700014,P009,Ceramic Planter,3,03/03/2011 18:00,6.53,12004.0,United Kingdom
+700014,P005,Glass Storage Jar,2,03/03/2011 18:00,6.5,12004.0,United Kingdom
+700015,P002,Linen Table Runner,2,21/10/2010 10:20,13.75,12004.0,EIRE
+700015,P001,Ceramic Tea Mug,12,21/10/2010 10:20,5.95,12004.0,EIRE
+700015,P004,Cotton Tote Bag,10,21/10/2010 10:20,4.25,12004.0,EIRE
+700016,P004,Cotton Tote Bag,10,20/12/2010 19:00,4.25,12004.0,Netherlands
+700016,P009,Ceramic Planter,3,20/12/2010 19:00,6.53,12004.0,Netherlands
+700016,P003,Decorative Candle Set,1,20/12/2010 19:00,8.75,12004.0,Netherlands
+700017,P010,Wooden Photo Frame,10,23/09/2010 13:00,11.0,12004.0,United Kingdom
+700017,P006,Botanical Greeting Card,4,23/09/2010 13:00,1.25,12004.0,United Kingdom
+700018,P004,Cotton Tote Bag,2,22/02/2011 16:00,4.25,12005.0,United Kingdom
+700018,P002,Linen Table Runner,2,22/02/2011 16:00,12.5,12005.0,United Kingdom
+700018,P009,Ceramic Planter,4,22/02/2011 16:00,7.25,12005.0,United Kingdom
+700019,P003,Decorative Candle Set,4,10/03/2011 11:40,8.75,12005.0,United Kingdom
+700020,P010,Wooden Photo Frame,3,30/01/2011 17:50,11.0,12005.0,Netherlands
+700020,P007,Woven Cushion Cover,1,30/01/2011 17:50,15.0,12005.0,Netherlands
+700021,P004,Cotton Tote Bag,3,29/08/2010 15:30,4.25,12005.0,United Kingdom
+700021,P006,Botanical Greeting Card,1,29/08/2010 15:30,1.25,12005.0,United Kingdom
+700022,P006,Botanical Greeting Card,3,25/02/2011 08:40,1.25,12005.0,EIRE
+700022,P009,Ceramic Planter,1,25/02/2011 08:40,7.98,12005.0,EIRE
+700023,P001,Ceramic Tea Mug,2,22/07/2010 15:50,5.95,12005.0,EIRE
+700024,P007,Woven Cushion Cover,1,15/08/2010 15:40,15.0,12005.0,United Kingdom
+700024,P003,Decorative Candle Set,1,15/08/2010 15:40,8.75,12005.0,United Kingdom
+700025,P002,Linen Table Runner,2,27/08/2010 08:50,13.75,12006.0,United Kingdom
+700025,P003,Decorative Candle Set,2,27/08/2010 08:50,8.75,12006.0,United Kingdom
+700025,P005,Glass Storage Jar,1,27/08/2010 08:50,6.5,12006.0,United Kingdom
+700025,P007,Woven Cushion Cover,6,27/08/2010 08:50,15.0,12006.0,United Kingdom
+700026,P002,Linen Table Runner,3,07/10/2010 19:10,13.75,12006.0,United Kingdom
+700027,P004,Cotton Tote Bag,1,10/03/2011 15:00,4.25,12006.0,United Kingdom
+700027,P003,Decorative Candle Set,1,10/03/2011 15:00,8.75,12006.0,United Kingdom
+700027,P010,Wooden Photo Frame,3,10/03/2011 15:00,12.1,12006.0,United Kingdom
+700027,P006,Botanical Greeting Card,4,10/03/2011 15:00,1.12,12006.0,United Kingdom
+700028,P008,Stainless Water Bottle,4,08/04/2011 11:00,8.96,12006.0,Germany
+700029,P006,Botanical Greeting Card,2,11/04/2011 08:40,1.25,12006.0,United Kingdom
+700029,P002,Linen Table Runner,3,11/04/2011 08:40,12.5,12006.0,United Kingdom
+700029,P008,Stainless Water Bottle,1,11/04/2011 08:40,9.95,12006.0,United Kingdom
+700030,P010,Wooden Photo Frame,1,05/09/2010 15:00,11.0,12006.0,Spain
+700030,P008,Stainless Water Bottle,10,05/09/2010 15:00,9.95,12006.0,Spain
+700031,P003,Decorative Candle Set,3,17/04/2011 11:20,8.75,12007.0,Spain
+700032,P006,Botanical Greeting Card,3,05/07/2010 19:20,1.12,12007.0,United Kingdom
+700033,P004,Cotton Tote Bag,6,25/02/2011 08:50,3.83,12007.0,United Kingdom
+700034,P002,Linen Table Runner,1,23/01/2011 13:50,13.75,12008.0,United Kingdom
+700034,P008,Stainless Water Bottle,1,23/01/2011 13:50,9.95,12008.0,United Kingdom
+700034,P004,Cotton Tote Bag,2,23/01/2011 13:50,4.25,12008.0,United Kingdom
+700035,P003,Decorative Candle Set,1,17/04/2011 12:30,8.75,12008.0,France
+700035,P008,Stainless Water Bottle,10,17/04/2011 12:30,9.95,12008.0,France
+700036,P007,Woven Cushion Cover,10,17/10/2010 15:10,15.0,12008.0,United Kingdom
+700037,P002,Linen Table Runner,1,05/12/2010 14:50,12.5,12008.0,United Kingdom
+700038,P006,Botanical Greeting Card,2,11/03/2011 19:30,1.25,12008.0,United Kingdom
+700039,P001,Ceramic Tea Mug,2,10/09/2010 10:40,5.95,12008.0,United Kingdom
+700039,P010,Wooden Photo Frame,1,10/09/2010 10:40,11.0,12008.0,United Kingdom
+700040,P009,Ceramic Planter,1,05/12/2010 10:30,7.25,12008.0,United Kingdom
+700041,P001,Ceramic Tea Mug,2,19/09/2010 15:10,5.95,12008.0,Germany
+700041,P006,Botanical Greeting Card,4,19/09/2010 15:10,1.12,12008.0,Germany
+700041,P007,Woven Cushion Cover,1,19/09/2010 15:10,15.0,12008.0,Germany
+700042,P003,Decorative Candle Set,1,11/08/2010 09:40,9.62,12009.0,United Kingdom
+700043,P008,Stainless Water Bottle,1,28/08/2010 09:40,10.95,12009.0,Germany
+700043,P004,Cotton Tote Bag,12,28/08/2010 09:40,4.25,12009.0,Germany
+700044,P008,Stainless Water Bottle,3,28/07/2010 19:20,8.96,12010.0,United Kingdom
+700044,P010,Wooden Photo Frame,1,28/07/2010 19:20,12.1,12010.0,United Kingdom
+700044,P006,Botanical Greeting Card,4,28/07/2010 19:20,1.25,12010.0,United Kingdom
+700044,P001,Ceramic Tea Mug,2,28/07/2010 19:20,5.36,12010.0,United Kingdom
+700045,P008,Stainless Water Bottle,4,05/03/2011 18:20,10.95,12010.0,Netherlands
+700046,P005,Glass Storage Jar,1,26/04/2011 10:00,6.5,12011.0,United Kingdom
+700047,P008,Stainless Water Bottle,2,05/09/2010 09:10,9.95,12011.0,Netherlands
+700047,P002,Linen Table Runner,1,05/09/2010 09:10,13.75,12011.0,Netherlands
+700047,P009,Ceramic Planter,1,05/09/2010 09:10,7.25,12011.0,Netherlands
+700047,P010,Wooden Photo Frame,2,05/09/2010 09:10,11.0,12011.0,Netherlands
+700048,P002,Linen Table Runner,1,15/04/2011 14:50,13.75,12011.0,United Kingdom
+700049,P004,Cotton Tote Bag,3,19/11/2010 13:40,4.25,12012.0,Netherlands
+700049,P002,Linen Table Runner,1,19/11/2010 13:40,12.5,12012.0,Netherlands
+700049,P007,Woven Cushion Cover,1,19/11/2010 13:40,13.5,12012.0,Netherlands
+700049,P005,Glass Storage Jar,1,19/11/2010 13:40,7.15,12012.0,Netherlands
+700050,P009,Ceramic Planter,10,28/02/2011 18:00,7.25,12013.0,United Kingdom
+700051,P009,Ceramic Planter,1,03/11/2010 11:00,6.53,12013.0,United Kingdom
+700052,P009,Ceramic Planter,3,31/12/2010 12:20,7.25,12013.0,United Kingdom
+700052,P005,Glass Storage Jar,3,31/12/2010 12:20,7.15,12013.0,United Kingdom
+700052,P001,Ceramic Tea Mug,4,31/12/2010 12:20,5.95,12013.0,United Kingdom
+700052,P002,Linen Table Runner,1,31/12/2010 12:20,11.25,12013.0,United Kingdom
+700053,P007,Woven Cushion Cover,4,29/07/2010 08:50,15.0,12013.0,EIRE
+700053,P001,Ceramic Tea Mug,10,29/07/2010 08:50,5.95,12013.0,EIRE
+700054,P008,Stainless Water Bottle,2,28/09/2010 15:50,9.95,12013.0,Germany
+700054,P007,Woven Cushion Cover,3,28/09/2010 15:50,13.5,12013.0,Germany
+700054,P005,Glass Storage Jar,1,28/09/2010 15:50,6.5,12013.0,Germany
+700055,P004,Cotton Tote Bag,4,24/10/2010 11:00,4.68,12013.0,Germany
+700056,P004,Cotton Tote Bag,1,22/01/2011 10:20,3.83,12013.0,France
+700056,P009,Ceramic Planter,1,22/01/2011 10:20,7.25,12013.0,France
+700056,P002,Linen Table Runner,2,22/01/2011 10:20,12.5,12013.0,France
+700056,P006,Botanical Greeting Card,3,22/01/2011 10:20,1.25,12013.0,France
+700057,P010,Wooden Photo Frame,1,09/08/2010 18:30,11.0,12013.0,United Kingdom
+700057,P009,Ceramic Planter,1,09/08/2010 18:30,6.53,12013.0,United Kingdom
+700057,P002,Linen Table Runner,2,09/08/2010 18:30,11.25,12013.0,United Kingdom
+700057,P005,Glass Storage Jar,10,09/08/2010 18:30,5.85,12013.0,United Kingdom
+700058,P003,Decorative Candle Set,3,24/09/2010 14:50,9.62,12014.0,United Kingdom
+700058,P010,Wooden Photo Frame,4,24/09/2010 14:50,11.0,12014.0,United Kingdom
+700058,P004,Cotton Tote Bag,1,24/09/2010 14:50,3.83,12014.0,United Kingdom
+700059,P007,Woven Cushion Cover,1,21/12/2010 08:30,15.0,12014.0,United Kingdom
+700059,P004,Cotton Tote Bag,1,21/12/2010 08:30,4.68,12014.0,United Kingdom
+700059,P005,Glass Storage Jar,1,21/12/2010 08:30,6.5,12014.0,United Kingdom
+700059,P002,Linen Table Runner,2,21/12/2010 08:30,12.5,12014.0,United Kingdom
+700060,P004,Cotton Tote Bag,4,02/01/2011 13:30,4.25,12015.0,Spain
+700060,P006,Botanical Greeting Card,2,02/01/2011 13:30,1.25,12015.0,Spain
+700060,P008,Stainless Water Bottle,4,02/01/2011 13:30,9.95,12015.0,Spain
+700060,P002,Linen Table Runner,1,02/01/2011 13:30,12.5,12015.0,Spain
+700061,P010,Wooden Photo Frame,3,03/11/2010 09:20,11.0,12015.0,United Kingdom
+700061,P008,Stainless Water Bottle,1,03/11/2010 09:20,9.95,12015.0,United Kingdom
+700062,P001,Ceramic Tea Mug,1,18/10/2010 08:10,5.36,12015.0,Netherlands
+700062,P002,Linen Table Runner,2,18/10/2010 08:10,11.25,12015.0,Netherlands
+700062,P004,Cotton Tote Bag,1,18/10/2010 08:10,4.25,12015.0,Netherlands
+700062,P010,Wooden Photo Frame,12,18/10/2010 08:10,12.1,12015.0,Netherlands
+700063,P001,Ceramic Tea Mug,4,23/01/2011 08:10,5.95,12016.0,United Kingdom
+700063,P010,Wooden Photo Frame,3,23/01/2011 08:10,11.0,12016.0,United Kingdom
+700063,P006,Botanical Greeting Card,12,23/01/2011 08:10,1.12,12016.0,United Kingdom
+700063,P004,Cotton Tote Bag,2,23/01/2011 08:10,4.25,12016.0,United Kingdom
+700064,P007,Woven Cushion Cover,6,04/12/2010 10:10,16.5,12016.0,United Kingdom
+700064,P004,Cotton Tote Bag,6,04/12/2010 10:10,4.25,12016.0,United Kingdom
+700064,P006,Botanical Greeting Card,1,04/12/2010 10:10,1.25,12016.0,United Kingdom
+700064,P005,Glass Storage Jar,10,04/12/2010 10:10,7.15,12016.0,United Kingdom
+700065,P003,Decorative Candle Set,1,28/08/2010 08:40,8.75,12017.0,United Kingdom
+700066,P003,Decorative Candle Set,2,25/09/2010 08:40,8.75,12017.0,United Kingdom
+700066,P008,Stainless Water Bottle,2,25/09/2010 08:40,9.95,12017.0,United Kingdom
+700067,P005,Glass Storage Jar,1,12/03/2011 19:50,7.15,12018.0,United Kingdom
+700067,P006,Botanical Greeting Card,4,12/03/2011 19:50,1.25,12018.0,United Kingdom
+700067,P010,Wooden Photo Frame,12,12/03/2011 19:50,11.0,12018.0,United Kingdom
+700067,P008,Stainless Water Bottle,2,12/03/2011 19:50,10.95,12018.0,United Kingdom
+700068,P004,Cotton Tote Bag,2,11/10/2010 09:40,4.25,12018.0,United Kingdom
+700068,P005,Glass Storage Jar,2,11/10/2010 09:40,7.15,12018.0,United Kingdom
+700068,P009,Ceramic Planter,1,11/10/2010 09:40,7.25,12018.0,United Kingdom
+700069,P010,Wooden Photo Frame,3,09/04/2011 09:00,11.0,12018.0,France
+700070,P003,Decorative Candle Set,3,23/09/2010 16:50,9.62,12018.0,EIRE
+700071,P001,Ceramic Tea Mug,3,16/01/2011 15:30,5.95,12019.0,United Kingdom
+700071,P008,Stainless Water Bottle,3,16/01/2011 15:30,10.95,12019.0,United Kingdom
+700071,P009,Ceramic Planter,6,16/01/2011 15:30,7.98,12019.0,United Kingdom
+700071,P010,Wooden Photo Frame,1,16/01/2011 15:30,11.0,12019.0,United Kingdom
+700072,P008,Stainless Water Bottle,1,18/02/2011 11:50,9.95,12020.0,United Kingdom
+700072,P006,Botanical Greeting Card,1,18/02/2011 11:50,1.25,12020.0,United Kingdom
+700072,P004,Cotton Tote Bag,2,18/02/2011 11:50,4.68,12020.0,United Kingdom
+700073,P002,Linen Table Runner,1,08/02/2011 08:40,12.5,12020.0,United Kingdom
+700073,P003,Decorative Candle Set,3,08/02/2011 08:40,8.75,12020.0,United Kingdom
+700073,P008,Stainless Water Bottle,2,08/02/2011 08:40,9.95,12020.0,United Kingdom
+700074,P003,Decorative Candle Set,4,26/10/2010 14:50,9.62,12020.0,United Kingdom
+700075,P003,Decorative Candle Set,3,13/12/2010 09:30,8.75,12021.0,United Kingdom
+700075,P002,Linen Table Runner,1,13/12/2010 09:30,12.5,12021.0,United Kingdom
+700076,P003,Decorative Candle Set,1,11/11/2010 13:40,9.62,12021.0,United Kingdom
+700076,P007,Woven Cushion Cover,4,11/11/2010 13:40,15.0,12021.0,United Kingdom
+700076,P008,Stainless Water Bottle,1,11/11/2010 13:40,9.95,12021.0,United Kingdom
+700076,P001,Ceramic Tea Mug,12,11/11/2010 13:40,5.95,12021.0,United Kingdom
+700077,P008,Stainless Water Bottle,3,27/04/2011 10:50,9.95,12021.0,United Kingdom
+700077,P005,Glass Storage Jar,4,27/04/2011 10:50,5.85,12021.0,United Kingdom
+700077,P007,Woven Cushion Cover,2,27/04/2011 10:50,15.0,12021.0,United Kingdom
+700078,P008,Stainless Water Bottle,2,24/04/2011 11:10,9.95,12021.0,United Kingdom
+700078,P009,Ceramic Planter,1,24/04/2011 11:10,6.53,12021.0,United Kingdom
+700079,P001,Ceramic Tea Mug,3,09/09/2010 09:00,5.36,12021.0,Netherlands
+700079,P003,Decorative Candle Set,2,09/09/2010 09:00,8.75,12021.0,Netherlands
+700079,P007,Woven Cushion Cover,3,09/09/2010 09:00,13.5,12021.0,Netherlands
+700079,P010,Wooden Photo Frame,4,09/09/2010 09:00,11.0,12021.0,Netherlands
+700080,P010,Wooden Photo Frame,3,06/03/2011 19:20,12.1,12021.0,United Kingdom
+700080,P008,Stainless Water Bottle,2,06/03/2011 19:20,9.95,12021.0,United Kingdom
+700081,P010,Wooden Photo Frame,3,12/07/2010 14:30,11.0,12021.0,United Kingdom
+700081,P009,Ceramic Planter,2,12/07/2010 14:30,7.25,12021.0,United Kingdom
+700081,P006,Botanical Greeting Card,10,12/07/2010 14:30,1.25,12021.0,United Kingdom
+700082,P003,Decorative Candle Set,4,12/02/2011 18:50,8.75,12022.0,France
+700082,P004,Cotton Tote Bag,2,12/02/2011 18:50,4.25,12022.0,France
+700082,P002,Linen Table Runner,3,12/02/2011 18:50,11.25,12022.0,France
+700082,P007,Woven Cushion Cover,1,12/02/2011 18:50,15.0,12022.0,France
+700083,P002,Linen Table Runner,2,06/11/2010 14:00,13.75,12022.0,United Kingdom
+700083,P005,Glass Storage Jar,12,06/11/2010 14:00,7.15,12022.0,United Kingdom
+700083,P006,Botanical Greeting Card,1,06/11/2010 14:00,1.25,12022.0,United Kingdom
+700084,P004,Cotton Tote Bag,2,14/04/2011 13:30,4.25,12023.0,United Kingdom
+700084,P005,Glass Storage Jar,3,14/04/2011 13:30,6.5,12023.0,United Kingdom
+700084,P008,Stainless Water Bottle,2,14/04/2011 13:30,9.95,12023.0,United Kingdom
+700085,P003,Decorative Candle Set,1,13/03/2011 18:50,8.75,12023.0,United Kingdom
+700085,P005,Glass Storage Jar,12,13/03/2011 18:50,6.5,12023.0,United Kingdom
+700085,P009,Ceramic Planter,10,13/03/2011 18:50,7.25,12023.0,United Kingdom
+700085,P002,Linen Table Runner,2,13/03/2011 18:50,12.5,12023.0,United Kingdom
+700086,P009,Ceramic Planter,1,14/10/2010 14:40,7.98,12023.0,Germany
+700086,P008,Stainless Water Bottle,2,14/10/2010 14:40,9.95,12023.0,Germany
+700086,P006,Botanical Greeting Card,4,14/10/2010 14:40,1.12,12023.0,Germany
+700087,P002,Linen Table Runner,1,14/01/2011 17:50,12.5,12023.0,Germany
+700088,P005,Glass Storage Jar,2,19/01/2011 15:30,6.5,12023.0,United Kingdom
+700088,P009,Ceramic Planter,1,19/01/2011 15:30,7.98,12023.0,United Kingdom
+700089,P003,Decorative Candle Set,4,10/02/2011 17:10,8.75,12023.0,United Kingdom
+700089,P005,Glass Storage Jar,1,10/02/2011 17:10,5.85,12023.0,United Kingdom
+700089,P002,Linen Table Runner,4,10/02/2011 17:10,11.25,12023.0,United Kingdom
+700090,P008,Stainless Water Bottle,3,07/02/2011 18:20,10.95,12023.0,United Kingdom
+700090,P010,Wooden Photo Frame,10,07/02/2011 18:20,11.0,12023.0,United Kingdom
+700090,P004,Cotton Tote Bag,1,07/02/2011 18:20,4.25,12023.0,United Kingdom
+700090,P009,Ceramic Planter,2,07/02/2011 18:20,7.25,12023.0,United Kingdom
+700091,P007,Woven Cushion Cover,3,17/09/2010 18:10,15.0,12024.0,United Kingdom
+700091,P010,Wooden Photo Frame,1,17/09/2010 18:10,9.9,12024.0,United Kingdom
+700091,P009,Ceramic Planter,4,17/09/2010 18:10,7.25,12024.0,United Kingdom
+700092,P004,Cotton Tote Bag,1,29/11/2010 17:20,4.25,12024.0,Spain
+700093,P002,Linen Table Runner,1,03/11/2010 14:00,11.25,12024.0,United Kingdom
+700093,P003,Decorative Candle Set,2,03/11/2010 14:00,9.62,12024.0,United Kingdom
+700093,P004,Cotton Tote Bag,1,03/11/2010 14:00,4.25,12024.0,United Kingdom
+700094,P004,Cotton Tote Bag,1,17/11/2010 13:20,4.68,12025.0,United Kingdom
+700094,P002,Linen Table Runner,3,17/11/2010 13:20,12.5,12025.0,United Kingdom
+700094,P005,Glass Storage Jar,10,17/11/2010 13:20,6.5,12025.0,United Kingdom
+700095,P002,Linen Table Runner,3,07/12/2010 09:50,11.25,12025.0,EIRE
+700095,P005,Glass Storage Jar,1,07/12/2010 09:50,6.5,12025.0,EIRE
+700096,P006,Botanical Greeting Card,1,18/04/2011 14:30,1.25,12025.0,United Kingdom
+700097,P004,Cotton Tote Bag,2,17/12/2010 12:50,3.83,12025.0,France
+700097,P003,Decorative Candle Set,1,17/12/2010 12:50,8.75,12025.0,France
+700097,P006,Botanical Greeting Card,2,17/12/2010 12:50,1.25,12025.0,France
+700098,P009,Ceramic Planter,1,02/07/2010 08:40,7.25,12025.0,Germany
+700098,P010,Wooden Photo Frame,1,02/07/2010 08:40,12.1,12025.0,Germany
+700098,P004,Cotton Tote Bag,1,02/07/2010 08:40,4.25,12025.0,Germany
+700098,P003,Decorative Candle Set,1,02/07/2010 08:40,8.75,12025.0,Germany
+700099,P002,Linen Table Runner,2,06/01/2011 09:30,12.5,12025.0,Spain
+700099,P008,Stainless Water Bottle,3,06/01/2011 09:30,9.95,12025.0,Spain
+700099,P010,Wooden Photo Frame,4,06/01/2011 09:30,9.9,12025.0,Spain
+700099,P007,Woven Cushion Cover,1,06/01/2011 09:30,13.5,12025.0,Spain
+700100,P006,Botanical Greeting Card,1,31/01/2011 12:40,1.38,12026.0,United Kingdom
+700100,P007,Woven Cushion Cover,4,31/01/2011 12:40,15.0,12026.0,United Kingdom
+700100,P003,Decorative Candle Set,1,31/01/2011 12:40,8.75,12026.0,United Kingdom
+700101,P008,Stainless Water Bottle,6,12/11/2010 13:40,8.96,12026.0,United Kingdom
+700101,P006,Botanical Greeting Card,1,12/11/2010 13:40,1.12,12026.0,United Kingdom
+700101,P007,Woven Cushion Cover,1,12/11/2010 13:40,15.0,12026.0,United Kingdom
+700102,P004,Cotton Tote Bag,2,10/08/2010 19:50,4.68,12026.0,United Kingdom
+700102,P006,Botanical Greeting Card,2,10/08/2010 19:50,1.25,12026.0,United Kingdom
+700103,P003,Decorative Candle Set,1,13/04/2011 15:20,9.62,12027.0,United Kingdom
+700103,P004,Cotton Tote Bag,1,13/04/2011 15:20,4.25,12027.0,United Kingdom
+700103,P009,Ceramic Planter,1,13/04/2011 15:20,7.25,12027.0,United Kingdom
+700103,P008,Stainless Water Bottle,2,13/04/2011 15:20,9.95,12027.0,United Kingdom
+700104,P007,Woven Cushion Cover,1,16/09/2010 11:20,15.0,12027.0,United Kingdom
+700105,P004,Cotton Tote Bag,6,23/02/2011 08:40,4.25,12027.0,United Kingdom
+700105,P002,Linen Table Runner,1,23/02/2011 08:40,12.5,12027.0,United Kingdom
+700105,P003,Decorative Candle Set,1,23/02/2011 08:40,8.75,12027.0,United Kingdom
+700106,P001,Ceramic Tea Mug,3,06/04/2011 10:00,6.55,12028.0,United Kingdom
+700106,P002,Linen Table Runner,3,06/04/2011 10:00,12.5,12028.0,United Kingdom
+700106,P004,Cotton Tote Bag,4,06/04/2011 10:00,4.68,12028.0,United Kingdom
+700106,P008,Stainless Water Bottle,1,06/04/2011 10:00,9.95,12028.0,United Kingdom
+700107,P001,Ceramic Tea Mug,12,22/07/2010 12:20,5.95,12029.0,United Kingdom
+700107,P007,Woven Cushion Cover,1,22/07/2010 12:20,13.5,12029.0,United Kingdom
+700108,P004,Cotton Tote Bag,1,22/07/2010 19:30,4.25,12029.0,Spain
+700108,P002,Linen Table Runner,4,22/07/2010 19:30,12.5,12029.0,Spain
+700108,P003,Decorative Candle Set,1,22/07/2010 19:30,9.62,12029.0,Spain
+700109,P009,Ceramic Planter,2,02/07/2010 10:20,7.25,12029.0,United Kingdom
+700109,P001,Ceramic Tea Mug,1,02/07/2010 10:20,6.55,12029.0,United Kingdom
+700109,P004,Cotton Tote Bag,2,02/07/2010 10:20,4.25,12029.0,United Kingdom
+700110,P009,Ceramic Planter,4,28/03/2011 15:40,7.98,12029.0,United Kingdom
+700110,P005,Glass Storage Jar,6,28/03/2011 15:40,5.85,12029.0,United Kingdom
+700110,P003,Decorative Candle Set,1,28/03/2011 15:40,8.75,12029.0,United Kingdom
+700111,P010,Wooden Photo Frame,1,30/10/2010 17:20,11.0,12029.0,United Kingdom
+700111,P003,Decorative Candle Set,12,30/10/2010 17:20,8.75,12029.0,United Kingdom
+700111,P005,Glass Storage Jar,2,30/10/2010 17:20,6.5,12029.0,United Kingdom
+700112,P007,Woven Cushion Cover,6,15/03/2011 10:50,16.5,12030.0,United Kingdom
+700113,P009,Ceramic Planter,3,14/07/2010 10:30,7.25,12030.0,United Kingdom
+700113,P002,Linen Table Runner,1,14/07/2010 10:30,12.5,12030.0,United Kingdom
+700113,P003,Decorative Candle Set,1,14/07/2010 10:30,8.75,12030.0,United Kingdom
+700114,P002,Linen Table Runner,2,18/12/2010 14:30,12.5,12030.0,United Kingdom
+700114,P003,Decorative Candle Set,12,18/12/2010 14:30,8.75,12030.0,United Kingdom
+700114,P010,Wooden Photo Frame,2,18/12/2010 14:30,11.0,12030.0,United Kingdom
+700114,P009,Ceramic Planter,1,18/12/2010 14:30,7.25,12030.0,United Kingdom
+700115,P002,Linen Table Runner,2,09/03/2011 19:50,12.5,12030.0,United Kingdom
+700115,P005,Glass Storage Jar,12,09/03/2011 19:50,6.5,12030.0,United Kingdom
+700115,P004,Cotton Tote Bag,12,09/03/2011 19:50,4.25,12030.0,United Kingdom
+700116,P001,Ceramic Tea Mug,1,08/10/2010 10:40,5.36,12030.0,United Kingdom
+700117,P008,Stainless Water Bottle,6,02/02/2011 18:20,8.96,12030.0,United Kingdom
+700117,P009,Ceramic Planter,3,02/02/2011 18:20,7.25,12030.0,United Kingdom
+700118,P004,Cotton Tote Bag,1,21/09/2010 13:20,3.83,12031.0,Germany
+700119,P004,Cotton Tote Bag,4,25/09/2010 16:10,4.68,12031.0,Netherlands
+700120,P004,Cotton Tote Bag,10,25/03/2011 16:30,4.25,12031.0,Spain
+700120,P007,Woven Cushion Cover,2,25/03/2011 16:30,15.0,12031.0,Spain
+700120,P002,Linen Table Runner,6,25/03/2011 16:30,11.25,12031.0,Spain
+700121,P004,Cotton Tote Bag,4,05/07/2010 15:20,4.25,12031.0,EIRE
+700121,P001,Ceramic Tea Mug,6,05/07/2010 15:20,5.95,12031.0,EIRE
+700121,P008,Stainless Water Bottle,12,05/07/2010 15:20,9.95,12031.0,EIRE
+700122,P002,Linen Table Runner,1,04/11/2010 09:00,12.5,12031.0,United Kingdom
+700122,P007,Woven Cushion Cover,2,04/11/2010 09:00,15.0,12031.0,United Kingdom
+700122,P009,Ceramic Planter,4,04/11/2010 09:00,7.25,12031.0,United Kingdom
+700123,P003,Decorative Candle Set,2,12/08/2010 16:30,9.62,12031.0,United Kingdom
+700123,P002,Linen Table Runner,2,12/08/2010 16:30,11.25,12031.0,United Kingdom
+700123,P007,Woven Cushion Cover,1,12/08/2010 16:30,15.0,12031.0,United Kingdom
+700124,P004,Cotton Tote Bag,10,26/10/2010 10:50,4.25,12031.0,United Kingdom
+700124,P002,Linen Table Runner,2,26/10/2010 10:50,12.5,12031.0,United Kingdom
+700124,P001,Ceramic Tea Mug,2,26/10/2010 10:50,5.36,12031.0,United Kingdom
+700124,P008,Stainless Water Bottle,3,26/10/2010 10:50,9.95,12031.0,United Kingdom
+700125,P009,Ceramic Planter,10,21/04/2011 12:30,6.53,12032.0,Germany
+700125,P010,Wooden Photo Frame,2,21/04/2011 12:30,12.1,12032.0,Germany
+700126,P003,Decorative Candle Set,1,18/12/2010 11:00,8.75,12032.0,United Kingdom
+700126,P001,Ceramic Tea Mug,3,18/12/2010 11:00,5.95,12032.0,United Kingdom
+700126,P009,Ceramic Planter,3,18/12/2010 11:00,6.53,12032.0,United Kingdom
+700127,P007,Woven Cushion Cover,1,19/08/2010 13:00,13.5,12033.0,United Kingdom
+700127,P002,Linen Table Runner,1,19/08/2010 13:00,12.5,12033.0,United Kingdom
+700127,P009,Ceramic Planter,10,19/08/2010 13:00,7.25,12033.0,United Kingdom
+700127,P008,Stainless Water Bottle,12,19/08/2010 13:00,10.95,12033.0,United Kingdom
+700128,P002,Linen Table Runner,2,11/10/2010 13:00,13.75,12033.0,United Kingdom
+700129,P007,Woven Cushion Cover,3,14/10/2010 09:00,15.0,12034.0,Netherlands
+700129,P004,Cotton Tote Bag,1,14/10/2010 09:00,4.25,12034.0,Netherlands
+700130,P007,Woven Cushion Cover,1,18/12/2010 13:50,13.5,12034.0,United Kingdom
+700130,P001,Ceramic Tea Mug,2,18/12/2010 13:50,5.95,12034.0,United Kingdom
+700130,P002,Linen Table Runner,1,18/12/2010 13:50,11.25,12034.0,United Kingdom
+700130,P009,Ceramic Planter,1,18/12/2010 13:50,7.98,12034.0,United Kingdom
+700131,P006,Botanical Greeting Card,3,05/09/2010 15:30,1.38,12034.0,United Kingdom
+700131,P009,Ceramic Planter,10,05/09/2010 15:30,7.25,12034.0,United Kingdom
+700132,P004,Cotton Tote Bag,1,28/07/2010 10:50,4.25,12034.0,United Kingdom
+700132,P009,Ceramic Planter,1,28/07/2010 10:50,7.25,12034.0,United Kingdom
+700132,P006,Botanical Greeting Card,4,28/07/2010 10:50,1.12,12034.0,United Kingdom
+700132,P005,Glass Storage Jar,6,28/07/2010 10:50,7.15,12034.0,United Kingdom
+700133,P007,Woven Cushion Cover,1,14/01/2011 11:40,15.0,12035.0,Germany
+700133,P008,Stainless Water Bottle,12,14/01/2011 11:40,8.96,12035.0,Germany
+700134,P005,Glass Storage Jar,2,02/03/2011 13:30,6.5,12035.0,Spain
+700134,P004,Cotton Tote Bag,1,02/03/2011 13:30,4.25,12035.0,Spain
+700134,P007,Woven Cushion Cover,2,02/03/2011 13:30,16.5,12035.0,Spain
+700134,P010,Wooden Photo Frame,3,02/03/2011 13:30,11.0,12035.0,Spain
+700135,P001,Ceramic Tea Mug,4,01/10/2010 19:20,6.55,12035.0,United Kingdom
+700135,P002,Linen Table Runner,1,01/10/2010 19:20,12.5,12035.0,United Kingdom
+700135,P006,Botanical Greeting Card,2,01/10/2010 19:20,1.25,12035.0,United Kingdom
+700135,P009,Ceramic Planter,1,01/10/2010 19:20,7.25,12035.0,United Kingdom
+700136,P006,Botanical Greeting Card,10,24/09/2010 16:10,1.38,12035.0,United Kingdom
+700136,P010,Wooden Photo Frame,2,24/09/2010 16:10,11.0,12035.0,United Kingdom
+700137,P005,Glass Storage Jar,4,27/07/2010 15:00,5.85,12035.0,United Kingdom
+700137,P007,Woven Cushion Cover,4,27/07/2010 15:00,15.0,12035.0,United Kingdom
+700137,P001,Ceramic Tea Mug,3,27/07/2010 15:00,5.36,12035.0,United Kingdom
+700138,P007,Woven Cushion Cover,2,10/10/2010 13:20,15.0,12036.0,United Kingdom
+700139,P004,Cotton Tote Bag,1,25/08/2010 17:20,4.25,12036.0,United Kingdom
+700140,P004,Cotton Tote Bag,1,28/10/2010 16:10,4.68,12036.0,United Kingdom
+700140,P005,Glass Storage Jar,1,28/10/2010 16:10,6.5,12036.0,United Kingdom
+700140,P003,Decorative Candle Set,6,28/10/2010 16:10,8.75,12036.0,United Kingdom
+700141,P007,Woven Cushion Cover,2,17/09/2010 09:10,15.0,12037.0,Netherlands
+700142,P001,Ceramic Tea Mug,3,19/02/2011 08:10,5.95,12037.0,United Kingdom
+700143,P009,Ceramic Planter,3,17/01/2011 10:40,7.25,12037.0,EIRE
+700143,P001,Ceramic Tea Mug,3,17/01/2011 10:40,5.36,12037.0,EIRE
+700144,P005,Glass Storage Jar,2,06/07/2010 17:50,7.15,12037.0,United Kingdom
+700144,P004,Cotton Tote Bag,10,06/07/2010 17:50,4.68,12037.0,United Kingdom
+700144,P003,Decorative Candle Set,6,06/07/2010 17:50,7.88,12037.0,United Kingdom
+700145,P007,Woven Cushion Cover,1,13/11/2010 09:20,15.0,12037.0,United Kingdom
+700145,P001,Ceramic Tea Mug,6,13/11/2010 09:20,5.95,12037.0,United Kingdom
+700145,P009,Ceramic Planter,3,13/11/2010 09:20,7.98,12037.0,United Kingdom
+700146,P010,Wooden Photo Frame,1,23/09/2010 10:40,9.9,12037.0,United Kingdom
+700146,P003,Decorative Candle Set,1,23/09/2010 10:40,8.75,12037.0,United Kingdom
+700147,P008,Stainless Water Bottle,6,30/09/2010 11:30,9.95,12037.0,United Kingdom
+700147,P003,Decorative Candle Set,1,30/09/2010 11:30,8.75,12037.0,United Kingdom
+700147,P007,Woven Cushion Cover,3,30/09/2010 11:30,16.5,12037.0,United Kingdom
+700147,P009,Ceramic Planter,10,30/09/2010 11:30,7.25,12037.0,United Kingdom
+700148,P003,Decorative Candle Set,1,19/01/2011 10:40,8.75,12037.0,United Kingdom
+700148,P002,Linen Table Runner,1,19/01/2011 10:40,13.75,12037.0,United Kingdom
+700149,P010,Wooden Photo Frame,12,26/07/2010 12:40,11.0,12037.0,United Kingdom
+700150,P005,Glass Storage Jar,3,07/07/2010 15:50,6.5,12038.0,United Kingdom
+700150,P007,Woven Cushion Cover,3,07/07/2010 15:50,15.0,12038.0,United Kingdom
+700150,P003,Decorative Candle Set,4,07/07/2010 15:50,8.75,12038.0,United Kingdom
+700150,P001,Ceramic Tea Mug,1,07/07/2010 15:50,5.95,12038.0,United Kingdom
+700151,P007,Woven Cushion Cover,1,27/07/2010 10:40,13.5,12038.0,United Kingdom
+700151,P006,Botanical Greeting Card,4,27/07/2010 10:40,1.12,12038.0,United Kingdom
+700152,P002,Linen Table Runner,3,07/09/2010 12:00,11.25,12038.0,United Kingdom
+700153,P003,Decorative Candle Set,1,31/03/2011 10:40,8.75,12038.0,United Kingdom
+700153,P009,Ceramic Planter,2,31/03/2011 10:40,7.25,12038.0,United Kingdom
+700154,P008,Stainless Water Bottle,2,23/04/2011 08:20,8.96,12038.0,United Kingdom
+700154,P009,Ceramic Planter,3,23/04/2011 08:20,6.53,12038.0,United Kingdom
+700155,P008,Stainless Water Bottle,2,05/04/2011 13:50,9.95,12038.0,United Kingdom
+700155,P004,Cotton Tote Bag,3,05/04/2011 13:50,4.25,12038.0,United Kingdom
+700155,P007,Woven Cushion Cover,2,05/04/2011 13:50,15.0,12038.0,United Kingdom
+700155,P005,Glass Storage Jar,4,05/04/2011 13:50,6.5,12038.0,United Kingdom
+700156,P002,Linen Table Runner,10,06/01/2011 18:30,11.25,12039.0,United Kingdom
+700157,P007,Woven Cushion Cover,1,03/11/2010 12:40,15.0,12039.0,United Kingdom
+700157,P009,Ceramic Planter,2,03/11/2010 12:40,7.25,12039.0,United Kingdom
+700158,P001,Ceramic Tea Mug,2,01/04/2011 13:20,5.95,12039.0,United Kingdom
+700158,P005,Glass Storage Jar,1,01/04/2011 13:20,6.5,12039.0,United Kingdom
+700158,P007,Woven Cushion Cover,2,01/04/2011 13:20,15.0,12039.0,United Kingdom
+700159,P008,Stainless Water Bottle,3,29/07/2010 14:00,8.96,12039.0,Netherlands
+700159,P002,Linen Table Runner,1,29/07/2010 14:00,12.5,12039.0,Netherlands
+700159,P005,Glass Storage Jar,2,29/07/2010 14:00,6.5,12039.0,Netherlands
+700160,P003,Decorative Candle Set,3,24/03/2011 10:20,8.75,12040.0,Spain
+700160,P001,Ceramic Tea Mug,2,24/03/2011 10:20,5.95,12040.0,Spain
+700160,P004,Cotton Tote Bag,2,24/03/2011 10:20,4.25,12040.0,Spain
+700161,P009,Ceramic Planter,12,07/04/2011 08:50,7.25,12040.0,United Kingdom
+700162,P008,Stainless Water Bottle,2,17/02/2011 10:20,9.95,12040.0,United Kingdom
+700162,P002,Linen Table Runner,4,17/02/2011 10:20,12.5,12040.0,United Kingdom
+700162,P001,Ceramic Tea Mug,1,17/02/2011 10:20,5.95,12040.0,United Kingdom
+700162,P009,Ceramic Planter,1,17/02/2011 10:20,7.25,12040.0,United Kingdom
+700163,P007,Woven Cushion Cover,3,10/09/2010 14:20,15.0,12041.0,United Kingdom
+700163,P009,Ceramic Planter,3,10/09/2010 14:20,7.25,12041.0,United Kingdom
+700163,P008,Stainless Water Bottle,6,10/09/2010 14:20,9.95,12041.0,United Kingdom
+700163,P010,Wooden Photo Frame,1,10/09/2010 14:20,11.0,12041.0,United Kingdom
+700164,P009,Ceramic Planter,1,08/09/2010 19:10,7.98,12041.0,Spain
+700164,P005,Glass Storage Jar,1,08/09/2010 19:10,5.85,12041.0,Spain
+700165,P010,Wooden Photo Frame,3,22/11/2010 13:20,9.9,12041.0,United Kingdom
+700165,P009,Ceramic Planter,2,22/11/2010 13:20,6.53,12041.0,United Kingdom
+700166,P002,Linen Table Runner,4,16/12/2010 15:30,12.5,12041.0,France
+700167,P008,Stainless Water Bottle,12,30/08/2010 18:00,10.95,12042.0,United Kingdom
+700168,P009,Ceramic Planter,2,14/01/2011 16:40,7.25,12042.0,United Kingdom
+700169,P001,Ceramic Tea Mug,2,09/02/2011 09:50,5.95,12042.0,United Kingdom
+700169,P002,Linen Table Runner,1,09/02/2011 09:50,13.75,12042.0,United Kingdom
+700170,P002,Linen Table Runner,1,13/02/2011 12:50,12.5,12042.0,United Kingdom
+700170,P005,Glass Storage Jar,1,13/02/2011 12:50,7.15,12042.0,United Kingdom
+700171,P001,Ceramic Tea Mug,1,16/09/2010 15:30,6.55,12043.0,EIRE
+700171,P009,Ceramic Planter,1,16/09/2010 15:30,7.25,12043.0,EIRE
+700171,P003,Decorative Candle Set,1,16/09/2010 15:30,8.75,12043.0,EIRE
+700171,P004,Cotton Tote Bag,4,16/09/2010 15:30,3.83,12043.0,EIRE
+700172,P002,Linen Table Runner,1,20/07/2010 17:30,13.75,12043.0,United Kingdom
+700172,P004,Cotton Tote Bag,1,20/07/2010 17:30,4.68,12043.0,United Kingdom
+700173,P009,Ceramic Planter,1,26/01/2011 15:00,7.25,12043.0,United Kingdom
+700173,P010,Wooden Photo Frame,1,26/01/2011 15:00,11.0,12043.0,United Kingdom
+700173,P006,Botanical Greeting Card,6,26/01/2011 15:00,1.25,12043.0,United Kingdom
+700173,P004,Cotton Tote Bag,1,26/01/2011 15:00,4.25,12043.0,United Kingdom
+700174,P007,Woven Cushion Cover,4,13/10/2010 17:20,16.5,12043.0,Spain
+700174,P008,Stainless Water Bottle,6,13/10/2010 17:20,9.95,12043.0,Spain
+700175,P009,Ceramic Planter,10,31/01/2011 10:20,7.25,12043.0,United Kingdom
+700176,P004,Cotton Tote Bag,1,01/04/2011 19:10,4.25,12043.0,United Kingdom
+700176,P009,Ceramic Planter,1,01/04/2011 19:10,7.98,12043.0,United Kingdom
+700176,P010,Wooden Photo Frame,3,01/04/2011 19:10,9.9,12043.0,United Kingdom
+700177,P005,Glass Storage Jar,1,17/09/2010 18:40,6.5,12044.0,United Kingdom
+700177,P004,Cotton Tote Bag,1,17/09/2010 18:40,3.83,12044.0,United Kingdom
+700178,P001,Ceramic Tea Mug,2,10/08/2010 13:00,5.95,12045.0,United Kingdom
+700178,P007,Woven Cushion Cover,1,10/08/2010 13:00,15.0,12045.0,United Kingdom
+700178,P005,Glass Storage Jar,1,10/08/2010 13:00,6.5,12045.0,United Kingdom
+700179,P004,Cotton Tote Bag,1,14/02/2011 15:20,3.83,12045.0,Netherlands
+700179,P005,Glass Storage Jar,4,14/02/2011 15:20,6.5,12045.0,Netherlands
+700179,P006,Botanical Greeting Card,2,14/02/2011 15:20,1.25,12045.0,Netherlands
+700179,P003,Decorative Candle Set,1,14/02/2011 15:20,8.75,12045.0,Netherlands
+700180,P003,Decorative Candle Set,2,09/11/2010 08:20,8.75,12045.0,United Kingdom
+700180,P002,Linen Table Runner,1,09/11/2010 08:20,12.5,12045.0,United Kingdom
+700181,P005,Glass Storage Jar,1,21/02/2011 17:00,6.5,12046.0,United Kingdom
+700181,P007,Woven Cushion Cover,2,21/02/2011 17:00,15.0,12046.0,United Kingdom
+700182,P007,Woven Cushion Cover,12,21/07/2010 19:30,16.5,12046.0,United Kingdom
+700182,P005,Glass Storage Jar,6,21/07/2010 19:30,6.5,12046.0,United Kingdom
+700183,P005,Glass Storage Jar,3,17/02/2011 09:40,6.5,12047.0,United Kingdom
+700184,P010,Wooden Photo Frame,4,21/03/2011 11:50,11.0,12048.0,United Kingdom
+700184,P002,Linen Table Runner,1,21/03/2011 11:50,12.5,12048.0,United Kingdom
+700185,P009,Ceramic Planter,6,19/10/2010 17:50,7.25,12048.0,United Kingdom
+700185,P005,Glass Storage Jar,3,19/10/2010 17:50,5.85,12048.0,United Kingdom
+700185,P001,Ceramic Tea Mug,2,19/10/2010 17:50,5.95,12048.0,United Kingdom
+700185,P010,Wooden Photo Frame,4,19/10/2010 17:50,11.0,12048.0,United Kingdom
+700186,P007,Woven Cushion Cover,1,27/12/2010 14:40,15.0,12048.0,France
+700187,P001,Ceramic Tea Mug,1,10/02/2011 11:00,5.95,12048.0,United Kingdom
+700188,P002,Linen Table Runner,2,24/03/2011 12:00,12.5,12048.0,Netherlands
+700188,P001,Ceramic Tea Mug,2,24/03/2011 12:00,5.36,12048.0,Netherlands
+700188,P006,Botanical Greeting Card,1,24/03/2011 12:00,1.12,12048.0,Netherlands
+700189,P007,Woven Cushion Cover,3,10/04/2011 18:20,16.5,12048.0,United Kingdom
+700190,P002,Linen Table Runner,1,09/12/2010 12:20,12.5,12049.0,Netherlands
+700190,P008,Stainless Water Bottle,10,09/12/2010 12:20,10.95,12049.0,Netherlands
+700190,P010,Wooden Photo Frame,4,09/12/2010 12:20,11.0,12049.0,Netherlands
+700190,P003,Decorative Candle Set,10,09/12/2010 12:20,8.75,12049.0,Netherlands
+700191,P005,Glass Storage Jar,6,01/03/2011 15:50,6.5,12049.0,United Kingdom
+700191,P002,Linen Table Runner,1,01/03/2011 15:50,12.5,12049.0,United Kingdom
+700191,P006,Botanical Greeting Card,2,01/03/2011 15:50,1.12,12049.0,United Kingdom
+700192,P009,Ceramic Planter,1,11/09/2010 14:40,7.25,12049.0,Germany
+700192,P005,Glass Storage Jar,1,11/09/2010 14:40,6.5,12049.0,Germany
+700192,P007,Woven Cushion Cover,12,11/09/2010 14:40,15.0,12049.0,Germany
+700193,P009,Ceramic Planter,1,16/11/2010 14:10,6.53,12049.0,EIRE
+700194,P005,Glass Storage Jar,1,01/08/2010 10:10,6.5,12049.0,United Kingdom
+700194,P007,Woven Cushion Cover,2,01/08/2010 10:10,15.0,12049.0,United Kingdom
+700194,P008,Stainless Water Bottle,2,01/08/2010 10:10,9.95,12049.0,United Kingdom
+700194,P001,Ceramic Tea Mug,2,01/08/2010 10:10,6.55,12049.0,United Kingdom
+700195,P008,Stainless Water Bottle,1,15/11/2010 08:20,9.95,12049.0,United Kingdom
+700195,P009,Ceramic Planter,1,15/11/2010 08:20,7.98,12049.0,United Kingdom
+700195,P007,Woven Cushion Cover,1,15/11/2010 08:20,16.5,12049.0,United Kingdom
+700196,P006,Botanical Greeting Card,1,04/01/2011 12:50,1.25,12049.0,United Kingdom
+700196,P005,Glass Storage Jar,3,04/01/2011 12:50,7.15,12049.0,United Kingdom
+700197,P004,Cotton Tote Bag,2,15/09/2010 18:50,3.83,12050.0,United Kingdom
+700197,P007,Woven Cushion Cover,1,15/09/2010 18:50,15.0,12050.0,United Kingdom
+700197,P009,Ceramic Planter,1,15/09/2010 18:50,7.25,12050.0,United Kingdom
+700198,P007,Woven Cushion Cover,1,05/09/2010 08:10,15.0,12050.0,France
+700199,P006,Botanical Greeting Card,2,10/08/2010 18:10,1.12,12051.0,United Kingdom
+700199,P009,Ceramic Planter,10,10/08/2010 18:10,7.25,12051.0,United Kingdom
+700200,P009,Ceramic Planter,6,23/07/2010 14:20,6.53,12051.0,United Kingdom
+700200,P003,Decorative Candle Set,10,23/07/2010 14:20,9.62,12051.0,United Kingdom
+700200,P001,Ceramic Tea Mug,4,23/07/2010 14:20,5.36,12051.0,United Kingdom
+700201,P001,Ceramic Tea Mug,1,07/11/2010 12:50,5.95,12051.0,France
+700201,P009,Ceramic Planter,1,07/11/2010 12:50,7.25,12051.0,France
+700201,P002,Linen Table Runner,2,07/11/2010 12:50,12.5,12051.0,France
+700202,P009,Ceramic Planter,3,03/04/2011 14:10,7.98,12051.0,Germany
+700202,P006,Botanical Greeting Card,2,03/04/2011 14:10,1.12,12051.0,Germany
+700203,P002,Linen Table Runner,10,12/10/2010 10:30,12.5,12051.0,United Kingdom
+700203,P001,Ceramic Tea Mug,1,12/10/2010 10:30,5.95,12051.0,United Kingdom
+700203,P010,Wooden Photo Frame,1,12/10/2010 10:30,9.9,12051.0,United Kingdom
+700204,P002,Linen Table Runner,1,23/07/2010 17:00,12.5,12051.0,France
+700204,P008,Stainless Water Bottle,1,23/07/2010 17:00,8.96,12051.0,France
+700204,P009,Ceramic Planter,4,23/07/2010 17:00,7.25,12051.0,France
+700204,P010,Wooden Photo Frame,4,23/07/2010 17:00,11.0,12051.0,France
+700205,P009,Ceramic Planter,4,25/11/2010 16:50,7.25,12051.0,United Kingdom
+700205,P008,Stainless Water Bottle,1,25/11/2010 16:50,9.95,12051.0,United Kingdom
+700205,P005,Glass Storage Jar,12,25/11/2010 16:50,6.5,12051.0,United Kingdom
+700206,P008,Stainless Water Bottle,12,04/04/2011 11:20,9.95,12052.0,United Kingdom
+700207,P010,Wooden Photo Frame,1,28/01/2011 12:50,12.1,12052.0,United Kingdom
+700207,P007,Woven Cushion Cover,1,28/01/2011 12:50,13.5,12052.0,United Kingdom
+700208,P008,Stainless Water Bottle,3,20/09/2010 17:40,10.95,12052.0,United Kingdom
+700208,P006,Botanical Greeting Card,1,20/09/2010 17:40,1.12,12052.0,United Kingdom
+700208,P004,Cotton Tote Bag,1,20/09/2010 17:40,4.68,12052.0,United Kingdom
+700208,P007,Woven Cushion Cover,1,20/09/2010 17:40,15.0,12052.0,United Kingdom
+700209,P009,Ceramic Planter,2,09/03/2011 15:40,7.98,12052.0,Netherlands
+700209,P007,Woven Cushion Cover,1,09/03/2011 15:40,15.0,12052.0,Netherlands
+700209,P008,Stainless Water Bottle,1,09/03/2011 15:40,9.95,12052.0,Netherlands
+700209,P003,Decorative Candle Set,3,09/03/2011 15:40,8.75,12052.0,Netherlands
+700210,P009,Ceramic Planter,1,17/07/2010 08:30,6.53,12052.0,United Kingdom
+700210,P007,Woven Cushion Cover,1,17/07/2010 08:30,15.0,12052.0,United Kingdom
+700210,P001,Ceramic Tea Mug,1,17/07/2010 08:30,5.95,12052.0,United Kingdom
+700211,P003,Decorative Candle Set,2,22/07/2010 13:10,9.62,12052.0,United Kingdom
+700211,P002,Linen Table Runner,1,22/07/2010 13:10,11.25,12052.0,United Kingdom
+700211,P001,Ceramic Tea Mug,2,22/07/2010 13:10,5.95,12052.0,United Kingdom
+700212,P007,Woven Cushion Cover,1,29/09/2010 18:40,15.0,12052.0,Spain
+700212,P008,Stainless Water Bottle,12,29/09/2010 18:40,10.95,12052.0,Spain
+700212,P004,Cotton Tote Bag,3,29/09/2010 18:40,4.25,12052.0,Spain
+700213,P006,Botanical Greeting Card,1,20/12/2010 16:30,1.12,12052.0,Spain
+700213,P004,Cotton Tote Bag,6,20/12/2010 16:30,3.83,12052.0,Spain
+700213,P007,Woven Cushion Cover,1,20/12/2010 16:30,16.5,12052.0,Spain
+700213,P003,Decorative Candle Set,10,20/12/2010 16:30,8.75,12052.0,Spain
+700214,P003,Decorative Candle Set,1,03/07/2010 08:10,8.75,12053.0,United Kingdom
+700215,P004,Cotton Tote Bag,2,14/09/2010 08:00,4.25,12053.0,United Kingdom
+700216,P006,Botanical Greeting Card,1,09/03/2011 11:40,1.38,12053.0,United Kingdom
+700217,P009,Ceramic Planter,2,29/08/2010 10:30,7.98,12053.0,United Kingdom
+700217,P008,Stainless Water Bottle,10,29/08/2010 10:30,9.95,12053.0,United Kingdom
+700217,P006,Botanical Greeting Card,2,29/08/2010 10:30,1.12,12053.0,United Kingdom
+700218,P007,Woven Cushion Cover,3,15/10/2010 09:00,15.0,12053.0,United Kingdom
+700218,P004,Cotton Tote Bag,2,15/10/2010 09:00,4.68,12053.0,United Kingdom
+700218,P008,Stainless Water Bottle,1,15/10/2010 09:00,8.96,12053.0,United Kingdom
+700219,P004,Cotton Tote Bag,4,22/08/2010 08:50,4.25,12053.0,Spain
+700219,P001,Ceramic Tea Mug,4,22/08/2010 08:50,5.95,12053.0,Spain
+700219,P006,Botanical Greeting Card,6,22/08/2010 08:50,1.12,12053.0,Spain
+700220,P004,Cotton Tote Bag,2,24/08/2010 12:10,4.68,12053.0,United Kingdom
+700220,P010,Wooden Photo Frame,1,24/08/2010 12:10,12.1,12053.0,United Kingdom
+700221,P004,Cotton Tote Bag,1,17/10/2010 15:40,3.83,12054.0,EIRE
+700221,P001,Ceramic Tea Mug,3,17/10/2010 15:40,5.95,12054.0,EIRE
+700221,P002,Linen Table Runner,1,17/10/2010 15:40,11.25,12054.0,EIRE
+700221,P010,Wooden Photo Frame,4,17/10/2010 15:40,11.0,12054.0,EIRE
+700222,P008,Stainless Water Bottle,1,22/10/2010 10:30,9.95,12054.0,United Kingdom
+700222,P004,Cotton Tote Bag,2,22/10/2010 10:30,4.25,12054.0,United Kingdom
+700222,P001,Ceramic Tea Mug,2,22/10/2010 10:30,5.36,12054.0,United Kingdom
+700223,P001,Ceramic Tea Mug,1,22/03/2011 11:00,6.55,12054.0,United Kingdom
+700223,P010,Wooden Photo Frame,1,22/03/2011 11:00,12.1,12054.0,United Kingdom
+700224,P002,Linen Table Runner,2,29/09/2010 14:30,12.5,12054.0,United Kingdom
+700224,P001,Ceramic Tea Mug,1,29/09/2010 14:30,5.95,12054.0,United Kingdom
+700224,P006,Botanical Greeting Card,1,29/09/2010 14:30,1.25,12054.0,United Kingdom
+700224,P003,Decorative Candle Set,1,29/09/2010 14:30,8.75,12054.0,United Kingdom
+700225,P007,Woven Cushion Cover,1,28/12/2010 19:30,15.0,12055.0,United Kingdom
+700225,P009,Ceramic Planter,1,28/12/2010 19:30,7.98,12055.0,United Kingdom
+700225,P005,Glass Storage Jar,2,28/12/2010 19:30,7.15,12055.0,United Kingdom
+700226,P005,Glass Storage Jar,3,20/01/2011 09:30,6.5,12055.0,United Kingdom
+700226,P004,Cotton Tote Bag,3,20/01/2011 09:30,4.25,12055.0,United Kingdom
+700226,P010,Wooden Photo Frame,12,20/01/2011 09:30,11.0,12055.0,United Kingdom
+700227,P009,Ceramic Planter,1,07/02/2011 15:30,7.25,12055.0,United Kingdom
+700227,P007,Woven Cushion Cover,4,07/02/2011 15:30,15.0,12055.0,United Kingdom
+700227,P006,Botanical Greeting Card,6,07/02/2011 15:30,1.12,12055.0,United Kingdom
+700227,P002,Linen Table Runner,1,07/02/2011 15:30,12.5,12055.0,United Kingdom
+700228,P004,Cotton Tote Bag,2,07/04/2011 16:30,4.25,12055.0,Spain
+700228,P005,Glass Storage Jar,4,07/04/2011 16:30,6.5,12055.0,Spain
+700229,P006,Botanical Greeting Card,12,23/07/2010 14:40,1.25,12056.0,United Kingdom
+700230,P004,Cotton Tote Bag,6,27/04/2011 14:30,4.25,12056.0,France
+700230,P007,Woven Cushion Cover,3,27/04/2011 14:30,16.5,12056.0,France
+700230,P009,Ceramic Planter,2,27/04/2011 14:30,7.25,12056.0,France
+700231,P007,Woven Cushion Cover,2,31/01/2011 13:40,15.0,12056.0,United Kingdom
+700231,P009,Ceramic Planter,1,31/01/2011 13:40,6.53,12056.0,United Kingdom
+700231,P003,Decorative Candle Set,1,31/01/2011 13:40,7.88,12056.0,United Kingdom
+700232,P002,Linen Table Runner,1,17/11/2010 10:40,12.5,12057.0,Spain
+700233,P009,Ceramic Planter,10,15/09/2010 09:40,7.25,12057.0,United Kingdom
+700233,P006,Botanical Greeting Card,2,15/09/2010 09:40,1.12,12057.0,United Kingdom
+700233,P002,Linen Table Runner,6,15/09/2010 09:40,13.75,12057.0,United Kingdom
+700233,P001,Ceramic Tea Mug,1,15/09/2010 09:40,5.95,12057.0,United Kingdom
+700234,P010,Wooden Photo Frame,1,10/10/2010 17:20,12.1,12057.0,United Kingdom
+700234,P008,Stainless Water Bottle,3,10/10/2010 17:20,8.96,12057.0,United Kingdom
+700234,P006,Botanical Greeting Card,1,10/10/2010 17:20,1.12,12057.0,United Kingdom
+700235,P007,Woven Cushion Cover,3,09/04/2011 11:10,16.5,12057.0,United Kingdom
+700235,P010,Wooden Photo Frame,2,09/04/2011 11:10,11.0,12057.0,United Kingdom
+700235,P004,Cotton Tote Bag,3,09/04/2011 11:10,4.68,12057.0,United Kingdom
+700235,P002,Linen Table Runner,1,09/04/2011 11:10,11.25,12057.0,United Kingdom
+700236,P005,Glass Storage Jar,10,21/07/2010 13:20,5.85,12058.0,France
+700236,P008,Stainless Water Bottle,10,21/07/2010 13:20,10.95,12058.0,France
+700237,P004,Cotton Tote Bag,2,15/04/2011 14:50,4.25,12058.0,United Kingdom
+700237,P001,Ceramic Tea Mug,1,15/04/2011 14:50,6.55,12058.0,United Kingdom
+700237,P003,Decorative Candle Set,4,15/04/2011 14:50,8.75,12058.0,United Kingdom
+700237,P002,Linen Table Runner,1,15/04/2011 14:50,11.25,12058.0,United Kingdom
+700238,P007,Woven Cushion Cover,1,07/04/2011 17:50,15.0,12058.0,United Kingdom
+700238,P009,Ceramic Planter,10,07/04/2011 17:50,7.98,12058.0,United Kingdom
+700238,P002,Linen Table Runner,1,07/04/2011 17:50,11.25,12058.0,United Kingdom
+700238,P001,Ceramic Tea Mug,1,07/04/2011 17:50,5.95,12058.0,United Kingdom
+700239,P005,Glass Storage Jar,6,06/03/2011 12:00,6.5,12059.0,Germany
+700240,P010,Wooden Photo Frame,1,08/12/2010 11:00,12.1,12059.0,United Kingdom
+700240,P004,Cotton Tote Bag,1,08/12/2010 11:00,4.25,12059.0,United Kingdom
+700240,P007,Woven Cushion Cover,1,08/12/2010 11:00,15.0,12059.0,United Kingdom
+700241,P008,Stainless Water Bottle,2,19/04/2011 15:10,9.95,12059.0,United Kingdom
+700242,P008,Stainless Water Bottle,6,23/01/2011 19:40,9.95,12060.0,United Kingdom
+700243,P002,Linen Table Runner,1,30/10/2010 10:10,12.5,12060.0,United Kingdom
+700243,P008,Stainless Water Bottle,2,30/10/2010 10:10,9.95,12060.0,United Kingdom
+700243,P010,Wooden Photo Frame,3,30/10/2010 10:10,12.1,12060.0,United Kingdom
+700243,P001,Ceramic Tea Mug,1,30/10/2010 10:10,5.36,12060.0,United Kingdom
+700244,P009,Ceramic Planter,2,01/08/2010 10:40,6.53,12060.0,United Kingdom
+700244,P004,Cotton Tote Bag,6,01/08/2010 10:40,4.68,12060.0,United Kingdom
+700244,P005,Glass Storage Jar,2,01/08/2010 10:40,6.5,12060.0,United Kingdom
+700244,P010,Wooden Photo Frame,3,01/08/2010 10:40,11.0,12060.0,United Kingdom
+700245,P001,Ceramic Tea Mug,12,14/12/2010 10:00,5.95,12061.0,United Kingdom
+700246,P009,Ceramic Planter,1,04/12/2010 16:00,6.53,12061.0,United Kingdom
+700246,P005,Glass Storage Jar,2,04/12/2010 16:00,6.5,12061.0,United Kingdom
+700246,P004,Cotton Tote Bag,1,04/12/2010 16:00,4.68,12061.0,United Kingdom
+700247,P001,Ceramic Tea Mug,1,08/12/2010 10:50,6.55,12061.0,United Kingdom
+700248,P008,Stainless Water Bottle,1,17/11/2010 10:20,9.95,12061.0,EIRE
+700248,P004,Cotton Tote Bag,3,17/11/2010 10:20,4.25,12061.0,EIRE
+700248,P005,Glass Storage Jar,2,17/11/2010 10:20,5.85,12061.0,EIRE
+700249,P010,Wooden Photo Frame,3,11/01/2011 16:00,12.1,12062.0,United Kingdom
+700250,P010,Wooden Photo Frame,1,16/07/2010 18:40,11.0,12062.0,United Kingdom
+700250,P009,Ceramic Planter,12,16/07/2010 18:40,7.25,12062.0,United Kingdom
+700251,P005,Glass Storage Jar,1,16/07/2010 13:50,6.5,12062.0,United Kingdom
+700251,P007,Woven Cushion Cover,4,16/07/2010 13:50,13.5,12062.0,United Kingdom
+700252,P002,Linen Table Runner,6,05/08/2010 18:40,12.5,12063.0,United Kingdom
+700252,P004,Cotton Tote Bag,1,05/08/2010 18:40,4.25,12063.0,United Kingdom
+700252,P010,Wooden Photo Frame,2,05/08/2010 18:40,12.1,12063.0,United Kingdom
+700253,P007,Woven Cushion Cover,3,13/07/2010 16:40,15.0,12064.0,United Kingdom
+700254,P007,Woven Cushion Cover,1,17/08/2010 17:30,16.5,12064.0,France
+700255,P010,Wooden Photo Frame,1,10/12/2010 15:00,12.1,12064.0,United Kingdom
+700255,P001,Ceramic Tea Mug,1,10/12/2010 15:00,5.95,12064.0,United Kingdom
+700256,P004,Cotton Tote Bag,1,13/12/2010 15:20,4.25,12064.0,United Kingdom
+700256,P008,Stainless Water Bottle,12,13/12/2010 15:20,10.95,12064.0,United Kingdom
+700256,P002,Linen Table Runner,2,13/12/2010 15:20,11.25,12064.0,United Kingdom
+700257,P005,Glass Storage Jar,2,30/11/2010 12:00,7.15,12064.0,Germany
+700258,P002,Linen Table Runner,10,05/02/2011 16:40,13.75,12064.0,United Kingdom
+700258,P008,Stainless Water Bottle,2,05/02/2011 16:40,9.95,12064.0,United Kingdom
+700259,P006,Botanical Greeting Card,6,23/08/2010 19:10,1.25,12065.0,United Kingdom
+700259,P007,Woven Cushion Cover,2,23/08/2010 19:10,16.5,12065.0,United Kingdom
+700259,P008,Stainless Water Bottle,2,23/08/2010 19:10,9.95,12065.0,United Kingdom
+700259,P003,Decorative Candle Set,1,23/08/2010 19:10,7.88,12065.0,United Kingdom
+700260,P010,Wooden Photo Frame,3,29/08/2010 13:00,11.0,12065.0,United Kingdom
+700261,P007,Woven Cushion Cover,4,30/07/2010 17:10,15.0,12065.0,Netherlands
+700261,P009,Ceramic Planter,3,30/07/2010 17:10,6.53,12065.0,Netherlands
+700261,P001,Ceramic Tea Mug,1,30/07/2010 17:10,5.95,12065.0,Netherlands
+700261,P008,Stainless Water Bottle,1,30/07/2010 17:10,10.95,12065.0,Netherlands
+700262,P008,Stainless Water Bottle,3,29/01/2011 08:50,9.95,12066.0,Spain
+700263,P006,Botanical Greeting Card,1,25/08/2010 15:10,1.25,12066.0,United Kingdom
+700263,P002,Linen Table Runner,2,25/08/2010 15:10,12.5,12066.0,United Kingdom
+700264,P005,Glass Storage Jar,3,14/04/2011 12:10,7.15,12067.0,EIRE
+700264,P007,Woven Cushion Cover,3,14/04/2011 12:10,15.0,12067.0,EIRE
+700265,P001,Ceramic Tea Mug,1,19/08/2010 16:20,6.55,12067.0,Germany
+700265,P010,Wooden Photo Frame,1,19/08/2010 16:20,11.0,12067.0,Germany
+700266,P001,Ceramic Tea Mug,2,21/01/2011 10:00,5.36,12067.0,United Kingdom
+700266,P006,Botanical Greeting Card,1,21/01/2011 10:00,1.25,12067.0,United Kingdom
+700266,P004,Cotton Tote Bag,1,21/01/2011 10:00,4.25,12067.0,United Kingdom
+700267,P006,Botanical Greeting Card,2,13/11/2010 11:30,1.25,12067.0,United Kingdom
+700267,P010,Wooden Photo Frame,2,13/11/2010 11:30,11.0,12067.0,United Kingdom
+700267,P004,Cotton Tote Bag,3,13/11/2010 11:30,4.25,12067.0,United Kingdom
+700268,P005,Glass Storage Jar,12,31/01/2011 11:40,7.15,12067.0,United Kingdom
+700268,P001,Ceramic Tea Mug,2,31/01/2011 11:40,5.95,12067.0,United Kingdom
+700268,P003,Decorative Candle Set,2,31/01/2011 11:40,9.62,12067.0,United Kingdom
+700268,P006,Botanical Greeting Card,2,31/01/2011 11:40,1.25,12067.0,United Kingdom
+700269,P007,Woven Cushion Cover,2,17/01/2011 15:50,15.0,12068.0,United Kingdom
+700269,P002,Linen Table Runner,1,17/01/2011 15:50,13.75,12068.0,United Kingdom
+700270,P006,Botanical Greeting Card,6,18/12/2010 08:30,1.25,12068.0,United Kingdom
+700270,P008,Stainless Water Bottle,1,18/12/2010 08:30,8.96,12068.0,United Kingdom
+700270,P003,Decorative Candle Set,6,18/12/2010 08:30,8.75,12068.0,United Kingdom
+700271,P010,Wooden Photo Frame,10,23/07/2010 08:40,9.9,12068.0,France
+700272,P007,Woven Cushion Cover,4,13/02/2011 13:30,15.0,12068.0,United Kingdom
+700273,P002,Linen Table Runner,2,31/01/2011 16:50,11.25,12068.0,United Kingdom
+700273,P010,Wooden Photo Frame,4,31/01/2011 16:50,9.9,12068.0,United Kingdom
+700273,P005,Glass Storage Jar,3,31/01/2011 16:50,6.5,12068.0,United Kingdom
+700273,P007,Woven Cushion Cover,2,31/01/2011 16:50,15.0,12068.0,United Kingdom
+700274,P008,Stainless Water Bottle,1,31/07/2010 17:20,9.95,12069.0,United Kingdom
+700275,P010,Wooden Photo Frame,10,28/09/2010 18:30,9.9,12069.0,United Kingdom
+700275,P004,Cotton Tote Bag,3,28/09/2010 18:30,4.68,12069.0,United Kingdom
+700275,P007,Woven Cushion Cover,6,28/09/2010 18:30,15.0,12069.0,United Kingdom
+700276,P008,Stainless Water Bottle,1,28/07/2010 08:50,8.96,12069.0,United Kingdom
+700276,P009,Ceramic Planter,1,28/07/2010 08:50,7.98,12069.0,United Kingdom
+700276,P003,Decorative Candle Set,1,28/07/2010 08:50,8.75,12069.0,United Kingdom
+700276,P007,Woven Cushion Cover,1,28/07/2010 08:50,16.5,12069.0,United Kingdom
+700277,P003,Decorative Candle Set,1,29/10/2010 18:40,8.75,12069.0,United Kingdom
+700278,P005,Glass Storage Jar,3,11/10/2010 09:20,5.85,12069.0,United Kingdom
+700279,P010,Wooden Photo Frame,3,11/09/2010 17:20,12.1,12069.0,EIRE
+700279,P006,Botanical Greeting Card,2,11/09/2010 17:20,1.25,12069.0,EIRE
+700279,P002,Linen Table Runner,2,11/09/2010 17:20,12.5,12069.0,EIRE
+700279,P001,Ceramic Tea Mug,4,11/09/2010 17:20,6.55,12069.0,EIRE
+700280,P010,Wooden Photo Frame,3,15/10/2010 09:10,11.0,12070.0,Spain
+700281,P007,Woven Cushion Cover,10,14/10/2010 13:20,15.0,12070.0,Netherlands
+700281,P009,Ceramic Planter,1,14/10/2010 13:20,7.25,12070.0,Netherlands
+700281,P006,Botanical Greeting Card,12,14/10/2010 13:20,1.25,12070.0,Netherlands
+700281,P002,Linen Table Runner,6,14/10/2010 13:20,13.75,12070.0,Netherlands
+700282,P006,Botanical Greeting Card,4,19/11/2010 17:50,1.25,12070.0,United Kingdom
+700282,P005,Glass Storage Jar,2,19/11/2010 17:50,6.5,12070.0,United Kingdom
+700282,P003,Decorative Candle Set,3,19/11/2010 17:50,9.62,12070.0,United Kingdom
+700282,P008,Stainless Water Bottle,1,19/11/2010 17:50,9.95,12070.0,United Kingdom
+700283,P007,Woven Cushion Cover,1,25/08/2010 13:00,15.0,12071.0,United Kingdom
+700284,P010,Wooden Photo Frame,3,02/07/2010 19:20,11.0,12071.0,United Kingdom
+700285,P006,Botanical Greeting Card,1,12/02/2011 09:10,1.38,12071.0,United Kingdom
+700285,P001,Ceramic Tea Mug,2,12/02/2011 09:10,6.55,12071.0,United Kingdom
+700285,P004,Cotton Tote Bag,2,12/02/2011 09:10,4.25,12071.0,United Kingdom
+700286,P006,Botanical Greeting Card,3,07/04/2011 11:40,1.25,12071.0,United Kingdom
+700286,P004,Cotton Tote Bag,6,07/04/2011 11:40,4.25,12071.0,United Kingdom
+700286,P007,Woven Cushion Cover,2,07/04/2011 11:40,15.0,12071.0,United Kingdom
+700286,P001,Ceramic Tea Mug,3,07/04/2011 11:40,5.95,12071.0,United Kingdom
+700287,P003,Decorative Candle Set,3,16/08/2010 15:10,8.75,12071.0,United Kingdom
+700287,P004,Cotton Tote Bag,2,16/08/2010 15:10,4.68,12071.0,United Kingdom
+700288,P007,Woven Cushion Cover,4,20/09/2010 18:40,13.5,12071.0,France
+700288,P004,Cotton Tote Bag,1,20/09/2010 18:40,4.25,12071.0,France
+700288,P008,Stainless Water Bottle,4,20/09/2010 18:40,9.95,12071.0,France
+700288,P003,Decorative Candle Set,1,20/09/2010 18:40,8.75,12071.0,France
+700289,P007,Woven Cushion Cover,1,14/09/2010 18:00,15.0,12072.0,United Kingdom
+700289,P008,Stainless Water Bottle,6,14/09/2010 18:00,9.95,12072.0,United Kingdom
+700289,P004,Cotton Tote Bag,3,14/09/2010 18:00,4.25,12072.0,United Kingdom
+700290,P003,Decorative Candle Set,10,28/02/2011 18:10,7.88,12072.0,United Kingdom
+700290,P001,Ceramic Tea Mug,1,28/02/2011 18:10,5.36,12072.0,United Kingdom
+700290,P006,Botanical Greeting Card,1,28/02/2011 18:10,1.12,12072.0,United Kingdom
+700290,P008,Stainless Water Bottle,1,28/02/2011 18:10,9.95,12072.0,United Kingdom
+700291,P003,Decorative Candle Set,1,26/07/2010 13:10,8.75,12072.0,Germany
+700291,P009,Ceramic Planter,2,26/07/2010 13:10,7.25,12072.0,Germany
+700292,P007,Woven Cushion Cover,4,11/12/2010 16:20,16.5,12072.0,United Kingdom
+700292,P010,Wooden Photo Frame,1,11/12/2010 16:20,9.9,12072.0,United Kingdom
+700292,P008,Stainless Water Bottle,2,11/12/2010 16:20,8.96,12072.0,United Kingdom
+700293,P009,Ceramic Planter,12,21/07/2010 08:00,6.53,12073.0,United Kingdom
+700294,P010,Wooden Photo Frame,2,29/08/2010 15:50,12.1,12073.0,United Kingdom
+700294,P007,Woven Cushion Cover,1,29/08/2010 15:50,13.5,12073.0,United Kingdom
+700294,P004,Cotton Tote Bag,4,29/08/2010 15:50,4.68,12073.0,United Kingdom
+700295,P005,Glass Storage Jar,12,12/01/2011 12:20,7.15,12073.0,United Kingdom
+700295,P001,Ceramic Tea Mug,1,12/01/2011 12:20,5.36,12073.0,United Kingdom
+700295,P010,Wooden Photo Frame,10,12/01/2011 12:20,11.0,12073.0,United Kingdom
+700295,P008,Stainless Water Bottle,3,12/01/2011 12:20,9.95,12073.0,United Kingdom
+700296,P010,Wooden Photo Frame,3,11/02/2011 13:00,11.0,12073.0,France
+700297,P008,Stainless Water Bottle,2,07/02/2011 12:50,8.96,12073.0,United Kingdom
+700297,P005,Glass Storage Jar,2,07/02/2011 12:50,6.5,12073.0,United Kingdom
+700298,P004,Cotton Tote Bag,1,17/03/2011 15:00,4.25,12074.0,United Kingdom
+700299,P004,Cotton Tote Bag,3,12/12/2010 13:10,4.25,12074.0,United Kingdom
+700299,P007,Woven Cushion Cover,4,12/12/2010 13:10,15.0,12074.0,United Kingdom
+700299,P005,Glass Storage Jar,2,12/12/2010 13:10,6.5,12074.0,United Kingdom
+700300,P010,Wooden Photo Frame,1,02/01/2011 17:20,11.0,12074.0,Germany
+700301,P005,Glass Storage Jar,1,21/09/2010 09:40,5.85,12074.0,United Kingdom
+700302,P008,Stainless Water Bottle,1,12/07/2010 19:50,8.96,12074.0,United Kingdom
+700302,P009,Ceramic Planter,1,12/07/2010 19:50,6.53,12074.0,United Kingdom
+700303,P003,Decorative Candle Set,1,10/03/2011 13:30,8.75,12075.0,United Kingdom
+700303,P007,Woven Cushion Cover,2,10/03/2011 13:30,16.5,12075.0,United Kingdom
+700304,P003,Decorative Candle Set,1,22/07/2010 17:40,9.62,12075.0,United Kingdom
+700304,P007,Woven Cushion Cover,1,22/07/2010 17:40,15.0,12075.0,United Kingdom
+700304,P010,Wooden Photo Frame,2,22/07/2010 17:40,9.9,12075.0,United Kingdom
+700304,P002,Linen Table Runner,1,22/07/2010 17:40,12.5,12075.0,United Kingdom
+700305,P010,Wooden Photo Frame,2,09/11/2010 09:50,11.0,12076.0,United Kingdom
+700305,P001,Ceramic Tea Mug,1,09/11/2010 09:50,5.95,12076.0,United Kingdom
+700305,P008,Stainless Water Bottle,10,09/11/2010 09:50,10.95,12076.0,United Kingdom
+700305,P007,Woven Cushion Cover,6,09/11/2010 09:50,15.0,12076.0,United Kingdom
+700306,P009,Ceramic Planter,1,04/09/2010 14:50,6.53,12077.0,United Kingdom
+700306,P001,Ceramic Tea Mug,4,04/09/2010 14:50,5.36,12077.0,United Kingdom
+700306,P004,Cotton Tote Bag,1,04/09/2010 14:50,4.25,12077.0,United Kingdom
+700306,P006,Botanical Greeting Card,2,04/09/2010 14:50,1.12,12077.0,United Kingdom
+700307,P001,Ceramic Tea Mug,1,07/10/2010 19:20,5.95,12077.0,United Kingdom
+700307,P009,Ceramic Planter,4,07/10/2010 19:20,6.53,12077.0,United Kingdom
+700307,P004,Cotton Tote Bag,10,07/10/2010 19:20,4.25,12077.0,United Kingdom
+700307,P002,Linen Table Runner,2,07/10/2010 19:20,12.5,12077.0,United Kingdom
+700308,P006,Botanical Greeting Card,6,01/02/2011 08:40,1.12,12077.0,Germany
+700309,P009,Ceramic Planter,1,06/02/2011 09:20,7.25,12077.0,United Kingdom
+700309,P006,Botanical Greeting Card,2,06/02/2011 09:20,1.12,12077.0,United Kingdom
+700309,P001,Ceramic Tea Mug,3,06/02/2011 09:20,5.95,12077.0,United Kingdom
+700309,P004,Cotton Tote Bag,4,06/02/2011 09:20,4.68,12077.0,United Kingdom
+700310,P004,Cotton Tote Bag,6,18/10/2010 10:40,4.68,12077.0,United Kingdom
+700310,P001,Ceramic Tea Mug,1,18/10/2010 10:40,6.55,12077.0,United Kingdom
+700310,P006,Botanical Greeting Card,1,18/10/2010 10:40,1.25,12077.0,United Kingdom
+700311,P008,Stainless Water Bottle,2,11/09/2010 14:40,8.96,12077.0,United Kingdom
+700311,P004,Cotton Tote Bag,2,11/09/2010 14:40,4.25,12077.0,United Kingdom
+700311,P001,Ceramic Tea Mug,1,11/09/2010 14:40,6.55,12077.0,United Kingdom
+700312,P005,Glass Storage Jar,2,24/09/2010 09:10,6.5,12078.0,United Kingdom
+700312,P007,Woven Cushion Cover,1,24/09/2010 09:10,16.5,12078.0,United Kingdom
+700313,P002,Linen Table Runner,2,31/08/2010 14:10,12.5,12078.0,France
+700313,P003,Decorative Candle Set,1,31/08/2010 14:10,8.75,12078.0,France
+700313,P001,Ceramic Tea Mug,12,31/08/2010 14:10,5.95,12078.0,France
+700314,P002,Linen Table Runner,4,28/09/2010 17:20,11.25,12078.0,United Kingdom
+700314,P009,Ceramic Planter,6,28/09/2010 17:20,7.25,12078.0,United Kingdom
+700314,P007,Woven Cushion Cover,2,28/09/2010 17:20,16.5,12078.0,United Kingdom
+700314,P006,Botanical Greeting Card,4,28/09/2010 17:20,1.25,12078.0,United Kingdom
+700315,P001,Ceramic Tea Mug,1,17/08/2010 19:40,6.55,12079.0,EIRE
+700315,P003,Decorative Candle Set,2,17/08/2010 19:40,8.75,12079.0,EIRE
+700315,P010,Wooden Photo Frame,1,17/08/2010 19:40,12.1,12079.0,EIRE
+700316,P006,Botanical Greeting Card,4,30/08/2010 15:00,1.12,12079.0,United Kingdom
+700316,P004,Cotton Tote Bag,4,30/08/2010 15:00,3.83,12079.0,United Kingdom
+700316,P009,Ceramic Planter,6,30/08/2010 15:00,7.25,12079.0,United Kingdom
+700316,P001,Ceramic Tea Mug,6,30/08/2010 15:00,5.95,12079.0,United Kingdom
+700317,P007,Woven Cushion Cover,1,25/12/2010 15:30,16.5,12079.0,United Kingdom
+700318,P002,Linen Table Runner,1,18/02/2011 19:00,13.75,12079.0,France
+700318,P006,Botanical Greeting Card,6,18/02/2011 19:00,1.25,12079.0,France
+700318,P003,Decorative Candle Set,1,18/02/2011 19:00,8.75,12079.0,France
+700319,P010,Wooden Photo Frame,1,08/07/2010 10:50,11.0,12079.0,United Kingdom
+700320,P007,Woven Cushion Cover,4,02/07/2010 16:30,16.5,12079.0,United Kingdom
+700320,P010,Wooden Photo Frame,2,02/07/2010 16:30,12.1,12079.0,United Kingdom
+700320,P006,Botanical Greeting Card,6,02/07/2010 16:30,1.38,12079.0,United Kingdom
+700320,P008,Stainless Water Bottle,2,02/07/2010 16:30,9.95,12079.0,United Kingdom
+700321,P006,Botanical Greeting Card,3,25/07/2010 11:10,1.25,12080.0,United Kingdom
+700321,P004,Cotton Tote Bag,10,25/07/2010 11:10,4.25,12080.0,United Kingdom
+700322,P005,Glass Storage Jar,4,24/11/2010 15:20,5.85,12080.0,United Kingdom
+700323,P003,Decorative Candle Set,2,10/11/2010 10:40,9.62,12080.0,United Kingdom
+700323,P010,Wooden Photo Frame,1,10/11/2010 10:40,11.0,12080.0,United Kingdom
+700323,P004,Cotton Tote Bag,3,10/11/2010 10:40,4.25,12080.0,United Kingdom
+700323,P007,Woven Cushion Cover,2,10/11/2010 10:40,15.0,12080.0,United Kingdom
+700324,P007,Woven Cushion Cover,2,19/11/2010 15:40,15.0,12081.0,France
+700324,P003,Decorative Candle Set,2,19/11/2010 15:40,8.75,12081.0,France
+700324,P002,Linen Table Runner,10,19/11/2010 15:40,12.5,12081.0,France
+700325,P004,Cotton Tote Bag,2,12/02/2011 19:30,4.68,12081.0,United Kingdom
+700325,P001,Ceramic Tea Mug,3,12/02/2011 19:30,5.95,12081.0,United Kingdom
+700325,P010,Wooden Photo Frame,1,12/02/2011 19:30,9.9,12081.0,United Kingdom
+700325,P006,Botanical Greeting Card,1,12/02/2011 19:30,1.25,12081.0,United Kingdom
+700326,P010,Wooden Photo Frame,6,29/07/2010 13:10,12.1,12082.0,France
+700327,P010,Wooden Photo Frame,2,15/10/2010 13:00,11.0,12082.0,United Kingdom
+700327,P004,Cotton Tote Bag,2,15/10/2010 13:00,3.83,12082.0,United Kingdom
+700328,P005,Glass Storage Jar,3,11/07/2010 19:10,7.15,12082.0,Spain
+700329,P003,Decorative Candle Set,6,16/02/2011 14:10,8.75,12082.0,United Kingdom
+700329,P007,Woven Cushion Cover,2,16/02/2011 14:10,15.0,12082.0,United Kingdom
+700330,P003,Decorative Candle Set,1,19/11/2010 09:50,9.62,12082.0,United Kingdom
+700330,P010,Wooden Photo Frame,3,19/11/2010 09:50,11.0,12082.0,United Kingdom
+700330,P007,Woven Cushion Cover,1,19/11/2010 09:50,16.5,12082.0,United Kingdom
+700330,P004,Cotton Tote Bag,6,19/11/2010 09:50,4.25,12082.0,United Kingdom
+700331,P005,Glass Storage Jar,10,28/09/2010 19:00,7.15,12082.0,United Kingdom
+700331,P001,Ceramic Tea Mug,4,28/09/2010 19:00,5.95,12082.0,United Kingdom
+700331,P002,Linen Table Runner,2,28/09/2010 19:00,12.5,12082.0,United Kingdom
+700332,P006,Botanical Greeting Card,2,30/11/2010 12:20,1.25,12083.0,United Kingdom
+700332,P009,Ceramic Planter,3,30/11/2010 12:20,7.25,12083.0,United Kingdom
+700332,P004,Cotton Tote Bag,10,30/11/2010 12:20,4.25,12083.0,United Kingdom
+700333,P007,Woven Cushion Cover,1,19/04/2011 19:50,15.0,12083.0,United Kingdom
+700334,P005,Glass Storage Jar,10,06/04/2011 18:40,7.15,12084.0,United Kingdom
+700334,P008,Stainless Water Bottle,1,06/04/2011 18:40,10.95,12084.0,United Kingdom
+700335,P006,Botanical Greeting Card,1,29/12/2010 10:50,1.25,12084.0,United Kingdom
+700335,P004,Cotton Tote Bag,1,29/12/2010 10:50,4.68,12084.0,United Kingdom
+700335,P001,Ceramic Tea Mug,10,29/12/2010 10:50,6.55,12084.0,United Kingdom
+700335,P009,Ceramic Planter,1,29/12/2010 10:50,7.25,12084.0,United Kingdom
+700336,P009,Ceramic Planter,6,04/10/2010 15:30,7.98,12085.0,United Kingdom
+700336,P006,Botanical Greeting Card,1,04/10/2010 15:30,1.25,12085.0,United Kingdom
+700336,P007,Woven Cushion Cover,1,04/10/2010 15:30,15.0,12085.0,United Kingdom
+700337,P009,Ceramic Planter,2,07/04/2011 10:20,7.25,12085.0,United Kingdom
+700337,P007,Woven Cushion Cover,3,07/04/2011 10:20,16.5,12085.0,United Kingdom
+700337,P010,Wooden Photo Frame,2,07/04/2011 10:20,12.1,12085.0,United Kingdom
+700337,P003,Decorative Candle Set,3,07/04/2011 10:20,8.75,12085.0,United Kingdom
+700338,P009,Ceramic Planter,1,15/01/2011 17:10,7.25,12085.0,EIRE
+700339,P007,Woven Cushion Cover,10,20/03/2011 15:30,13.5,12085.0,United Kingdom
+700339,P005,Glass Storage Jar,1,20/03/2011 15:30,6.5,12085.0,United Kingdom
+700339,P006,Botanical Greeting Card,1,20/03/2011 15:30,1.12,12085.0,United Kingdom
+700339,P002,Linen Table Runner,4,20/03/2011 15:30,12.5,12085.0,United Kingdom
+700340,P003,Decorative Candle Set,1,08/10/2010 15:50,8.75,12085.0,France
+700340,P008,Stainless Water Bottle,6,08/10/2010 15:50,9.95,12085.0,France
+700340,P006,Botanical Greeting Card,4,08/10/2010 15:50,1.25,12085.0,France
+700341,P004,Cotton Tote Bag,3,14/09/2010 19:40,4.68,12086.0,United Kingdom
+700342,P001,Ceramic Tea Mug,1,15/07/2010 19:40,5.95,12086.0,Spain
+700342,P005,Glass Storage Jar,1,15/07/2010 19:40,6.5,12086.0,Spain
+700342,P009,Ceramic Planter,10,15/07/2010 19:40,6.53,12086.0,Spain
+700342,P003,Decorative Candle Set,10,15/07/2010 19:40,8.75,12086.0,Spain
+700343,P005,Glass Storage Jar,4,04/03/2011 10:50,5.85,12086.0,EIRE
+700343,P006,Botanical Greeting Card,1,04/03/2011 10:50,1.25,12086.0,EIRE
+700343,P008,Stainless Water Bottle,2,04/03/2011 10:50,9.95,12086.0,EIRE
+700343,P001,Ceramic Tea Mug,3,04/03/2011 10:50,5.36,12086.0,EIRE
+700344,P004,Cotton Tote Bag,2,13/04/2011 08:50,4.25,12087.0,EIRE
+700344,P001,Ceramic Tea Mug,1,13/04/2011 08:50,5.36,12087.0,EIRE
+700344,P008,Stainless Water Bottle,3,13/04/2011 08:50,9.95,12087.0,EIRE
+700344,P003,Decorative Candle Set,2,13/04/2011 08:50,8.75,12087.0,EIRE
+700345,P006,Botanical Greeting Card,6,20/10/2010 08:40,1.25,12087.0,United Kingdom
+700345,P010,Wooden Photo Frame,12,20/10/2010 08:40,12.1,12087.0,United Kingdom
+700345,P004,Cotton Tote Bag,1,20/10/2010 08:40,4.25,12087.0,United Kingdom
+700346,P003,Decorative Candle Set,1,11/07/2010 11:00,8.75,12087.0,United Kingdom
+700346,P001,Ceramic Tea Mug,4,11/07/2010 11:00,5.95,12087.0,United Kingdom
+700346,P006,Botanical Greeting Card,3,11/07/2010 11:00,1.25,12087.0,United Kingdom
+700347,P002,Linen Table Runner,1,26/03/2011 16:00,11.25,12087.0,United Kingdom
+700348,P006,Botanical Greeting Card,1,03/04/2011 14:20,1.25,12087.0,Netherlands
+700348,P002,Linen Table Runner,2,03/04/2011 14:20,13.75,12087.0,Netherlands
+700348,P010,Wooden Photo Frame,1,03/04/2011 14:20,9.9,12087.0,Netherlands
+700349,P002,Linen Table Runner,2,11/02/2011 09:00,12.5,12087.0,United Kingdom
+700350,P008,Stainless Water Bottle,1,28/07/2010 09:40,8.96,12088.0,Germany
+700350,P002,Linen Table Runner,1,28/07/2010 09:40,11.25,12088.0,Germany
+700351,P002,Linen Table Runner,3,05/03/2011 10:10,12.5,12088.0,United Kingdom
+700351,P001,Ceramic Tea Mug,1,05/03/2011 10:10,5.36,12088.0,United Kingdom
+700351,P004,Cotton Tote Bag,3,05/03/2011 10:10,4.25,12088.0,United Kingdom
+700351,P003,Decorative Candle Set,1,05/03/2011 10:10,8.75,12088.0,United Kingdom
+700352,P005,Glass Storage Jar,1,04/01/2011 10:20,6.5,12088.0,United Kingdom
+700352,P004,Cotton Tote Bag,1,04/01/2011 10:20,3.83,12088.0,United Kingdom
+700353,P006,Botanical Greeting Card,2,03/03/2011 14:00,1.12,12089.0,United Kingdom
+700354,P006,Botanical Greeting Card,10,29/12/2010 16:10,1.38,12089.0,United Kingdom
+700355,P001,Ceramic Tea Mug,2,12/03/2011 15:50,5.95,12090.0,Netherlands
+700355,P006,Botanical Greeting Card,6,12/03/2011 15:50,1.12,12090.0,Netherlands
+700355,P004,Cotton Tote Bag,1,12/03/2011 15:50,4.25,12090.0,Netherlands
+700356,P010,Wooden Photo Frame,10,16/09/2010 18:50,9.9,12090.0,United Kingdom
+700356,P003,Decorative Candle Set,4,16/09/2010 18:50,9.62,12090.0,United Kingdom
+700356,P005,Glass Storage Jar,2,16/09/2010 18:50,6.5,12090.0,United Kingdom
+700357,P003,Decorative Candle Set,6,11/09/2010 18:50,7.88,12090.0,Spain
+700357,P009,Ceramic Planter,1,11/09/2010 18:50,7.98,12090.0,Spain
+700358,P008,Stainless Water Bottle,1,12/10/2010 16:20,9.95,12090.0,United Kingdom
+700359,P003,Decorative Candle Set,1,12/07/2010 08:50,8.75,12091.0,United Kingdom
+700360,P002,Linen Table Runner,1,03/04/2011 17:10,13.75,12091.0,Netherlands
+700360,P005,Glass Storage Jar,1,03/04/2011 17:10,7.15,12091.0,Netherlands
+700360,P003,Decorative Candle Set,1,03/04/2011 17:10,7.88,12091.0,Netherlands
+700360,P004,Cotton Tote Bag,2,03/04/2011 17:10,4.25,12091.0,Netherlands
+700361,P009,Ceramic Planter,1,23/11/2010 14:20,6.53,12091.0,United Kingdom
+700361,P006,Botanical Greeting Card,10,23/11/2010 14:20,1.25,12091.0,United Kingdom
+700361,P002,Linen Table Runner,1,23/11/2010 14:20,12.5,12091.0,United Kingdom
+700362,P006,Botanical Greeting Card,4,07/01/2011 17:30,1.25,12092.0,United Kingdom
+700362,P002,Linen Table Runner,1,07/01/2011 17:30,12.5,12092.0,United Kingdom
+700363,P004,Cotton Tote Bag,2,04/11/2010 09:20,4.25,12092.0,United Kingdom
+700363,P001,Ceramic Tea Mug,3,04/11/2010 09:20,5.95,12092.0,United Kingdom
+700363,P010,Wooden Photo Frame,2,04/11/2010 09:20,11.0,12092.0,United Kingdom
+700364,P009,Ceramic Planter,3,11/01/2011 17:30,7.25,12092.0,Netherlands
+700365,P003,Decorative Candle Set,1,29/09/2010 12:40,8.75,12092.0,United Kingdom
+700365,P001,Ceramic Tea Mug,1,29/09/2010 12:40,5.36,12092.0,United Kingdom
+700365,P005,Glass Storage Jar,3,29/09/2010 12:40,6.5,12092.0,United Kingdom
+700366,P007,Woven Cushion Cover,1,13/02/2011 18:20,15.0,12093.0,United Kingdom
+700366,P009,Ceramic Planter,1,13/02/2011 18:20,7.98,12093.0,United Kingdom
+700367,P005,Glass Storage Jar,1,24/04/2011 14:30,7.15,12093.0,United Kingdom
+700367,P010,Wooden Photo Frame,1,24/04/2011 14:30,9.9,12093.0,United Kingdom
+700367,P007,Woven Cushion Cover,12,24/04/2011 14:30,16.5,12093.0,United Kingdom
+700368,P010,Wooden Photo Frame,1,18/04/2011 08:50,11.0,12093.0,France
+700368,P008,Stainless Water Bottle,1,18/04/2011 08:50,9.95,12093.0,France
+700368,P001,Ceramic Tea Mug,2,18/04/2011 08:50,6.55,12093.0,France
+700369,P007,Woven Cushion Cover,10,20/12/2010 19:20,15.0,12094.0,Netherlands
+700369,P005,Glass Storage Jar,1,20/12/2010 19:20,7.15,12094.0,Netherlands
+700369,P009,Ceramic Planter,1,20/12/2010 19:20,7.25,12094.0,Netherlands
+700369,P001,Ceramic Tea Mug,4,20/12/2010 19:20,5.95,12094.0,Netherlands
+700370,P007,Woven Cushion Cover,1,15/01/2011 10:20,15.0,12094.0,United Kingdom
+700370,P010,Wooden Photo Frame,12,15/01/2011 10:20,11.0,12094.0,United Kingdom
+700370,P009,Ceramic Planter,1,15/01/2011 10:20,6.53,12094.0,United Kingdom
+700370,P003,Decorative Candle Set,1,15/01/2011 10:20,8.75,12094.0,United Kingdom
+700371,P003,Decorative Candle Set,1,07/11/2010 19:30,8.75,12094.0,United Kingdom
+700371,P006,Botanical Greeting Card,3,07/11/2010 19:30,1.25,12094.0,United Kingdom
+700371,P001,Ceramic Tea Mug,2,07/11/2010 19:30,5.95,12094.0,United Kingdom
+700372,P001,Ceramic Tea Mug,1,12/12/2010 19:50,6.55,12094.0,United Kingdom
+700372,P008,Stainless Water Bottle,3,12/12/2010 19:50,8.96,12094.0,United Kingdom
+700373,P005,Glass Storage Jar,6,14/01/2011 12:20,5.85,12094.0,United Kingdom
+700373,P009,Ceramic Planter,3,14/01/2011 12:20,7.25,12094.0,United Kingdom
+700374,P008,Stainless Water Bottle,2,19/01/2011 18:30,8.96,12094.0,United Kingdom
+700374,P007,Woven Cushion Cover,3,19/01/2011 18:30,15.0,12094.0,United Kingdom
+700375,P002,Linen Table Runner,1,17/02/2011 08:20,13.75,12094.0,United Kingdom
+700375,P005,Glass Storage Jar,1,17/02/2011 08:20,6.5,12094.0,United Kingdom
+700375,P006,Botanical Greeting Card,2,17/02/2011 08:20,1.12,12094.0,United Kingdom
+700376,P003,Decorative Candle Set,2,05/02/2011 19:00,8.75,12095.0,United Kingdom
+700376,P009,Ceramic Planter,12,05/02/2011 19:00,7.98,12095.0,United Kingdom
+700376,P002,Linen Table Runner,1,05/02/2011 19:00,11.25,12095.0,United Kingdom
+700376,P008,Stainless Water Bottle,10,05/02/2011 19:00,8.96,12095.0,United Kingdom
+700377,P003,Decorative Candle Set,1,13/09/2010 17:10,8.75,12095.0,United Kingdom
+700378,P006,Botanical Greeting Card,3,26/09/2010 19:00,1.12,12096.0,Germany
+700378,P010,Wooden Photo Frame,2,26/09/2010 19:00,11.0,12096.0,Germany
+700378,P003,Decorative Candle Set,10,26/09/2010 19:00,8.75,12096.0,Germany
+700378,P005,Glass Storage Jar,2,26/09/2010 19:00,6.5,12096.0,Germany
+700379,P005,Glass Storage Jar,2,03/07/2010 12:40,6.5,12096.0,United Kingdom
+700379,P009,Ceramic Planter,10,03/07/2010 12:40,7.25,12096.0,United Kingdom
+700380,P003,Decorative Candle Set,3,01/10/2010 10:00,8.75,12096.0,United Kingdom
+700381,P008,Stainless Water Bottle,6,13/11/2010 09:50,10.95,12096.0,United Kingdom
+700381,P002,Linen Table Runner,6,13/11/2010 09:50,12.5,12096.0,United Kingdom
+700381,P005,Glass Storage Jar,1,13/11/2010 09:50,5.85,12096.0,United Kingdom
+700382,P010,Wooden Photo Frame,6,07/12/2010 12:00,11.0,12096.0,United Kingdom
+700382,P008,Stainless Water Bottle,1,07/12/2010 12:00,9.95,12096.0,United Kingdom
+700382,P009,Ceramic Planter,6,07/12/2010 12:00,7.98,12096.0,United Kingdom
+700382,P004,Cotton Tote Bag,4,07/12/2010 12:00,4.25,12096.0,United Kingdom
+700383,P009,Ceramic Planter,12,20/12/2010 15:30,7.25,12096.0,United Kingdom
+700383,P006,Botanical Greeting Card,1,20/12/2010 15:30,1.25,12096.0,United Kingdom
+700383,P010,Wooden Photo Frame,6,20/12/2010 15:30,9.9,12096.0,United Kingdom
+700384,P002,Linen Table Runner,4,01/07/2010 16:10,12.5,12097.0,United Kingdom
+700384,P005,Glass Storage Jar,6,01/07/2010 16:10,6.5,12097.0,United Kingdom
+700385,P008,Stainless Water Bottle,2,01/02/2011 08:10,8.96,12097.0,United Kingdom
+700385,P010,Wooden Photo Frame,1,01/02/2011 08:10,12.1,12097.0,United Kingdom
+700386,P008,Stainless Water Bottle,4,27/08/2010 17:00,10.95,12098.0,United Kingdom
+700386,P003,Decorative Candle Set,10,27/08/2010 17:00,8.75,12098.0,United Kingdom
+700387,P003,Decorative Candle Set,3,23/04/2011 15:00,8.75,12098.0,United Kingdom
+700388,P002,Linen Table Runner,2,11/01/2011 19:50,12.5,12098.0,United Kingdom
+700388,P004,Cotton Tote Bag,3,11/01/2011 19:50,4.25,12098.0,United Kingdom
+700389,P008,Stainless Water Bottle,2,16/11/2010 16:20,9.95,12098.0,Spain
+700389,P007,Woven Cushion Cover,4,16/11/2010 16:20,13.5,12098.0,Spain
+700390,P008,Stainless Water Bottle,1,18/08/2010 10:50,8.96,12098.0,United Kingdom
+700390,P003,Decorative Candle Set,1,18/08/2010 10:50,9.62,12098.0,United Kingdom
+700390,P002,Linen Table Runner,1,18/08/2010 10:50,12.5,12098.0,United Kingdom
+700391,P002,Linen Table Runner,1,18/12/2010 18:20,11.25,12098.0,EIRE
+700391,P008,Stainless Water Bottle,1,18/12/2010 18:20,8.96,12098.0,EIRE
+700391,P004,Cotton Tote Bag,4,18/12/2010 18:20,4.25,12098.0,EIRE
+700392,P002,Linen Table Runner,3,23/08/2010 09:50,12.5,12098.0,Netherlands
+700392,P004,Cotton Tote Bag,4,23/08/2010 09:50,4.25,12098.0,Netherlands
+700392,P001,Ceramic Tea Mug,1,23/08/2010 09:50,5.36,12098.0,Netherlands
+700392,P003,Decorative Candle Set,6,23/08/2010 09:50,9.62,12098.0,Netherlands
+700393,P010,Wooden Photo Frame,1,29/09/2010 14:30,12.1,12098.0,EIRE
+700393,P004,Cotton Tote Bag,1,29/09/2010 14:30,4.25,12098.0,EIRE
+700393,P003,Decorative Candle Set,1,29/09/2010 14:30,7.88,12098.0,EIRE
+700394,P009,Ceramic Planter,1,16/09/2010 17:30,7.25,12099.0,United Kingdom
+700394,P003,Decorative Candle Set,2,16/09/2010 17:30,7.88,12099.0,United Kingdom
+700394,P004,Cotton Tote Bag,3,16/09/2010 17:30,4.25,12099.0,United Kingdom
+700395,P006,Botanical Greeting Card,1,02/07/2010 12:50,1.38,12099.0,United Kingdom
+700396,P008,Stainless Water Bottle,1,03/04/2011 19:20,10.95,12099.0,United Kingdom
+700397,P010,Wooden Photo Frame,2,12/07/2010 11:00,12.1,12099.0,United Kingdom
+700397,P003,Decorative Candle Set,6,12/07/2010 11:00,8.75,12099.0,United Kingdom
+700398,P006,Botanical Greeting Card,1,23/10/2010 14:40,1.38,12099.0,United Kingdom
+700399,P002,Linen Table Runner,1,02/09/2010 14:50,13.75,12100.0,Netherlands
+700399,P007,Woven Cushion Cover,2,02/09/2010 14:50,13.5,12100.0,Netherlands
+700399,P004,Cotton Tote Bag,3,02/09/2010 14:50,4.25,12100.0,Netherlands
+700399,P010,Wooden Photo Frame,1,02/09/2010 14:50,9.9,12100.0,Netherlands
+700400,P002,Linen Table Runner,4,05/02/2011 17:10,12.5,12101.0,United Kingdom
+700400,P009,Ceramic Planter,6,05/02/2011 17:10,7.25,12101.0,United Kingdom
+700401,P001,Ceramic Tea Mug,1,21/04/2011 08:20,5.95,12102.0,France
+700401,P004,Cotton Tote Bag,2,21/04/2011 08:20,3.83,12102.0,France
+700401,P008,Stainless Water Bottle,1,21/04/2011 08:20,9.95,12102.0,France
+700401,P005,Glass Storage Jar,4,21/04/2011 08:20,6.5,12102.0,France
+700402,P007,Woven Cushion Cover,1,28/12/2010 14:30,15.0,12102.0,United Kingdom
+700402,P003,Decorative Candle Set,12,28/12/2010 14:30,8.75,12102.0,United Kingdom
+700402,P004,Cotton Tote Bag,1,28/12/2010 14:30,4.25,12102.0,United Kingdom
+700402,P002,Linen Table Runner,1,28/12/2010 14:30,12.5,12102.0,United Kingdom
+700403,P005,Glass Storage Jar,3,25/01/2011 11:10,5.85,12102.0,United Kingdom
+700403,P006,Botanical Greeting Card,2,25/01/2011 11:10,1.25,12102.0,United Kingdom
+700403,P004,Cotton Tote Bag,1,25/01/2011 11:10,4.68,12102.0,United Kingdom
+700404,P002,Linen Table Runner,1,27/02/2011 09:50,12.5,12102.0,United Kingdom
+700404,P009,Ceramic Planter,1,27/02/2011 09:50,6.53,12102.0,United Kingdom
+700405,P008,Stainless Water Bottle,1,22/11/2010 19:40,9.95,12102.0,United Kingdom
+700405,P002,Linen Table Runner,2,22/11/2010 19:40,12.5,12102.0,United Kingdom
+700405,P006,Botanical Greeting Card,10,22/11/2010 19:40,1.25,12102.0,United Kingdom
+700406,P009,Ceramic Planter,10,11/04/2011 16:00,7.25,12103.0,United Kingdom
+700406,P008,Stainless Water Bottle,1,11/04/2011 16:00,9.95,12103.0,United Kingdom
+700406,P001,Ceramic Tea Mug,4,11/04/2011 16:00,6.55,12103.0,United Kingdom
+700407,P005,Glass Storage Jar,1,24/11/2010 13:10,7.15,12103.0,Spain
+700407,P009,Ceramic Planter,10,24/11/2010 13:10,6.53,12103.0,Spain
+700407,P006,Botanical Greeting Card,2,24/11/2010 13:10,1.25,12103.0,Spain
+700408,P008,Stainless Water Bottle,2,08/12/2010 10:50,9.95,12103.0,United Kingdom
+700409,P001,Ceramic Tea Mug,2,16/03/2011 16:40,5.95,12104.0,United Kingdom
+700409,P006,Botanical Greeting Card,2,16/03/2011 16:40,1.25,12104.0,United Kingdom
+700409,P004,Cotton Tote Bag,1,16/03/2011 16:40,4.68,12104.0,United Kingdom
+700410,P009,Ceramic Planter,1,29/01/2011 09:00,7.25,12104.0,United Kingdom
+700410,P002,Linen Table Runner,4,29/01/2011 09:00,12.5,12104.0,United Kingdom
+700410,P005,Glass Storage Jar,10,29/01/2011 09:00,5.85,12104.0,United Kingdom
+700411,P001,Ceramic Tea Mug,2,11/07/2010 15:20,5.95,12104.0,United Kingdom
+700411,P009,Ceramic Planter,3,11/07/2010 15:20,7.25,12104.0,United Kingdom
+700411,P002,Linen Table Runner,1,11/07/2010 15:20,12.5,12104.0,United Kingdom
+700412,P010,Wooden Photo Frame,1,16/07/2010 16:20,11.0,12104.0,United Kingdom
+700412,P006,Botanical Greeting Card,1,16/07/2010 16:20,1.25,12104.0,United Kingdom
+700412,P007,Woven Cushion Cover,10,16/07/2010 16:20,13.5,12104.0,United Kingdom
+700413,P001,Ceramic Tea Mug,3,09/02/2011 17:30,5.95,12104.0,United Kingdom
+700414,P001,Ceramic Tea Mug,3,22/04/2011 09:50,6.55,12104.0,United Kingdom
+700414,P005,Glass Storage Jar,3,22/04/2011 09:50,7.15,12104.0,United Kingdom
+700415,P003,Decorative Candle Set,1,19/09/2010 08:00,9.62,12105.0,United Kingdom
+700415,P002,Linen Table Runner,1,19/09/2010 08:00,12.5,12105.0,United Kingdom
+700416,P007,Woven Cushion Cover,1,26/10/2010 12:00,16.5,12105.0,United Kingdom
+700416,P009,Ceramic Planter,6,26/10/2010 12:00,7.25,12105.0,United Kingdom
+700416,P001,Ceramic Tea Mug,3,26/10/2010 12:00,6.55,12105.0,United Kingdom
+700416,P002,Linen Table Runner,2,26/10/2010 12:00,11.25,12105.0,United Kingdom
+700417,P009,Ceramic Planter,2,16/01/2011 13:30,7.25,12105.0,United Kingdom
+700417,P008,Stainless Water Bottle,1,16/01/2011 13:30,8.96,12105.0,United Kingdom
+700417,P010,Wooden Photo Frame,3,16/01/2011 13:30,11.0,12105.0,United Kingdom
+700417,P002,Linen Table Runner,1,16/01/2011 13:30,11.25,12105.0,United Kingdom
+700418,P009,Ceramic Planter,10,11/12/2010 16:50,7.98,12105.0,United Kingdom
+700419,P009,Ceramic Planter,2,01/04/2011 16:00,7.25,12106.0,United Kingdom
+700420,P006,Botanical Greeting Card,2,25/08/2010 16:50,1.25,12106.0,United Kingdom
+700421,P002,Linen Table Runner,10,17/09/2010 14:20,11.25,12106.0,United Kingdom
+700421,P001,Ceramic Tea Mug,3,17/09/2010 14:20,5.95,12106.0,United Kingdom
+700422,P007,Woven Cushion Cover,6,27/12/2010 13:50,16.5,12106.0,EIRE
+700422,P005,Glass Storage Jar,4,27/12/2010 13:50,6.5,12106.0,EIRE
+700422,P003,Decorative Candle Set,1,27/12/2010 13:50,7.88,12106.0,EIRE
+700422,P004,Cotton Tote Bag,1,27/12/2010 13:50,4.25,12106.0,EIRE
+700423,P003,Decorative Candle Set,2,31/03/2011 08:00,7.88,12107.0,Netherlands
+700423,P006,Botanical Greeting Card,1,31/03/2011 08:00,1.38,12107.0,Netherlands
+700423,P001,Ceramic Tea Mug,2,31/03/2011 08:00,5.95,12107.0,Netherlands
+700423,P010,Wooden Photo Frame,4,31/03/2011 08:00,11.0,12107.0,Netherlands
+700424,P003,Decorative Candle Set,2,04/08/2010 08:30,8.75,12107.0,United Kingdom
+700424,P005,Glass Storage Jar,1,04/08/2010 08:30,7.15,12107.0,United Kingdom
+700425,P009,Ceramic Planter,1,03/10/2010 18:10,7.25,12107.0,EIRE
+700425,P008,Stainless Water Bottle,1,03/10/2010 18:10,9.95,12107.0,EIRE
+700425,P004,Cotton Tote Bag,6,03/10/2010 18:10,4.25,12107.0,EIRE
+700426,P010,Wooden Photo Frame,2,03/11/2010 19:20,9.9,12108.0,United Kingdom
+700426,P009,Ceramic Planter,2,03/11/2010 19:20,6.53,12108.0,United Kingdom
+700426,P004,Cotton Tote Bag,3,03/11/2010 19:20,4.68,12108.0,United Kingdom
+700426,P001,Ceramic Tea Mug,3,03/11/2010 19:20,5.95,12108.0,United Kingdom
+700427,P002,Linen Table Runner,1,29/09/2010 09:40,12.5,12108.0,Spain
+700428,P009,Ceramic Planter,4,18/03/2011 11:00,7.98,12108.0,United Kingdom
+700428,P008,Stainless Water Bottle,3,18/03/2011 11:00,9.95,12108.0,United Kingdom
+700428,P006,Botanical Greeting Card,6,18/03/2011 11:00,1.12,12108.0,United Kingdom
+700428,P010,Wooden Photo Frame,3,18/03/2011 11:00,11.0,12108.0,United Kingdom
+700429,P006,Botanical Greeting Card,1,31/12/2010 09:00,1.25,12108.0,United Kingdom
+700429,P003,Decorative Candle Set,3,31/12/2010 09:00,9.62,12108.0,United Kingdom
+700429,P005,Glass Storage Jar,1,31/12/2010 09:00,6.5,12108.0,United Kingdom
+700429,P008,Stainless Water Bottle,10,31/12/2010 09:00,9.95,12108.0,United Kingdom
+700430,P010,Wooden Photo Frame,1,21/04/2011 13:30,11.0,12109.0,Netherlands
+700430,P009,Ceramic Planter,1,21/04/2011 13:30,7.25,12109.0,Netherlands
+700430,P005,Glass Storage Jar,1,21/04/2011 13:30,6.5,12109.0,Netherlands
+700431,P006,Botanical Greeting Card,2,23/12/2010 08:30,1.25,12109.0,United Kingdom
+700432,P003,Decorative Candle Set,4,01/02/2011 11:00,8.75,12109.0,United Kingdom
+700432,P001,Ceramic Tea Mug,1,01/02/2011 11:00,5.95,12109.0,United Kingdom
+700433,P010,Wooden Photo Frame,6,10/04/2011 16:40,11.0,12109.0,United Kingdom
+700434,P007,Woven Cushion Cover,1,13/07/2010 14:00,15.0,12109.0,United Kingdom
+700434,P004,Cotton Tote Bag,3,13/07/2010 14:00,4.25,12109.0,United Kingdom
+700435,P003,Decorative Candle Set,2,15/01/2011 08:10,8.75,12109.0,United Kingdom
+700436,P006,Botanical Greeting Card,1,29/11/2010 11:30,1.25,12109.0,United Kingdom
+700437,P006,Botanical Greeting Card,4,09/04/2011 09:30,1.38,12110.0,Spain
+700438,P009,Ceramic Planter,1,18/03/2011 09:20,6.53,12110.0,United Kingdom
+700439,P005,Glass Storage Jar,2,23/09/2010 17:30,5.85,12110.0,United Kingdom
+700439,P004,Cotton Tote Bag,3,23/09/2010 17:30,4.25,12110.0,United Kingdom
+700439,P010,Wooden Photo Frame,12,23/09/2010 17:30,11.0,12110.0,United Kingdom
+700440,P002,Linen Table Runner,2,01/09/2010 12:30,13.75,12110.0,Germany
+700440,P008,Stainless Water Bottle,1,01/09/2010 12:30,9.95,12110.0,Germany
+700440,P006,Botanical Greeting Card,2,01/09/2010 12:30,1.12,12110.0,Germany
+700441,P007,Woven Cushion Cover,2,03/10/2010 14:30,15.0,12110.0,United Kingdom
+700441,P008,Stainless Water Bottle,1,03/10/2010 14:30,9.95,12110.0,United Kingdom
+700442,P003,Decorative Candle Set,10,12/03/2011 18:50,8.75,12111.0,United Kingdom
+700443,P006,Botanical Greeting Card,3,24/01/2011 15:40,1.25,12112.0,United Kingdom
+700443,P005,Glass Storage Jar,10,24/01/2011 15:40,5.85,12112.0,United Kingdom
+700444,P007,Woven Cushion Cover,3,21/04/2011 15:50,16.5,12112.0,United Kingdom
+700444,P001,Ceramic Tea Mug,3,21/04/2011 15:50,5.95,12112.0,United Kingdom
+700444,P003,Decorative Candle Set,2,21/04/2011 15:50,8.75,12112.0,United Kingdom
+700445,P009,Ceramic Planter,2,09/12/2010 12:20,6.53,12112.0,United Kingdom
+700446,P006,Botanical Greeting Card,2,22/10/2010 18:10,1.25,12112.0,EIRE
+700446,P003,Decorative Candle Set,6,22/10/2010 18:10,8.75,12112.0,EIRE
+700446,P010,Wooden Photo Frame,6,22/10/2010 18:10,11.0,12112.0,EIRE
+700447,P002,Linen Table Runner,1,08/04/2011 17:50,12.5,12112.0,United Kingdom
+700447,P003,Decorative Candle Set,6,08/04/2011 17:50,9.62,12112.0,United Kingdom
+700447,P008,Stainless Water Bottle,4,08/04/2011 17:50,9.95,12112.0,United Kingdom
+700447,P006,Botanical Greeting Card,12,08/04/2011 17:50,1.38,12112.0,United Kingdom
+700448,P005,Glass Storage Jar,1,16/10/2010 19:50,5.85,12113.0,France
+700448,P003,Decorative Candle Set,1,16/10/2010 19:50,8.75,12113.0,France
+700448,P001,Ceramic Tea Mug,6,16/10/2010 19:50,5.95,12113.0,France
+700449,P010,Wooden Photo Frame,6,26/02/2011 11:50,11.0,12113.0,United Kingdom
+700450,P002,Linen Table Runner,2,11/04/2011 15:10,12.5,12113.0,United Kingdom
+700451,P008,Stainless Water Bottle,2,14/02/2011 19:50,8.96,12113.0,United Kingdom
+700452,P005,Glass Storage Jar,2,26/12/2010 13:30,6.5,12114.0,United Kingdom
+700452,P004,Cotton Tote Bag,6,26/12/2010 13:30,4.25,12114.0,United Kingdom
+700452,P007,Woven Cushion Cover,2,26/12/2010 13:30,13.5,12114.0,United Kingdom
+700452,P003,Decorative Candle Set,4,26/12/2010 13:30,7.88,12114.0,United Kingdom
+700453,P010,Wooden Photo Frame,1,31/07/2010 08:00,9.9,12114.0,United Kingdom
+700454,P001,Ceramic Tea Mug,1,01/07/2010 16:50,6.55,12114.0,United Kingdom
+700454,P006,Botanical Greeting Card,3,01/07/2010 16:50,1.12,12114.0,United Kingdom
+700454,P009,Ceramic Planter,1,01/07/2010 16:50,6.53,12114.0,United Kingdom
+700455,P009,Ceramic Planter,3,17/04/2011 17:50,6.53,12114.0,EIRE
+700455,P003,Decorative Candle Set,1,17/04/2011 17:50,9.62,12114.0,EIRE
+700455,P005,Glass Storage Jar,3,17/04/2011 17:50,6.5,12114.0,EIRE
+700456,P002,Linen Table Runner,10,19/08/2010 10:00,12.5,12114.0,United Kingdom
+700457,P004,Cotton Tote Bag,2,16/08/2010 09:40,4.68,12114.0,United Kingdom
+700457,P009,Ceramic Planter,1,16/08/2010 09:40,7.98,12114.0,United Kingdom
+700457,P005,Glass Storage Jar,10,16/08/2010 09:40,6.5,12114.0,United Kingdom
+700457,P007,Woven Cushion Cover,3,16/08/2010 09:40,13.5,12114.0,United Kingdom
+700458,P005,Glass Storage Jar,2,08/09/2010 19:20,5.85,12115.0,Netherlands
+700459,P007,Woven Cushion Cover,3,01/02/2011 19:00,15.0,12115.0,United Kingdom
+700459,P003,Decorative Candle Set,3,01/02/2011 19:00,8.75,12115.0,United Kingdom
+700460,P002,Linen Table Runner,12,27/10/2010 08:20,11.25,12115.0,United Kingdom
+700460,P005,Glass Storage Jar,1,27/10/2010 08:20,5.85,12115.0,United Kingdom
+700460,P009,Ceramic Planter,1,27/10/2010 08:20,7.25,12115.0,United Kingdom
+700460,P003,Decorative Candle Set,1,27/10/2010 08:20,8.75,12115.0,United Kingdom
+700461,P010,Wooden Photo Frame,1,08/09/2010 15:10,11.0,12115.0,Germany
+700461,P001,Ceramic Tea Mug,1,08/09/2010 15:10,5.95,12115.0,Germany
+700461,P008,Stainless Water Bottle,1,08/09/2010 15:10,9.95,12115.0,Germany
+700462,P009,Ceramic Planter,1,12/09/2010 09:50,7.25,12116.0,United Kingdom
+700462,P010,Wooden Photo Frame,3,12/09/2010 09:50,12.1,12116.0,United Kingdom
+700462,P002,Linen Table Runner,2,12/09/2010 09:50,13.75,12116.0,United Kingdom
+700463,P007,Woven Cushion Cover,1,17/07/2010 14:50,13.5,12116.0,United Kingdom
+700463,P004,Cotton Tote Bag,2,17/07/2010 14:50,4.25,12116.0,United Kingdom
+700463,P005,Glass Storage Jar,4,17/07/2010 14:50,6.5,12116.0,United Kingdom
+700463,P002,Linen Table Runner,3,17/07/2010 14:50,12.5,12116.0,United Kingdom
+700464,P007,Woven Cushion Cover,2,24/01/2011 11:50,15.0,12116.0,United Kingdom
+700464,P002,Linen Table Runner,2,24/01/2011 11:50,12.5,12116.0,United Kingdom
+700464,P004,Cotton Tote Bag,2,24/01/2011 11:50,4.25,12116.0,United Kingdom
+700465,P005,Glass Storage Jar,2,26/09/2010 13:20,5.85,12117.0,Germany
+700465,P003,Decorative Candle Set,1,26/09/2010 13:20,7.88,12117.0,Germany
+700466,P009,Ceramic Planter,1,17/04/2011 14:20,6.53,12117.0,United Kingdom
+700466,P006,Botanical Greeting Card,2,17/04/2011 14:20,1.12,12117.0,United Kingdom
+700466,P001,Ceramic Tea Mug,3,17/04/2011 14:20,6.55,12117.0,United Kingdom
+700466,P007,Woven Cushion Cover,2,17/04/2011 14:20,16.5,12117.0,United Kingdom
+700467,P009,Ceramic Planter,1,26/04/2011 11:40,6.53,12118.0,United Kingdom
+700467,P003,Decorative Candle Set,10,26/04/2011 11:40,7.88,12118.0,United Kingdom
+700468,P001,Ceramic Tea Mug,12,29/01/2011 14:50,5.95,12118.0,United Kingdom
+700468,P002,Linen Table Runner,2,29/01/2011 14:50,12.5,12118.0,United Kingdom
+700468,P004,Cotton Tote Bag,1,29/01/2011 14:50,3.83,12118.0,United Kingdom
+700468,P003,Decorative Candle Set,3,29/01/2011 14:50,8.75,12118.0,United Kingdom
+700469,P003,Decorative Candle Set,1,09/12/2010 12:50,8.75,12119.0,United Kingdom
+700469,P010,Wooden Photo Frame,1,09/12/2010 12:50,11.0,12119.0,United Kingdom
+700469,P002,Linen Table Runner,1,09/12/2010 12:50,12.5,12119.0,United Kingdom
+700470,P007,Woven Cushion Cover,3,05/09/2010 10:50,16.5,12119.0,Netherlands
+700470,P010,Wooden Photo Frame,2,05/09/2010 10:50,11.0,12119.0,Netherlands
+700471,P004,Cotton Tote Bag,10,13/10/2010 12:40,3.83,12119.0,United Kingdom
+700472,P006,Botanical Greeting Card,1,24/03/2011 15:40,1.38,12119.0,United Kingdom
+700473,P006,Botanical Greeting Card,3,10/03/2011 11:00,1.12,12119.0,United Kingdom
+700474,P010,Wooden Photo Frame,3,17/12/2010 01:00,11.0,,France
+700475,P001,Ceramic Tea Mug,2,28/12/2010 02:00,5.95,,United Kingdom
+700476,P004,Cotton Tote Bag,2,25/03/2011 01:00,4.25,,EIRE
+700477,P001,Ceramic Tea Mug,1,09/03/2011 21:00,5.95,,United Kingdom
+700478,P009,Ceramic Planter,5,04/03/2011 17:00,7.25,,Netherlands
+700479,P005,Glass Storage Jar,1,27/12/2010 19:00,6.5,,France
+700480,P006,Botanical Greeting Card,3,30/12/2010 17:00,1.25,,United Kingdom
+700481,P008,Stainless Water Bottle,1,18/02/2011 02:00,9.95,,Netherlands
+700482,P010,Wooden Photo Frame,4,01/11/2010 01:00,11.0,,Germany
+700483,P002,Linen Table Runner,1,06/02/2011 19:00,12.5,,EIRE
+700484,P010,Wooden Photo Frame,3,11/01/2011 21:00,11.0,,EIRE
+700485,P010,Wooden Photo Frame,1,14/08/2010 18:00,11.0,,United Kingdom
+700486,P001,Ceramic Tea Mug,3,04/04/2011 23:00,5.95,,Spain
+700487,P004,Cotton Tote Bag,6,19/11/2010 20:00,4.25,,Germany
+700488,P004,Cotton Tote Bag,3,27/01/2011 03:00,4.25,,EIRE
+700489,P009,Ceramic Planter,4,31/07/2010 23:00,7.25,,EIRE
+700490,P009,Ceramic Planter,3,21/11/2010 22:00,7.25,,United Kingdom
+700491,P002,Linen Table Runner,2,07/03/2011 19:00,12.5,,Spain
+700492,P003,Decorative Candle Set,3,25/07/2010 19:00,8.75,,United Kingdom
+700493,P009,Ceramic Planter,5,23/07/2010 02:00,7.25,,France
+700494,P008,Stainless Water Bottle,3,24/01/2011 17:00,9.95,,France
+700495,P008,Stainless Water Bottle,4,12/10/2010 02:00,9.95,,Germany
+700496,P007,Woven Cushion Cover,5,24/12/2010 03:00,15.0,,France
+700497,P002,Linen Table Runner,4,03/12/2010 20:00,12.5,,EIRE
+C700498,P009,Ceramic Planter,-2,29/09/2010 23:00,7.25,12104.0,United Kingdom
+700499,P003,Decorative Candle Set,-2,04/01/2011 21:00,8.75,12034.0,United Kingdom
+C700500,P006,Botanical Greeting Card,-2,09/11/2010 19:00,1.25,12005.0,United Kingdom
+700501,P008,Stainless Water Bottle,-2,27/04/2011 03:00,9.95,12035.0,United Kingdom
+C700502,P010,Wooden Photo Frame,-2,30/10/2010 02:00,11.0,12086.0,United Kingdom
+700503,P010,Wooden Photo Frame,-2,21/10/2010 03:00,11.0,12113.0,United Kingdom
+C700504,P010,Wooden Photo Frame,-2,01/10/2010 21:00,11.0,12103.0,United Kingdom
+700505,P008,Stainless Water Bottle,-1,10/09/2010 23:00,9.95,12043.0,United Kingdom
+C700506,P008,Stainless Water Bottle,-1,09/01/2011 20:00,9.95,12071.0,United Kingdom
+700507,P006,Botanical Greeting Card,-1,20/08/2010 22:00,1.25,12075.0,United Kingdom
+C700508,P002,Linen Table Runner,-1,16/08/2010 21:00,12.5,12100.0,United Kingdom
+700509,P006,Botanical Greeting Card,-1,17/12/2010 23:00,1.25,12108.0,United Kingdom
+C700510,P005,Glass Storage Jar,-1,13/11/2010 16:00,6.5,12009.0,United Kingdom
+700511,P010,Wooden Photo Frame,-2,05/07/2010 21:00,11.0,12021.0,United Kingdom
+C700512,P009,Ceramic Planter,-1,09/12/2010 16:00,7.25,12084.0,United Kingdom
+700513,P009,Ceramic Planter,-1,26/01/2011 23:00,7.25,12055.0,United Kingdom
+C700514,P008,Stainless Water Bottle,-2,16/04/2011 20:00,9.95,12079.0,United Kingdom
+700515,P004,Cotton Tote Bag,-1,24/01/2011 16:00,4.25,12081.0,United Kingdom
+C700516,P009,Ceramic Planter,-2,28/01/2011 19:00,7.25,12045.0,United Kingdom
+700517,P006,Botanical Greeting Card,-2,13/12/2010 00:00,1.25,12053.0,United Kingdom
+C700518,P004,Cotton Tote Bag,-1,05/02/2011 23:00,4.25,12054.0,United Kingdom
+700519,P007,Woven Cushion Cover,-2,06/08/2010 00:00,15.0,12111.0,United Kingdom
+C700520,P010,Wooden Photo Frame,-2,21/03/2011 00:00,11.0,12031.0,United Kingdom
+700521,P007,Woven Cushion Cover,-1,07/03/2011 19:00,15.0,12016.0,United Kingdom
+C700522,P010,Wooden Photo Frame,-2,06/11/2010 16:00,11.0,12044.0,United Kingdom
+700523,P002,Linen Table Runner,-2,04/07/2010 20:00,12.5,12021.0,United Kingdom
+C700524,P002,Linen Table Runner,-1,15/02/2011 23:00,12.5,12012.0,United Kingdom
+700525,P005,Glass Storage Jar,-2,16/12/2010 23:00,6.5,12051.0,United Kingdom
