@@ -147,7 +147,7 @@ def write_json_atomic(path: str | Path, payload: dict[str, Any]) -> None:
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)
     temporary = destination.with_suffix(destination.suffix + ".tmp")
-    temporary.write_text(json.dumps(payload, indent=2, default=str) + "\\n", encoding="utf-8")
+    temporary.write_text(json.dumps(payload, indent=2, default=str) + "\n", encoding="utf-8")
     temporary.replace(destination)
 
 
