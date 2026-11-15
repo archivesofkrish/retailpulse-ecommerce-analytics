@@ -1,22 +1,28 @@
-# RetailPulse v1.0.0 — Release Notes
+# RetailPulse v1.1.0 — Release Notes
 
-**Release date:** 15 November 2026
+**Release candidate date:** 15 November 2026
 
-## Included
+## Highlights
 
-- Professional six-section Streamlit dashboard.
-- Reproducible Python analysis and data download scripts.
-- UCI full-workbook validation and automated test suite.
-- Customer RFM, revenue concentration, repeat-purchase and cohort activity analysis.
-- Merchandise and country concentration analysis.
-- Historical 90-day inactivity backtest with temporal embargo and model caveats.
-- SQL examples, notebook walkthrough, executive report and 11-slide presentation.
-- GitHub Actions test workflow and publication checklist.
+- Hardened transaction ingestion, schema validation, customer-ID handling and finite numeric checks.
+- Added source SHA-256 fingerprints, pipeline run IDs and freshness validation across core analytics, Phase 3, SQL and Streamlit.
+- Added synthetic end-to-end integration coverage and explicit handling of model-skipped demo datasets.
+- Added invoice-level merchandise co-purchase analysis with support, confidence and lift.
+- Added the Decision Brief dashboard section with six transparent business-insight rules, evidence, thresholds, recommended actions and guardrails.
+- Added a non-root Docker dashboard image, read-only data mounts and automated container health smoke test.
+- Expanded CI to a supported Python runtime matrix, with package builds and downloadable JUnit reports.
+- Added CodeQL, Dependabot, security guidance and updated project status documentation.
 
-## Responsible-use notes
+## Runtime support
 
-The source period ends 9 December 2011. Revenue is not profit; historical spend is not projected CLV; cohort activity is not cumulative survival; and 90-day inactivity is not permanent churn. The full workbook is not included and must be retrieved from UCI under its CC BY 4.0 licence.
+RetailPulse requires Python 3.11 or newer. Python 3.10 is no longer supported by the upstream Python project as of 1 October 2026. The CI matrix validates Python 3.11, 3.12 and 3.13. The Docker dashboard runtime uses Python 3.12.
 
-## Validation
+## Important data and model limitations
 
-See `test-results/RELEASE_VALIDATION.md` for exact test counts, build-environment evidence and project-owner checks.
+The source dataset ends on 9 December 2011. Revenue is not profit; historical spend is not projected customer lifetime value; cohort activity is not cumulative survival; and 90-day inactivity is not permanent churn. Product affinity and business insight thresholds are descriptive diagnostics, not causal effects or automatic policies.
+
+The full UCI workbook is not included. Retrieve it separately with python scripts/download_data.py under the dataset's CC BY 4.0 attribution requirements.
+
+## Validation record
+
+See test-results/RELEASE_VALIDATION.md for CI run links, test counts, container-health evidence and the scope of full-workbook validation.

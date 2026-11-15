@@ -1,11 +1,11 @@
 # Contributing to RetailPulse
 
-Thanks for considering an improvement. RetailPulse is a portfolio analytics project built around a fixed historical public dataset.
+Thanks for considering an improvement. RetailPulse is a portfolio analytics project built around a fixed historical public dataset. Use a supported Python 3.11+ interpreter; Python 3.10 reached upstream end-of-life on 1 October 2026.
 
 ## Development setup
 
 ```bash
-python3 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
@@ -23,7 +23,7 @@ python scripts/run_phase3_analysis.py
 
 ```bash
 python -m compileall -q dashboard scripts src tests
-python -W error::DeprecationWarning -m pytest -q
+python -W error::DeprecationWarning -m pytest --strict-config --strict-markers -q
 ```
 
 For changes to the dashboard, launch `streamlit run dashboard/app.py` and visually inspect the affected section. For changes to the cohort calculations or model split, add regression tests for right-censoring or temporal leakage respectively.
@@ -37,4 +37,4 @@ For changes to the dashboard, launch `streamlit run dashboard/app.py` and visual
 
 ## Pull requests
 
-Describe the analytical question, the code or methodology change, the tests run, and any effect on reported metrics. Include updated documentation when definitions or interpretation change.
+Describe the analytical question, the code or methodology change, the tests run, and any effect on reported metrics. CI must pass the Python 3.11, 3.12 and 3.13 test jobs and the Docker health smoke test. Include updated documentation when definitions or interpretation change.

@@ -10,7 +10,7 @@ The recommended workflow is to generate analytics on a trusted host or data-proc
 
 - Docker Engine with the Compose plugin.
 - The repository checked out locally.
-- Python 3.10+ on the host if you intend to run the analytics pipeline outside Docker.
+- Python 3.11+ on the host if you intend to run the analytics pipeline outside Docker.
 
 ## Build the analytical outputs
 

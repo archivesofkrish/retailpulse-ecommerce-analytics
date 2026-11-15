@@ -2,7 +2,7 @@
 
 ## 30-second project summary
 
-RetailPulse is an end-to-end business intelligence project using UCI Online Retail II (1.067M invoice-line rows, Dec 2009–Dec 2011). It combines a Python data pipeline, SQL analysis, customer RFM segmentation, cohort activity, product and country concentration, a time-ordered historical inactivity backtest, and a Streamlit/Plotly dashboard.
+RetailPulse is an end-to-end business intelligence project using UCI Online Retail II (1.067M invoice-line rows, Dec 2009–Dec 2011). It combines a Python data pipeline, SQL analysis, customer RFM segmentation, cohort activity, product and country concentration, a time-ordered historical inactivity backtest, basket associations, a transparent business decision brief, source-to-output lineage checks, and a Streamlit/Plotly dashboard.
 
 ## What to demonstrate
 
@@ -11,7 +11,8 @@ RetailPulse is an end-to-end business intelligence project using UCI Online Reta
 3. **Concentration:** show that the top 10% of identified customers generate 63.9% of identified revenue; explain the business risk and opportunity.
 4. **Retention:** explain the 90-day second-purchase rate among eligible first-time customers (47.1%) and how cohort right-censoring is handled.
 5. **Product intelligence:** compare customer concentration with less concentrated merchandise stock-code revenue; discuss the unusual single-invoice bulk line.
-6. **Model governance:** explain the 90-day inactivity proxy, chronological split, 90-day embargo and temporal prevalence shift. Do not call it a production churn predictor.
+6. **Decision intelligence:** demonstrate how historical customer, country, repeat-purchase and product metrics trigger auditable recommendations, each with an evidence statement, threshold and guardrail.
+7. **Model governance:** explain the 90-day inactivity proxy, chronological split, 90-day embargo and temporal prevalence shift. Do not call it a production churn predictor.
 
 ## Honest limitations to state
 
@@ -20,6 +21,7 @@ RetailPulse is an end-to-end business intelligence project using UCI Online Reta
 - 15.4% of sales revenue has no customer ID.
 - RFM labels are heuristic; historical revenue is not projected CLV.
 - Inactivity is not permanent churn; model probabilities are not calibrated for financial forecasting.
+- The decision brief uses transparent heuristics; it is not an autonomous decision maker or a causal model.
 - The product bulk transaction should be verified from the original source document.
 
 ## Suggested portfolio description

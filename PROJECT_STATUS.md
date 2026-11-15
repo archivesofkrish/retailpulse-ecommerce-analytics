@@ -1,34 +1,42 @@
-# RetailPulse — Release Status
+# RetailPulse — Project Status
 
-**Release candidate:** v1.0.0\
-**Prepared:** 15 November 2026\
-**Status:** Portfolio release package prepared; GitHub publication not yet performed.
+**Version:** 1.1.0 development release candidate  
+**Updated:** 15 November 2026  
+**Repository:** [archivesofkrish/retailpulse-ecommerce-analytics](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics)  
+**Status:** Public repository; reliability, lineage, analytics, decision-intelligence and container changes are merged to main. Security automation and Python support-policy hardening are in progress.
 
-## Delivered
+## Delivered capabilities
 
-- End-to-end UCI Online Retail II ingestion and processing pipeline.
-- Transaction classification and revenue/customer reconciliation.
-- RFM segmentation with tie-safe scoring.
-- Merchandise vs operational/non-merchandise classification.
-- Repeat-purchase, right-censored cohort, customer concentration, product and country analysis.
-- Chronological 90-day inactivity-model backtest with a 90-day embargo and explicit limitations.
-- Six-section Streamlit dashboard.
-- DuckDB SQL examples and guided Jupyter notebook.
-- Consolidated executive report, detailed Phase 3 report and 11-slide executive presentation.
-- Automated tests, eight-check full-workbook validator and CI workflow.
+- Reproducible UCI Online Retail II ingestion and transaction classification.
+- Strict source-schema, customer-identifier and finite-number validation.
+- Revenue/customer reconciliation and explicit row-classification diagnostics.
+- RFM segmentation, repeat-purchase and right-censored cohort analytics.
+- Merchandise/operational classification, SKU and country concentration.
+- Invoice-level product affinity with support, confidence and lift.
+- Historical 90-day inactivity backtest with chronological split, temporal embargo and interpretation limits.
+- Source SHA-256, pipeline run IDs and core/Phase 3 manifest consistency checks.
+- Seven-section Streamlit dashboard, including an evidence-based Decision Brief.
+- Non-root Docker deployment with read-only data mounts and health-check CI.
+- DuckDB SQL examples, notebook walkthrough, executive report and 11-slide presentation.
 
-## Validation evidence
+## Engineering controls
 
-- Project-owner terminal output: 11 tests passed with `DeprecationWarning` treated as an error after the Phase 3 warning fix.
-- Project-owner full-workbook validation: 8 checks passed, 0 failed, 0 skipped.
-- Project-owner browser review: all six Professional Edition dashboard sections were opened and visually reviewed.
-- Release assembly environment: final code test suite and syntax checks are recorded in `test-results/RELEASE_VALIDATION.md`.
-- Executive PowerPoint: 11 slides rendered and passed the slide overflow test.
+- Python package metadata and reproducible install configuration.
+- CI matrix, strict deprecation-warning tests, package build and dependency checks.
+- Synthetic end-to-end analytics integration test.
+- Docker image build and Streamlit health smoke test.
+- JUnit test-result artefacts retained in GitHub Actions.
+- CodeQL static analysis and Dependabot dependency-update proposals.
+- Documented security boundaries and data-handling rules.
 
-## Release boundaries
+## Validation boundaries
 
-- The source workbook is downloaded separately from UCI; it is not committed.
-- Processed transaction extracts, customer-level CSVs, machine-specific outputs and validation JSON are generated locally and ignored by Git.
-- Findings describe the UCI 2009–2011 historical dataset; not current retail performance.
-- The inactivity model is a retrospective ranking proof of concept, not a calibrated or production churn model.
-- No public GitHub repository has been created or pushed as part of this release preparation.
+- The latest full-workbook reconciliation was previously run by the project owner against the local UCI workbook; generated source data are not available in the public repository.
+- GitHub Actions validates the synthetic integration path. It does not reproduce a fresh local run of the full UCI workbook unless the owner supplies/downloads that data in a controlled environment.
+- Dataset findings refer to 1 December 2009–9 December 2011. They are not current retailer performance.
+- Revenue is not profit; historical spend is not projected CLV; and the inactivity score is not a production churn probability.
+- Business insights are transparent diagnostic heuristics and require human review and controlled experiments.
+
+## Remaining repository-administrator actions
+
+The GitHub main branch is not yet protected. An administrator should enable branch protection requiring pull requests and the Python 3.11, 3.12, 3.13, Docker health and CodeQL checks, while blocking force-pushes and branch deletion. Private vulnerability reporting should also be enabled in repository security settings.

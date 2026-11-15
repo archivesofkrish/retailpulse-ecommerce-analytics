@@ -14,7 +14,7 @@
 | Product and market analytics | Merchandise classification, SKU Pareto, country concentration, basket associations (support/confidence/lift) |
 | Decision intelligence | Transparent business insight rules, threshold evidence, recommended actions and guardrails |
 | Historical model | Random Forest, chronological holdout, 90-day embargo |
-| Dashboard | Streamlit, Plotly |
+| Dashboard | Streamlit, Plotly (seven sections) |
 | Quality | schema and finite-value contracts, pytest, reconciliation validator, temporal and cohort regression tests |
 | Deliverables | Executive report, 11-slide presentation, portfolio guide |
 
@@ -66,13 +66,13 @@ The repository includes a small **synthetic demonstration sample** for smoke tes
 
 ## Quick start
 
-Requires Python 3.10 or newer. The full six-section Professional Edition uses the full UCI workbook.
+Requires Python 3.11 or newer. The full seven-section Professional Edition uses the full UCI workbook.
 
 ### Linux / macOS
 
 ```bash
 # From the repository root
-python3 -m venv .venv
+python3.11 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 pip install -r requirements.txt
@@ -115,7 +115,7 @@ Open `http://localhost:8501`. The container mounts the raw workbook and generate
 ### Windows PowerShell
 
 ```powershell
-py -3 -m venv .venv
+py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
 pip install -r requirements.txt
@@ -217,7 +217,7 @@ The Phase 3 pipeline evaluates explicit, documented thresholds for customer-ID c
 
 ## Validation
 
-The release test suite includes input-schema ambiguity checks, blank-identifier checks, finite numeric and line-value checks, customer-ID normalisation, transaction, RFM, row-reconciliation, merchandise-classification, right-censoring and temporal-embargo regression tests, plus a synthetic-data integration smoke test that executes the core pipeline through Phase 3 and validates the lineage manifests. See [Data Contracts](docs/DATA_CONTRACTS.md) for accepted input fields and rejection rules. The CI workflow tests Python 3.10, 3.11 and 3.12, installs the package in editable mode, builds distribution artefacts, and checks dependency consistency. The full UCI workbook validator checks eight data-quality and reconciliation conditions.
+The release test suite includes input-schema ambiguity checks, blank-identifier checks, finite numeric and line-value checks, customer-ID normalisation, transaction, RFM, row-reconciliation, merchandise-classification, right-censoring and temporal-embargo regression tests, plus a synthetic-data integration smoke test that executes the core pipeline through Phase 3 and validates the lineage manifests. See [Data Contracts](docs/DATA_CONTRACTS.md) for accepted input fields and rejection rules. The CI workflow tests supported Python 3.11, 3.12 and 3.13, installs the package in editable mode, builds distribution artefacts, checks dependency consistency, and publishes downloadable JUnit test reports. CodeQL analyses Python code; Dependabot proposes dependency and GitHub Actions updates. The full UCI workbook validator checks eight data-quality and reconciliation conditions.
 
 ```bash
 python -W error::DeprecationWarning -m pytest -q
@@ -226,6 +226,12 @@ python scripts/validate_real_data.py
 
 See `test-results/RELEASE_VALIDATION.md` for the validation scope and what was run in the build environment versus on the project owner's machine.
 
+## Security and supported runtime
+
+RetailPulse requires Python 3.11 or newer. Python 3.10 reached upstream end-of-life on 1 October 2026. CI tests Python 3.11–3.13, and the dashboard container runs Python 3.12. See [Security posture](docs/SECURITY_POSTURE.md) and [Security Policy](SECURITY.md).
+
+The repository includes CodeQL code scanning, Dependabot update proposals, multi-version tests, downloadable JUnit results and a non-root Docker runtime. These controls do not replace review of dependency alerts or repository settings. In particular, the main branch still needs administrator-configured branch protection and private vulnerability reporting.
+
 ## Portfolio deliverables
 
 - [`reports/RETAILPULSE_EXECUTIVE_REPORT.md`](reports/RETAILPULSE_EXECUTIVE_REPORT.md) — consolidated executive findings and recommended actions.
@@ -233,6 +239,8 @@ See `test-results/RELEASE_VALIDATION.md` for the validation scope and what was r
 - [`presentations/RetailPulse_Executive_Review.pptx`](presentations/RetailPulse_Executive_Review.pptx) — 11-slide executive presentation.
 - [`docs/FINAL_METHODOLOGY_AND_LIMITATIONS.md`](docs/FINAL_METHODOLOGY_AND_LIMITATIONS.md) — metric definitions, validation scope and responsible-use boundaries.
 - [`docs/PORTFOLIO_SHOWCASE_GUIDE.md`](docs/PORTFOLIO_SHOWCASE_GUIDE.md) — concise walkthrough for a portfolio or interview.
+- [`docs/SECURITY_POSTURE.md`](docs/SECURITY_POSTURE.md) — automated controls and repository settings to enable.
+- [`SECURITY.md`](SECURITY.md) — vulnerability reporting and data-safety policy.
 
 ## Licences
 
