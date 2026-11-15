@@ -34,3 +34,6 @@ reports/phase3/figures/*
 !reports/phase3/figures/*.png
 
 test-results/real_data_validation.json
+
+# CI-generated test reports (downloadable from GitHub Actions artifacts)
+test-results/ci/
