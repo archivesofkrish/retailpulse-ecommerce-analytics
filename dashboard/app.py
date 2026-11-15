@@ -94,6 +94,7 @@ def phase3_ready(source_path: Path) -> tuple[bool, str]:
         "repeat_purchase_windows.csv",
         "merchandise_product_concentration.csv",
         "product_associations.csv",
+        "business_insights.csv",
         "country_concentration.csv",
         "historical_inactivity_monthly_backtest.csv",
         "historical_inactivity_feature_importance.csv",
@@ -175,8 +176,8 @@ if filtered.empty:
     st.stop()
 
 # Phase navigation
-labels = ["Overview", "Customer Intelligence", "Retention", "Products & Markets", "Inactivity Model", "Data Quality"]
-tab_overview, tab_customer, tab_retention, tab_products, tab_model, tab_quality = st.tabs(labels)
+labels = ["Overview", "Customer Intelligence", "Retention", "Products & Markets", "Decision Brief", "Inactivity Model", "Data Quality"]
+tab_overview, tab_customer, tab_retention, tab_products, tab_decisions, tab_model, tab_quality = st.tabs(labels)
 
 # -----------------------------------------------------------------------------
 # OVERVIEW — filter-aware
@@ -516,6 +517,44 @@ with tab_products:
                 "stock_code": "Stock code", "description": "Description", "revenue_gbp": "Revenue (£)",
                 "units": "Units", "distinct_invoices": "Distinct invoices", "max_single_invoice_units": "Max units on one invoice",
             }), width="stretch", hide_index=True)
+
+# -----------------------------------------------------------------------------
+# BUSINESS DECISION BRIEF — transparent, threshold-based recommendations
+# -----------------------------------------------------------------------------
+with tab_decisions:
+    st.subheader("Business decision brief")
+    st.caption(
+        "Evidence-backed investigation prompts generated from the full historical dataset. "
+        "Rules identify patterns to review; they do not establish causality or expected profit."
+    )
+    if not p3:
+        st.info("Run the core pipeline and Phase 3 analytics to generate the business decision brief.")
+    else:
+        insights = phase3_summary.get("business_insights", [])
+        high_count = int(phase3_summary.get("high_priority_business_insight_count", 0))
+        medium_count = max(0, len(insights) - high_count)
+        c1, c2, c3 = st.columns(3)
+        c1.metric("Triggered insights", f"{len(insights):,}")
+        c2.metric("High priority", f"{high_count:,}")
+        c3.metric("Medium priority", f"{medium_count:,}")
+        if not insights:
+            st.success("No pre-defined decision rule crossed its threshold in this run. This does not prove that no risk or opportunity exists.")
+        for insight in insights:
+            with st.expander(f"{insight['priority']} priority · {insight['area']} · {insight['headline']}", expanded=False):
+                st.markdown(f"**Evidence**  \n{insight['evidence']}")
+                st.markdown(f"**Trigger rule**  \n{insight['trigger_rule']}")
+                st.markdown(f"**Recommended next action**  \n{insight['recommended_action']}")
+                st.caption(f"Guardrail: {insight['guardrail']}")
+        insight_table = phase3_csv("business_insights.csv")
+        if insight_table is not None and not insight_table.empty:
+            st.download_button(
+                "Download decision brief (CSV)",
+                data=insight_table.to_csv(index=False).encode("utf-8"),
+                file_name="retailpulse_business_insights.csv",
+                mime="text/csv",
+            )
+        st.caption("Thresholds and definitions are documented in docs/BUSINESS_INSIGHTS.md.")
+
 
 # -----------------------------------------------------------------------------
 # HISTORICAL INACTIVITY MODEL — backtest, not live customer scoring

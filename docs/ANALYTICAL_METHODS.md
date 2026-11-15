@@ -85,3 +85,9 @@ For merchandise items (A) and (B):
 A lift above 1 indicates the two items co-occur more frequently than expected under independence in this dataset. The association is descriptive, not causal. It does not demonstrate that displaying, bundling or discounting one product will increase the sales or profit of another.
 
 To reduce unstable one-off patterns, a pair must occur in at least `max(5, ceil(0.01% × merchandise invoice count))` distinct invoices. Both rule directions are reported because (A → B) and (B → A) have different confidence values. Revenue, gross margin, stock availability, promotion exposure and randomised experiment results are not part of the association calculation.
+
+## 9. Business insight rules
+
+The decision-support layer evaluates a fixed set of diagnostic thresholds against historical aggregated metrics. Current rules cover unidentified-customer revenue share (10%), leading-country revenue share (75%), top-20% identified-customer revenue share (50%), 90-day second-purchase conversion (40%, with at least 20 eligible customers), co-purchase lift (1.5, with at least 20 joint invoices), and top-10 SKU revenue share (60%, with at least 20 merchandise SKUs). Priority is raised at stricter documented cut-offs in the code and the generated insight record.
+
+Thresholds are heuristics for prioritising investigation, not confidence intervals, tests of statistical significance or automatic business policies. Each finding exposes its observed value and trigger rule, plus an action and an interpretation guardrail. Recommendations that imply a possible commercial intervention call for a controlled experiment; profitability claims require cost and margin data.

@@ -12,6 +12,7 @@
 | Query layer | SQL, DuckDB |
 | Customer analytics | RFM, customer concentration, repeat purchase, cohorts |
 | Product and market analytics | Merchandise classification, SKU Pareto, country concentration, basket associations (support/confidence/lift) |
+| Decision intelligence | Transparent business insight rules, threshold evidence, recommended actions and guardrails |
 | Historical model | Random Forest, chronological holdout, 90-day embargo |
 | Dashboard | Streamlit, Plotly |
 | Quality | schema and finite-value contracts, pytest, reconciliation validator, temporal and cohort regression tests |
@@ -38,14 +39,15 @@ The dataset has five malformed rows excluded during core validation. The remaini
 
 ## Dashboard
 
-The Professional Edition dashboard has six sections:
+The Professional Edition dashboard has seven sections:
 
 1. **Overview** — filter-aware sales KPIs, revenue trend, country sales, merchandise rankings and weekday activity.
 2. **Customer Intelligence** — historical customer spend, Pareto concentration, Gini and RFM segment economics.
 3. **Retention** — repeat-purchase windows and right-censored cohort activity.
 4. **Products & Markets** — merchandise-only rankings, SKU concentration, country concentration, product affinity and unusual one-invoice product records.
-5. **Inactivity Model** — historical 90-day inactivity backtest, monthly holdout AUC, feature importance and interpretation limits.
-6. **Data Quality** — row classification, revenue reconciliation, definitions and reproducibility instructions.
+5. **Decision Brief** — transparent business insights, evidence thresholds, suggested experiments and interpretation guardrails.
+6. **Inactivity Model** — historical 90-day inactivity backtest, monthly holdout AUC, feature importance and interpretation limits.
+7. **Data Quality** — row classification, revenue reconciliation, definitions and reproducibility instructions.
 
 Overview charts respond to the sidebar filters. The advanced Phase 3 panels use the full source period and are labelled accordingly; they do not silently change with the overview filters.
 
@@ -162,7 +164,7 @@ RetailPulse/
 │   ├── raw/                  # Downloaded UCI workbook (git-ignored)
 │   ├── sample/               # Synthetic smoke-test data
 │   └── processed/            # Generated analytical exports (git-ignored)
-├── docs/                     # Architecture, methods, limitations and portfolio guide
+├── docs/                     # Architecture, methods, limitations, insights and deployment guides
 ├── notebooks/                # Guided exploratory walkthrough
 ├── presentations/            # 11-slide executive review
 ├── reports/
@@ -170,7 +172,7 @@ RetailPulse/
 │   └── phase3/                # Aggregate report and static analytical figures
 ├── scripts/                  # Download, core analysis, validation and Phase 3 runner
 ├── sql/analysis.sql          # DuckDB examples
-├── src/retailpulse/          # Reusable analysis functions
+├── src/retailpulse/          # Reusable analysis and decision-intelligence functions
 ├── tests/                    # Core, cohort and temporal split tests
 ├── test-results/             # Curated validation evidence
 ├── DATA_LICENSE.md
@@ -208,6 +210,10 @@ Operational/non-merchandise stock codes remain in gross sales-line revenue but a
 The Random Forest target is no identified-customer invoice during the 90 days after a historical monthly snapshot. Features are built from information available on or before each snapshot. Training snapshots end 31 October 2010; a 90-day label horizon and embargo precede held-out snapshots from 31 January through 31 August 2011.
 
 The held-out ROC-AUC is 0.791 and average precision is 0.843. Training and test inactivity prevalence differ (48.1% vs 64.1%). Customer-month observations repeat the same customers and are not independent; test 90-day windows can overlap. Model scores are not calibrated for financial forecasts or current customer risk. This is a retrospective ranking proof of concept, not a deployable churn model.
+
+## Business decision intelligence
+
+The Phase 3 pipeline evaluates explicit, documented thresholds for customer-ID coverage, geographic concentration, customer revenue concentration, 90-day second-purchase conversion, merchandise basket associations and merchandise assortment concentration. Triggered findings are written to `reports/phase3/business_insights.csv`, included in `phase3_summary.json`, and displayed in the dashboard's Decision Brief. Each result includes its observed evidence, trigger threshold, recommended next action and limitation. The rules generate investigation prompts; they do not make autonomous commercial decisions or claim causal effects. See [Business Insights](docs/BUSINESS_INSIGHTS.md) for rule definitions.
 
 ## Validation
 
