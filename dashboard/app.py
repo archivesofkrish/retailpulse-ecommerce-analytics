@@ -87,6 +87,7 @@ def phase3_ready(source_path: Path) -> tuple[bool, str]:
         "customer_revenue_concentration.csv",
         "repeat_purchase_windows.csv",
         "merchandise_product_concentration.csv",
+        "product_associations.csv",
         "country_concentration.csv",
         "historical_inactivity_monthly_backtest.csv",
         "historical_inactivity_feature_importance.csv",
@@ -461,6 +462,42 @@ with tab_products:
             fig.update_layout(height=420, margin=dict(l=10, r=10, t=20, b=10))
             st.plotly_chart(fig, width="stretch")
         st.caption(f"United Kingdom revenue share: {country_m.get('top_country_revenue_share_pct', 0):.2f}%. Top five countries: {country_m.get('top_five_country_revenue_share_pct', 0):.2f}%. Revenue alone does not establish market profitability or expansion potential.")
+        associations = phase3_csv("product_associations.csv")
+        st.markdown("**Products frequently purchased together**")
+        affinity = phase3_summary.get("product_affinity_metrics", {})
+        if associations is not None and not associations.empty:
+            st.caption(
+                f"{affinity.get('merchandise_baskets', 0):,} merchandise invoices analysed. "
+                f"Rules require at least {affinity.get('minimum_joint_orders', 0):,} joint invoices "
+                "and are ranked by lift."
+            )
+            display_rules = associations.head(15).rename(columns={
+                "antecedent_stock_code": "Product code",
+                "antecedent_description": "Product",
+                "consequent_stock_code": "Often bought with code",
+                "consequent_description": "Often bought with",
+                "joint_orders": "Joint invoices",
+                "support_pct": "Support (%)",
+                "confidence_pct": "Confidence (%)",
+                "lift": "Lift",
+            })
+            st.dataframe(
+                display_rules[[
+                    "Product code", "Product", "Often bought with code", "Often bought with",
+                    "Joint invoices", "Support (%)", "Confidence (%)", "Lift",
+                ]],
+                width="stretch",
+                hide_index=True,
+            )
+            st.caption(
+                "Support measures how common the pair is across merchandise invoices. "
+                "Confidence measures how often the paired product appears when the first product is present. "
+                "Lift compares that confidence with the paired product's baseline purchase rate; lift above 1 indicates above-baseline co-purchase. "
+                "These are historical associations, not causal effects or profit estimates."
+            )
+        else:
+            st.info("No product pairs met the minimum co-purchase frequency threshold in this dataset.")
+
         if one_invoice is not None and not one_invoice.empty:
             st.warning("Manual review required: some merchandise stock codes appear on only one invoice. They remain in the revenue totals; do not treat unusual bulk lines as normal demand without source-document review.")
             st.dataframe(one_invoice.head(10).rename(columns={

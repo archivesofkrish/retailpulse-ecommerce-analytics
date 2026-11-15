@@ -11,7 +11,7 @@
 | Data pipeline | Python, pandas, NumPy |
 | Query layer | SQL, DuckDB |
 | Customer analytics | RFM, customer concentration, repeat purchase, cohorts |
-| Product and market analytics | Merchandise classification, SKU Pareto, country concentration |
+| Product and market analytics | Merchandise classification, SKU Pareto, country concentration, basket associations (support/confidence/lift) |
 | Historical model | Random Forest, chronological holdout, 90-day embargo |
 | Dashboard | Streamlit, Plotly |
 | Quality | schema and finite-value contracts, pytest, reconciliation validator, temporal and cohort regression tests |
@@ -43,7 +43,7 @@ The Professional Edition dashboard has six sections:
 1. **Overview** — filter-aware sales KPIs, revenue trend, country sales, merchandise rankings and weekday activity.
 2. **Customer Intelligence** — historical customer spend, Pareto concentration, Gini and RFM segment economics.
 3. **Retention** — repeat-purchase windows and right-censored cohort activity.
-4. **Products & Markets** — merchandise-only rankings, SKU concentration, country concentration and unusual one-invoice product records.
+4. **Products & Markets** — merchandise-only rankings, SKU concentration, country concentration, product affinity and unusual one-invoice product records.
 5. **Inactivity Model** — historical 90-day inactivity backtest, monthly holdout AUC, feature importance and interpretation limits.
 6. **Data Quality** — row classification, revenue reconciliation, definitions and reproducibility instructions.
 
