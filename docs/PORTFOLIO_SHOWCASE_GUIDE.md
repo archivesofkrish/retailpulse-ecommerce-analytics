@@ -2,7 +2,7 @@
 
 ## 30-second project summary
 
-RetailPulse is an end-to-end business intelligence project using UCI Online Retail II (1.067M invoice-line rows, Dec 2009–Dec 2011). It combines a Python data pipeline, SQL analysis, customer RFM segmentation, cohort activity, product and country concentration, a time-ordered historical inactivity backtest, basket associations, a transparent business decision brief, a configurable repeat-purchase Scenario Lab, source-to-output lineage checks, and an eight-section Streamlit/Plotly dashboard.
+RetailPulse is an end-to-end business intelligence project using UCI Online Retail II (1.067M invoice-line rows, Dec 2009–Dec 2011). It combines a Python data pipeline, SQL analysis, customer RFM segmentation, cohort activity, product and country concentration, a time-ordered historical inactivity backtest, basket associations, a transparent business decision brief, a configurable repeat-purchase Scenario Lab, source-to-output lineage checks, and an nine-section Streamlit/Plotly dashboard.
 
 ## What to demonstrate
 

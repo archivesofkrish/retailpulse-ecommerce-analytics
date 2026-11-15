@@ -6,11 +6,11 @@
 [![Python](https://img.shields.io/badge/Python-3.11--3.14-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**RetailPulse is a reproducible, end-to-end business intelligence project** built around the UCI Online Retail II transaction dataset. It combines Python data engineering, SQL analytics, customer segmentation, cohort activity, merchandise and market analysis, a historical inactivity-model backtest, and an eight-section Streamlit dashboard.
+**RetailPulse is a reproducible, end-to-end business intelligence project** built around the UCI Online Retail II transaction dataset. It combines Python data engineering, SQL analytics, customer segmentation, cohort activity, merchandise and market analysis, a historical inactivity-model backtest, and an nine-section Streamlit dashboard.
 
-**Current release:** `1.3.0` — includes the interactive Repeat-Purchase Scenario Lab, validated scenario calculations, and gross-revenue sensitivity analysis.
+**Current release:** `1.4.0` — includes the interactive Repeat-Purchase Scenario Lab, validated scenario calculations, and gross-revenue sensitivity analysis.
 
-> **Historical-data notice:** The source workbook covers **1 December 2009–9 December 2011**. RetailPulse is an analytical case study, not a live retailer feed. Its reported revenue is not profit, historical customer spend is not projected customer lifetime value, and the inactivity model is not a production churn score.
+> **Historical-data notice:** The source workbook covers **1 December 2009–9 December 2011**. RetailPulse is an analytical case study, not a live retailer feed. Its reported revenue is not profit, historical customer spend and cohort revenue yield are not projected customer lifetime value, and the inactivity model is not a production churn score.
 
 ## Project at a glance
 
@@ -23,7 +23,7 @@
 | Decision intelligence | Transparent business insight rules, threshold evidence, recommended actions and guardrails |
 | Commercial scenario planning | Interactive repeat-purchase scenarios, sensitivity analysis and assumption-driven gross-revenue calculations |
 | Historical model | Random Forest, chronological holdout, 90-day embargo |
-| Dashboard | Streamlit, Plotly (seven sections) |
+| Dashboard | Streamlit, Plotly (nine sections) |
 | Quality | schema and finite-value contracts, pytest, reconciliation validator, temporal and cohort regression tests |
 | Deliverables | Executive report, 11-slide presentation, portfolio guide |
 
@@ -76,7 +76,7 @@ The dataset has five malformed rows excluded during core validation. The remaini
 
 ## Dashboard
 
-The Professional Edition dashboard has eight sections:
+The Professional Edition dashboard has nine sections:
 
 1. **Overview** — filter-aware sales KPIs, revenue trend, country sales, merchandise rankings and weekday activity.
 2. **Customer Intelligence** — historical customer spend, Pareto concentration, Gini and RFM segment economics.
@@ -85,7 +85,7 @@ The Professional Edition dashboard has eight sections:
 5. **Decision Brief** — transparent business insights, evidence thresholds, suggested experiments and interpretation guardrails.
 6. **Scenario Lab** — conservative, base and stretch repeat-purchase scenarios, configurable conversion uplift and average-order-value assumptions, and a gross-revenue sensitivity curve.
 7. **Inactivity Model** — historical 90-day inactivity backtest, monthly holdout AUC, feature importance and interpretation limits.
-8. **Data Quality** — row classification, revenue reconciliation, definitions and reproducibility instructions.
+9. **Data Quality** — row classification, revenue reconciliation, definitions and reproducibility instructions.
 
 Overview charts respond to the sidebar filters. The advanced Phase 3 panels use the full source period and are labelled accordingly; they do not silently change with the overview filters.
 
@@ -104,7 +104,7 @@ The repository includes a small **synthetic demonstration sample** for smoke tes
 
 ## Quick start
 
-Requires Python 3.11 or newer. The full eight-section Professional Edition uses the full UCI workbook.
+Requires Python 3.11 or newer. The full nine-section Professional Edition uses the full UCI workbook.
 
 ### Linux / macOS
 
