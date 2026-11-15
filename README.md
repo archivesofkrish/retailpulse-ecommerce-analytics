@@ -1,5 +1,11 @@
 # RetailPulse — E-commerce Business Intelligence
 
+[![RetailPulse CI](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/workflows/tests.yml/badge.svg?branch=main)](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/workflows/tests.yml)
+[![CodeQL](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/workflows/codeql.yml)
+[![Dependency audit](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/workflows/dependency-audit.yml/badge.svg?branch=main)](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/workflows/dependency-audit.yml)
+[![Python](https://img.shields.io/badge/Python-3.11--3.14-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
 **RetailPulse is a reproducible, end-to-end business intelligence project** built around the UCI Online Retail II transaction dataset. It combines Python data engineering, SQL analytics, customer segmentation, cohort activity, merchandise and market analysis, a historical inactivity-model backtest, and a seven-section Streamlit dashboard.
 
 > **Historical-data notice:** The source workbook covers **1 December 2009–9 December 2011**. RetailPulse is an analytical case study, not a live retailer feed. Its reported revenue is not profit, historical customer spend is not projected customer lifetime value, and the inactivity model is not a production churn score.
@@ -17,6 +23,34 @@
 | Dashboard | Streamlit, Plotly (seven sections) |
 | Quality | schema and finite-value contracts, pytest, reconciliation validator, temporal and cohort regression tests |
 | Deliverables | Executive report, 11-slide presentation, portfolio guide |
+
+## How the system works
+
+```mermaid
+flowchart LR
+    A["UCI workbook or synthetic sample"] --> B["Ingestion and schema contracts"]
+    B --> C["Core sales, customer and product exports"]
+    C --> D["SHA-256 source and pipeline manifest"]
+    C --> E["Phase 3 advanced analytics"]
+    D --> E
+    E --> F["Customer, cohort, product and country metrics"]
+    E --> G["Historical inactivity backtest"]
+    E --> H["Evidence-backed decision rules"]
+    F --> I["Streamlit dashboard and reports"]
+    G --> I
+    H --> I
+    C --> J["DuckDB SQL analysis"]
+```
+
+## Engineering highlights
+
+- **Data contracts:** explicit source-column aliases, finite numeric validation, transaction classification and revenue reconciliation.
+- **Identity correctness:** customer IDs remain opaque strings; zero-padded and alphanumeric IDs stay distinct through advanced analytics.
+- **Correct analytical grain:** SKU quantity and revenue diagnostics are aggregated at invoice + stock-code level before per-invoice maxima are calculated.
+- **Reproducibility:** SHA-256 fingerprints, pipeline run IDs, atomic manifests and freshness checks prevent advanced outputs from silently drifting from their source.
+- **Honest empty states:** sales-level reporting still completes when customer IDs or merchandise SKUs are unavailable; unsupported customer/product metrics are marked unavailable rather than fabricated.
+- **Model governance:** the inactivity backtest uses chronological snapshots and a 90-day embargo, with limitations documented in the dashboard and report.
+- **Software quality:** Python 3.11–3.14 CI, end-to-end pytest coverage, CodeQL, dependency vulnerability auditing, Dependabot and Docker health checks.
 
 ## Key findings from the historical dataset
 

@@ -12,6 +12,9 @@
 - Added a non-root Docker dashboard image, read-only data mounts and automated container health smoke test.
 - Expanded CI to a supported Python runtime matrix, with package builds and downloadable JUnit reports.
 - Added CodeQL static analysis, a dependency vulnerability audit, Dependabot updates for Python/GitHub Actions/Docker, security guidance and updated project status documentation.
+- Preserved zero-padded and alphanumeric customer IDs throughout Phase 3 customer, retention and cohort analytics.
+- Corrected per-invoice SKU metrics by aggregating duplicate stock-code lines at invoice + SKU grain.
+- Made Phase 3 resilient to anonymous-only and operational-only sales datasets, with explicit unavailable states rather than fabricated customer/product metrics.
 
 ## Runtime support
 
