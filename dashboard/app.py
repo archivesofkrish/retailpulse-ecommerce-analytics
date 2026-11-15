@@ -450,15 +450,17 @@ with tab_products:
         left, right = st.columns(2)
         with left:
             st.markdown("**Top merchandise stock codes**")
-            if products is not None:
+            if products is not None and not products.empty:
                 top = products.head(12).sort_values("revenue_gbp")
                 fig = px.bar(top, x="revenue_gbp", y="description", orientation="h", hover_data=["stock_code", "orders", "units"],
                              labels={"revenue_gbp": "Revenue (£)", "description": "Product"})
                 fig.update_layout(height=430, margin=dict(l=10, r=10, t=20, b=10))
                 st.plotly_chart(fig, width="stretch")
+            else:
+                st.info("No merchandise stock codes are available for ranking.")
         with right:
             st.markdown("**Merchandise revenue Pareto curve**")
-            if products is not None:
+            if products is not None and not products.empty:
                 x_share = np.arange(1, len(products) + 1) / len(products)
                 fig = px.line(x=x_share, y=products["cumulative_revenue_share_pct"] / 100,
                               labels={"x": "Cumulative share of stock codes", "y": "Cumulative merchandise revenue"})
@@ -467,6 +469,8 @@ with tab_products:
                 fig.update_yaxes(tickformat=".0%", range=[0, 1])
                 fig.update_layout(height=430, margin=dict(l=10, r=10, t=20, b=10))
                 st.plotly_chart(fig, width="stretch")
+            else:
+                st.info("Merchandise concentration is unavailable because there are no merchandise stock codes.")
         st.markdown("**Country revenue concentration**")
         if countries is not None:
             topc = countries.head(12).sort_values("revenue")
