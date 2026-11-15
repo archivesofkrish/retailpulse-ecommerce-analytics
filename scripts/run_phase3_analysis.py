@@ -44,6 +44,7 @@ from retailpulse.provenance import (
     write_json_atomic,
 )
 from retailpulse.insights import generate_business_insights, INSIGHT_COLUMNS
+from retailpulse.value import build_customer_value_panel
 
 DATA = ROOT / "data" / "processed"
 OUT = ROOT / "reports" / "phase3"
@@ -1171,6 +1172,8 @@ def main():
     product_table, operational, product_metrics = make_product_outputs(sales, products)
     affinity_rules, affinity_metrics = make_product_affinity(sales, products)
     cohort_summary = make_cohort_outputs(sales)
+    customer_value_panel = build_customer_value_panel(sales)
+    customer_value_panel.to_csv(OUT / "customer_cohort_value.csv", index=False)
     business_insights = generate_business_insights(
         kpis=kpis,
         customer_metrics=customer_metrics,
@@ -1197,6 +1200,21 @@ def main():
         "sales_line_count": int(kpis["sales_lines"]),
         "return_cancellation_line_count": int(kpis["return_or_cancellation_lines"]),
         "customer_metrics": customer_metrics,
+        "customer_cohort_value": {
+            "status": "COMPLETED" if not customer_value_panel.empty else "SKIPPED_NO_IDENTIFIED_CUSTOMERS",
+            "cohort_count": int(customer_value_panel["cohort_month"].nunique()),
+            "identified_customers": int(
+                customer_value_panel.drop_duplicates("cohort_month")["cohort_customers"].sum()
+            ),
+            "mature_12_period_cohort_count": int(
+                customer_value_panel.loc[
+                    customer_value_panel["age_month"].eq(11)
+                    & ~customer_value_panel["is_partial_period"], "cohort_month"
+                ].nunique()
+            ),
+            "has_partial_final_period": bool(customer_value_panel["is_partial_period"].any()) if not customer_value_panel.empty else False,
+            "observation_end_date": customer_value_panel["observation_end_date"].max() if not customer_value_panel.empty else None,
+        },
         "country_metrics": country_metrics,
         "product_metrics": product_metrics,
         "product_affinity_metrics": affinity_metrics,

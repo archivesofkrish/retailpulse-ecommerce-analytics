@@ -47,6 +47,7 @@ def test_synthetic_pipeline_runs_through_phase3_with_complete_lineage(tmp_path, 
     assert phase3_manifest["schema_version"] == 2
     assert "phase3_summary.json" in phase3_manifest["artifacts"]
     assert "business_insights.csv" in phase3_manifest["artifacts"]
+    assert "customer_cohort_value.csv" in phase3_manifest["artifacts"]
     core_valid, core_message = verify_artifact_manifest(data_dir, pipeline_manifest["artifacts"])
     phase3_valid, phase3_message = verify_artifact_manifest(output_dir, phase3_manifest["artifacts"])
     assert core_valid, core_message
@@ -55,6 +56,8 @@ def test_synthetic_pipeline_runs_through_phase3_with_complete_lineage(tmp_path, 
     assert summary["source_sha256"] == pipeline_manifest["source"]["sha256"]
     assert summary["historical_inactivity_model"]["status"] in {"COMPLETED", "SKIPPED"}
     assert summary["business_insight_count"] == len(summary["business_insights"])
+    assert summary["customer_cohort_value"]["status"] == "COMPLETED"
+    assert summary["customer_cohort_value"]["cohort_count"] > 0
     assert (output_dir / "business_insights.csv").exists()
     customer_metrics = summary["customer_metrics"]
     assert "identified_customer_order_count" in customer_metrics
@@ -76,9 +79,14 @@ def test_synthetic_pipeline_runs_through_phase3_with_complete_lineage(tmp_path, 
         "historical_inactivity_monthly_backtest.csv",
         "historical_inactivity_feature_importance.csv",
         "cohort_retention_recomputed.csv",
+        "customer_cohort_value.csv",
         "weighted_cohort_retention.csv",
     ]
     assert all((output_dir / name).exists() for name in required_outputs)
+    value_panel = pd.read_csv(output_dir / "customer_cohort_value.csv")
+    assert not value_panel.empty
+    assert value_panel["cohort_customers"].gt(0).all()
+    assert value_panel["retention_pct"].between(0, 100).all()
 
 
 def test_phase3_refuses_core_outputs_marked_as_building(tmp_path, monkeypatch):
