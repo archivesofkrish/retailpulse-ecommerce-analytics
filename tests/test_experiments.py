@@ -150,7 +150,7 @@ def test_sample_ratio_diagnostic_flags_large_allocation_imbalance():
     assert result["status"] == "SAMPLE_RATIO_MISMATCH"
     assert result["sample_ratio_mismatch"] is True
     assert result["p_value"] < 0.001
-    assert result["allocation_deviation_pp"] == 10
+    assert result["allocation_deviation_pp"] == pytest.approx(10)
 
 
 def test_sample_ratio_diagnostic_respects_predeclared_non_equal_allocation():
@@ -161,7 +161,7 @@ def test_sample_ratio_diagnostic_respects_predeclared_non_equal_allocation():
     )
     assert result["status"] == "OK"
     assert result["p_value"] == 1
-    assert result["expected_variant_share_pct"] == 10
+    assert result["expected_variant_share_pct"] == pytest.approx(10)
 
 
 def test_sample_ratio_diagnostic_warns_for_small_expected_counts():
