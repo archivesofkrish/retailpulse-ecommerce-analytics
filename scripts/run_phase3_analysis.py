@@ -336,12 +336,28 @@ def make_cohort_outputs(sales: pd.DataFrame):
 
 def make_churn_backtest(orders: pd.DataFrame, observation_end: pd.Timestamp):
     """Historical 90-day inactivity backtest with chronological holdout."""
+    def write_skipped_outputs() -> None:
+        pd.DataFrame(columns=[
+            "snapshot_date", "observations", "observed_90d_inactivity_rate_pct",
+            "roc_auc", "average_precision",
+        ]).to_csv(OUT / "historical_inactivity_monthly_backtest.csv", index=False)
+        pd.DataFrame(columns=["feature", "importance"]).to_csv(
+            OUT / "historical_inactivity_feature_importance.csv", index=False
+        )
+        pd.DataFrame(columns=[
+            "customer_id_num", "snapshot_date", "inactive_next_90d",
+            "recency_days", "lifetime_orders", "lifetime_revenue",
+            "orders_90d", "orders_180d", "orders_365d",
+            "predicted_inactivity_score", "risk_rank_pct",
+        ]).to_csv(OUT / "historical_inactivity_holdout_scores.csv", index=False)
+
     start = orders["order_date"].min() + timedelta(days=90)
     end = observation_end - timedelta(days=90)
     first_cut = (start + pd.offsets.MonthEnd(0)).normalize()
     last_cut = end
     cutoffs = pd.date_range(first_cut, last_cut, freq="ME")
     if len(cutoffs) < 8:
+        write_skipped_outputs()
         return {"status": "SKIPPED", "reason": "Insufficient monthly snapshots for a meaningful time split."}
 
     records = []
@@ -385,6 +401,7 @@ def make_churn_backtest(orders: pd.DataFrame, observation_end: pd.Timestamp):
                 "orders_90d", "revenue_90d", "orders_180d", "revenue_180d", "orders_365d", "revenue_365d",
                 "snapshot_month"]
     if train.empty or test.empty or train["inactive_next_90d"].nunique() < 2 or test["inactive_next_90d"].nunique() < 2:
+        write_skipped_outputs()
         return {"status": "SKIPPED", "reason": "Insufficient class coverage in chronological train/test split."}
 
     model = RandomForestClassifier(n_estimators=250, max_depth=10, min_samples_leaf=25,
@@ -401,10 +418,11 @@ def make_churn_backtest(orders: pd.DataFrame, observation_end: pd.Timestamp):
     for date, group in test.groupby("snapshot_date"):
         idx = group.index
         prob = model.predict_proba(group[features])[:, 1]
+        labels = group["inactive_next_90d"]
         monthly.append({"snapshot_date": str(date.date()), "observations": int(len(group)),
-                        "observed_90d_inactivity_rate_pct": float(group["inactive_next_90d"].mean() * 100),
-                        "roc_auc": float(roc_auc_score(group["inactive_next_90d"], prob)),
-                        "average_precision": float(average_precision_score(group["inactive_next_90d"], prob))})
+                        "observed_90d_inactivity_rate_pct": float(labels.mean() * 100),
+                        "roc_auc": float(roc_auc_score(labels, prob)) if labels.nunique() > 1 else np.nan,
+                        "average_precision": float(average_precision_score(labels, prob)) if labels.sum() > 0 else np.nan})
     pd.DataFrame(monthly).to_csv(OUT / "historical_inactivity_monthly_backtest.csv", index=False)
 
     scored = test[["customer_id_num", "snapshot_date", "inactive_next_90d", "recency_days", "lifetime_orders",
