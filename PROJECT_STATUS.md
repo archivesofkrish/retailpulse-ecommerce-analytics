@@ -1,10 +1,10 @@
 # RetailPulse — Project Status
 
-**Version:** 1.2.0  
+**Version:** 1.3.0  
 **Merged to main:** 15 November 2026  
 **Repository:** [archivesofkrish/retailpulse-ecommerce-analytics](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics)  
 **Main commit:** `e3c2586e8a875d08783718bb9e26abf46e45a1c2`  
-**Status:** v1.2.0 plus the decision-metric reliability hardening are merged to the default branch. Pre-merge Python, end-to-end, output-integrity, Docker, CodeQL and dependency-audit workflows passed for the hardening change. Post-merge workflows are recorded in GitHub Actions. A GitHub Release/tag has not yet been published.
+**Status:** v1.3.0 adds the interactive repeat-purchase Scenario Lab to the v1.2.0 analytics platform. The Scenario Lab is assumption-driven planning arithmetic over historical 90-day repeat-purchase metrics, not a live forecast or causal model. PR #17 contains the release candidate; merge and post-merge validation are pending. The GitHub Release/tag will be published only after `main` validation passes.
 
 ## Delivered capabilities
 
