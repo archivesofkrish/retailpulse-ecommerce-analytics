@@ -3,13 +3,14 @@
 **Version:** 1.2.0  
 **Merged to main:** 15 November 2026  
 **Repository:** [archivesofkrish/retailpulse-ecommerce-analytics](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics)  
-**Main commit:** `be1ac79d2f81f10e587366be292f5281973ed1b5`  
-**Status:** v1.2.0 code and package metadata are merged to the default branch. The automated release validation has passed. A GitHub Release/tag has not yet been published.
+**Main commit:** `e3c2586e8a875d08783718bb9e26abf46e45a1c2`  
+**Status:** v1.2.0 plus the decision-metric reliability hardening are merged to the default branch. Pre-merge Python, end-to-end, output-integrity, Docker, CodeQL and dependency-audit workflows passed for the hardening change. Post-merge workflows are recorded in GitHub Actions. A GitHub Release/tag has not yet been published.
 
 ## Delivered capabilities
 
 - Reproducible UCI Online Retail II ingestion and transaction classification.
 - Strict source-schema, customer-identifier and finite-number validation.
+- Shared decision-metric validation: percentages must be finite and within 0–100; count inputs must be non-negative integers; booleans are not accepted as numeric metrics.
 - Revenue/customer reconciliation and explicit row-classification diagnostics.
 - RFM segmentation, repeat-purchase and right-censored cohort analytics.
 - Merchandise/operational classification, SKU and country concentration.
@@ -68,6 +69,6 @@ The repository's `main` branch is still unprotected and has no configured rulese
 
 A number of historical feature branches remain. Their changes are represented in the main history; pruning old branch references is a separate GitHub repository-maintenance task.
 
-## Additional reliability hardening in review
+## Reliability hardening merged after v1.2.0
 
-A follow-up branch adds shared finite-value validation for business decision metrics. Percentages outside the inclusive 0–100 range, non-finite values, booleans masquerading as numbers, and invalid counts are treated as unavailable rather than triggering an insight. Focused regression tests cover these boundaries. This work is not part of the v1.2.0 release until its pull request is reviewed and merged.
+PR [#16](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/pull/16) adds shared finite-value validation to the transparent decision rules. Percentages outside the inclusive 0–100 range, NaN/infinity, booleans, negative counts and fractional counts are treated as unavailable rather than triggering an insight. Regression tests cover these boundaries and the valid historical insight behaviour remains unchanged. This is a post-v1.2.0 reliability improvement; the project version is not changed by this maintenance patch.
