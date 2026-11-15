@@ -93,3 +93,8 @@ Merchandise diagnostics use the **invoice + stock-code grain** before computing 
 The decision-support layer evaluates a fixed set of diagnostic thresholds against historical aggregated metrics. Current rules cover unidentified-customer revenue share (10%), leading-country revenue share (75%), top-20% identified-customer revenue share (50%), 90-day second-purchase conversion (40%, with at least 20 eligible customers), co-purchase lift (1.5, with at least 20 joint invoices), and top-10 SKU revenue share (60%, with at least 20 merchandise SKUs). Priority is raised at stricter documented cut-offs in the code and the generated insight record.
 
 Thresholds are heuristics for prioritising investigation, not confidence intervals, tests of statistical significance or automatic business policies. Each finding exposes its observed value and trigger rule, plus an action and an interpretation guardrail. Recommendations that imply a possible commercial intervention call for a controlled experiment; profitability claims require cost and margin data.
+
+
+## Empty analytical dimensions
+
+If a dataset has no usable customer identifiers, sales-level analysis still runs. Customer-level outputs are marked unavailable and the historical inactivity model is skipped. If no merchandise stock codes are classified, operational and country metrics remain available while merchandise-only outputs are empty.
