@@ -56,6 +56,14 @@ def test_synthetic_pipeline_runs_through_phase3_with_complete_lineage(tmp_path, 
     assert summary["historical_inactivity_model"]["status"] in {"COMPLETED", "SKIPPED"}
     assert summary["business_insight_count"] == len(summary["business_insights"])
     assert (output_dir / "business_insights.csv").exists()
+    customer_metrics = summary["customer_metrics"]
+    assert "identified_customer_order_count" in customer_metrics
+    if customer_metrics["identified_customer_order_count"]:
+        assert customer_metrics["average_identified_customer_order_value_gbp"] > 0
+        assert customer_metrics["median_identified_customer_order_value_gbp"] > 0
+    else:
+        assert customer_metrics["average_identified_customer_order_value_gbp"] is None
+
 
     required_outputs = [
         "customer_segment_value.csv",
