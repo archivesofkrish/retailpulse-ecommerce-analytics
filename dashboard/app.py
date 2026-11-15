@@ -310,9 +310,14 @@ with tab_customer:
         cm = phase3_summary.get("customer_metrics", {})
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("Identified customers", f"{cm.get('identified_customers', 0):,}")
-        c2.metric("Mean historical spend", gbp(cm.get("mean_historical_revenue_per_customer_gbp", 0), 2))
-        c3.metric("Median historical spend", gbp(cm.get("median_historical_revenue_per_customer_gbp", 0), 2))
-        c4.metric("Revenue Gini", f"{cm.get('customer_revenue_gini', float('nan')):.3f}")
+        mean_spend = cm.get("mean_historical_revenue_per_customer_gbp")
+        median_spend = cm.get("median_historical_revenue_per_customer_gbp")
+        revenue_gini = cm.get("customer_revenue_gini")
+        c2.metric("Mean historical spend", gbp(mean_spend, 2) if mean_spend is not None else "N/A")
+        c3.metric("Median historical spend", gbp(median_spend, 2) if median_spend is not None else "N/A")
+        c4.metric("Revenue Gini", f"{revenue_gini:.3f}" if revenue_gini is not None else "N/A")
+        if not cm.get("identified_customers"):
+            st.info("Customer-level metrics are unavailable because this dataset contains no usable customer IDs. Sales-level reporting remains available.")
         st.caption("Historical spend is observed revenue over the dataset window, not a forward-looking customer lifetime value estimate.")
 
         pareto = phase3_csv("customer_revenue_concentration.csv")
@@ -321,7 +326,7 @@ with tab_customer:
         left, right = st.columns([1.25, 1])
         with left:
             st.markdown("**Customer revenue Pareto curve**")
-            if pareto is not None:
+            if pareto is not None and not pareto.empty:
                 fig = px.line(pareto, x="customer_share_cumulative", y="revenue_share_cumulative",
                               labels={"customer_share_cumulative": "Cumulative customer share", "revenue_share_cumulative": "Cumulative identified revenue share"})
                 fig.add_shape(type="line", x0=0, y0=0, x1=1, y1=1, line=dict(dash="dot", color="gray"))
@@ -330,14 +335,18 @@ with tab_customer:
                 fig.update_yaxes(tickformat=".0%", range=[0, 1])
                 fig.update_layout(height=370, margin=dict(l=10, r=10, t=20, b=10))
                 st.plotly_chart(fig, width="stretch")
+            else:
+                st.info("Customer revenue concentration is unavailable.")
         with right:
             st.markdown("**Revenue contributed by top customer groups**")
-            if top_conc is not None:
+            if top_conc is not None and not top_conc.empty:
                 fig = px.bar(top_conc, x="top_customer_share_pct", y="identified_revenue_share_pct", text_auto=".1f",
                              labels={"top_customer_share_pct": "Top customer share (%)", "identified_revenue_share_pct": "Identified revenue share (%)"})
                 fig.update_layout(height=370, margin=dict(l=10, r=10, t=20, b=10))
                 st.plotly_chart(fig, width="stretch")
-        if segments is not None:
+            else:
+                st.info("No identified-customer concentration groups are available.")
+        if segments is not None and not segments.empty:
             st.markdown("**RFM segment economics**")
             chart = segments.melt(id_vars="rfm_segment", value_vars=["customer_share_pct", "identified_revenue_share_pct"],
                                   var_name="measure", value_name="share_pct")
@@ -382,7 +391,11 @@ with tab_retention:
         c1, c2, c3 = st.columns(3)
         c1.metric("Repeat-customer share", f"{cm.get('repeat_customer_share_pct', 0):.1f}%")
         c2.metric("Customers with 2+ orders", f"{cm.get('repeat_customers', 0):,}")
-        c3.metric("Median days to second order", f"{cm.get('median_days_to_second_order_among_repeaters', 0):.1f}")
+        median_second_order_days = cm.get("median_days_to_second_order_among_repeaters")
+        c3.metric(
+            "Median days to second order",
+            f"{median_second_order_days:.1f}" if median_second_order_days is not None else "N/A",
+        )
         if windows is not None:
             left, right = st.columns([1.25, 1])
             with left:
@@ -400,7 +413,9 @@ with tab_retention:
                 }).copy()
                 for column in ["Window (days)", "Eligible first-time customers", "Second purchase count"]:
                     window_display[column] = window_display[column].map(lambda x: f"{int(x):,}")
-                window_display["Second purchase rate (%)"] = window_display["Second purchase rate (%)"].map(lambda x: f"{float(x):.1f}%")
+                window_display["Second purchase rate (%)"] = window_display["Second purchase rate (%)"].map(
+                    lambda x: f"{float(x):.1f}%" if pd.notna(x) else "N/A"
+                )
                 st.dataframe(window_display, width="stretch", hide_index=True)
         retention = phase3_csv("cohort_retention_recomputed.csv")
         weighted = phase3_csv("weighted_cohort_retention.csv")
@@ -450,15 +465,17 @@ with tab_products:
         left, right = st.columns(2)
         with left:
             st.markdown("**Top merchandise stock codes**")
-            if products is not None:
+            if products is not None and not products.empty:
                 top = products.head(12).sort_values("revenue_gbp")
                 fig = px.bar(top, x="revenue_gbp", y="description", orientation="h", hover_data=["stock_code", "orders", "units"],
                              labels={"revenue_gbp": "Revenue (£)", "description": "Product"})
                 fig.update_layout(height=430, margin=dict(l=10, r=10, t=20, b=10))
                 st.plotly_chart(fig, width="stretch")
+            else:
+                st.info("No merchandise stock codes are available for ranking.")
         with right:
             st.markdown("**Merchandise revenue Pareto curve**")
-            if products is not None:
+            if products is not None and not products.empty:
                 x_share = np.arange(1, len(products) + 1) / len(products)
                 fig = px.line(x=x_share, y=products["cumulative_revenue_share_pct"] / 100,
                               labels={"x": "Cumulative share of stock codes", "y": "Cumulative merchandise revenue"})
@@ -467,6 +484,8 @@ with tab_products:
                 fig.update_yaxes(tickformat=".0%", range=[0, 1])
                 fig.update_layout(height=430, margin=dict(l=10, r=10, t=20, b=10))
                 st.plotly_chart(fig, width="stretch")
+            else:
+                st.info("Merchandise concentration is unavailable because there are no merchandise stock codes.")
         st.markdown("**Country revenue concentration**")
         if countries is not None:
             topc = countries.head(12).sort_values("revenue")

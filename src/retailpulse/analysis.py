@@ -190,7 +190,24 @@ def build_customer_rfm(sales: pd.DataFrame) -> pd.DataFrame:
     """Build customer-level Recency, Frequency, Monetary value and segments."""
     customer_sales = sales.loc[sales["customer_id"].notna()].copy()
     if customer_sales.empty:
-        return pd.DataFrame(columns=["customer_id", "recency_days", "frequency", "monetary", "R", "F", "M", "rfm_segment"])
+        # Preserve the complete downstream RFM schema even when no customer IDs
+        # are present. Phase 3 and dashboard consumers can then distinguish an
+        # empty customer population from a malformed/incomplete export.
+        return pd.DataFrame(columns=[
+            "customer_id",
+            "last_purchase",
+            "first_purchase",
+            "frequency",
+            "monetary",
+            "units",
+            "recency_days",
+            "customer_tenure_days",
+            "R",
+            "F",
+            "M",
+            "rfm_segment",
+            "average_order_value",
+        ])
 
     snapshot_date = customer_sales["invoice_date"].max().normalize() + pd.DateOffset(days=1)
     customer = customer_sales.groupby("customer_id", as_index=False).agg(

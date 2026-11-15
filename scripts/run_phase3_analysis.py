@@ -112,6 +112,7 @@ def pct_money(x: float) -> str:
 
 
 def make_customer_outputs(sales: pd.DataFrame, rfm: pd.DataFrame, kpis: dict):
+    """Build customer concentration and repeat-purchase outputs, including empty-ID cases."""
     cust = rfm.copy()
     cust["customer_id"] = cust["customer_id"].astype("string").str.strip()
     cust["customer_id"] = cust["customer_id"].mask(cust["customer_id"].eq(""), pd.NA)
@@ -120,80 +121,179 @@ def make_customer_outputs(sales: pd.DataFrame, rfm: pd.DataFrame, kpis: dict):
     cust = cust.sort_values("monetary", ascending=False).reset_index(drop=True)
     n = len(cust)
     total = float(cust["monetary"].sum())
-    cust["revenue_rank"] = np.arange(1, n + 1)
-    cust["customer_share_cumulative"] = cust["revenue_rank"] / n
-    cust["revenue_share_cumulative"] = cust["monetary"].cumsum() / total
+
+    cust["revenue_rank"] = np.arange(1, n + 1, dtype=int)
+    cust["customer_share_cumulative"] = cust["revenue_rank"] / n if n else pd.Series(dtype=float)
+    cust["revenue_share_cumulative"] = (
+        cust["monetary"].cumsum() / total if total > 0 else pd.Series(dtype=float)
+    )
     cust.to_csv(OUT / "customer_revenue_concentration.csv", index=False)
 
     top_rows = []
-    for pct in [0.01, 0.05, 0.10, 0.20]:
-        k = max(1, math.ceil(n * pct))
-        value = float(cust.head(k)["monetary"].sum())
-        top_rows.append({"top_customer_share_pct": pct * 100, "customers": k,
-                         "historical_revenue_gbp": value, "identified_revenue_share_pct": value / total * 100})
     pareto_rows = []
-    for threshold in [0.50, 0.80, 0.90]:
-        k = int(np.argmax(cust["revenue_share_cumulative"].to_numpy() >= threshold) + 1)
-        pareto_rows.append({"revenue_threshold_pct": threshold * 100, "customers_required": k,
-                            "customer_base_share_pct": k / n * 100})
-    pd.DataFrame(top_rows).to_csv(OUT / "top_customer_concentration.csv", index=False)
-    pd.DataFrame(pareto_rows).to_csv(OUT / "customer_pareto_thresholds.csv", index=False)
+    if n and total > 0:
+        for pct in [0.01, 0.05, 0.10, 0.20]:
+            k = max(1, math.ceil(n * pct))
+            value = float(cust.head(k)["monetary"].sum())
+            top_rows.append({
+                "top_customer_share_pct": pct * 100,
+                "customers": k,
+                "historical_revenue_gbp": value,
+                "identified_revenue_share_pct": value / total * 100,
+            })
+        for threshold in [0.50, 0.80, 0.90]:
+            cumulative = cust["revenue_share_cumulative"].to_numpy()
+            reached = np.flatnonzero(cumulative >= threshold)
+            k = int(reached[0] + 1) if len(reached) else n
+            pareto_rows.append({
+                "revenue_threshold_pct": threshold * 100,
+                "customers_required": k,
+                "customer_base_share_pct": k / n * 100,
+            })
 
-    seg = (cust.groupby("rfm_segment", dropna=False)
-           .agg(customers=("customer_id", "size"), historical_revenue_gbp=("monetary", "sum"),
-                avg_recency_days=("recency_days", "mean"), median_recency_days=("recency_days", "median"),
-                avg_orders_per_customer=("frequency", "mean"), median_historical_revenue_gbp=("monetary", "median"))
-           .reset_index())
-    seg["customer_share_pct"] = seg["customers"] / n * 100
-    seg["identified_revenue_share_pct"] = seg["historical_revenue_gbp"] / total * 100
-    seg = seg.sort_values("historical_revenue_gbp", ascending=False)
+    top_columns = [
+        "top_customer_share_pct", "customers",
+        "historical_revenue_gbp", "identified_revenue_share_pct",
+    ]
+    pareto_columns = [
+        "revenue_threshold_pct", "customers_required", "customer_base_share_pct",
+    ]
+    pd.DataFrame(top_rows, columns=top_columns).to_csv(
+        OUT / "top_customer_concentration.csv", index=False
+    )
+    pd.DataFrame(pareto_rows, columns=pareto_columns).to_csv(
+        OUT / "customer_pareto_thresholds.csv", index=False
+    )
+
+    segment_columns = [
+        "rfm_segment", "customers", "historical_revenue_gbp",
+        "avg_recency_days", "median_recency_days", "avg_orders_per_customer",
+        "median_historical_revenue_gbp", "customer_share_pct",
+        "identified_revenue_share_pct",
+    ]
+    if n:
+        seg = (
+            cust.groupby("rfm_segment", dropna=False)
+            .agg(
+                customers=("customer_id", "size"),
+                historical_revenue_gbp=("monetary", "sum"),
+                avg_recency_days=("recency_days", "mean"),
+                median_recency_days=("recency_days", "median"),
+                avg_orders_per_customer=("frequency", "mean"),
+                median_historical_revenue_gbp=("monetary", "median"),
+            )
+            .reset_index()
+        )
+        seg["customer_share_pct"] = seg["customers"] / n * 100
+        seg["identified_revenue_share_pct"] = (
+            seg["historical_revenue_gbp"] / total * 100 if total > 0 else 0.0
+        )
+        seg = seg.sort_values("historical_revenue_gbp", ascending=False)
+    else:
+        seg = pd.DataFrame(columns=segment_columns)
     seg.to_csv(OUT / "customer_segment_value.csv", index=False)
 
-    # Customer-level order history and repeat purchase timing.
-    sales_known = sales.dropna(subset=["customer_id_key", "invoice_date", "invoice_key"]).copy()
-    orders = (sales_known.groupby(["customer_id_key", "invoice_key"], as_index=False)
-              .agg(order_date=("invoice_date", "min"), order_revenue=("revenue", "sum")))
-    orders = orders.sort_values(["customer_id_key", "order_date", "invoice_key"])
-    orders["order_number"] = orders.groupby("customer_id_key").cumcount() + 1
-    order_counts = orders.groupby("customer_id_key")["invoice_key"].nunique()
-    repeat_customers = int((order_counts >= 2).sum())
-    single_order_customers = int((order_counts == 1).sum())
-    first_orders = orders[orders["order_number"] == 1][["customer_id_key", "order_date"]].rename(columns={"order_date": "first_order_date"})
-    second_orders = orders[orders["order_number"] == 2][["customer_id_key", "order_date"]].rename(columns={"order_date": "second_order_date"})
-    first_second = first_orders.merge(second_orders, on="customer_id_key", how="left")
-    first_second["days_to_second_order"] = (first_second["second_order_date"] - first_second["first_order_date"]).dt.total_seconds() / 86400
+    # Customer-level order history is unavailable when no valid identifiers exist.
+    sales_known = sales.dropna(
+        subset=["customer_id_key", "invoice_date", "invoice_key"]
+    ).copy()
+    if sales_known.empty:
+        orders = pd.DataFrame(columns=[
+            "customer_id_key", "invoice_key", "order_date", "order_revenue", "order_number",
+        ])
+        first_second = pd.DataFrame(columns=[
+            "customer_id_key", "first_order_date", "second_order_date", "days_to_second_order",
+        ])
+    else:
+        orders = (
+            sales_known.groupby(["customer_id_key", "invoice_key"], as_index=False)
+            .agg(order_date=("invoice_date", "min"), order_revenue=("revenue", "sum"))
+        )
+        orders = orders.sort_values(["customer_id_key", "order_date", "invoice_key"])
+        orders["order_number"] = orders.groupby("customer_id_key").cumcount() + 1
+        first_orders = (
+            orders.loc[orders["order_number"].eq(1), ["customer_id_key", "order_date"]]
+            .rename(columns={"order_date": "first_order_date"})
+        )
+        second_orders = (
+            orders.loc[orders["order_number"].eq(2), ["customer_id_key", "order_date"]]
+            .rename(columns={"order_date": "second_order_date"})
+        )
+        first_second = first_orders.merge(second_orders, on="customer_id_key", how="left")
+        first_second["days_to_second_order"] = (
+            first_second["second_order_date"] - first_second["first_order_date"]
+        ).dt.total_seconds() / 86400
+
     first_second.to_csv(OUT / "customer_first_second_order.csv", index=False)
     observation_end = sales["invoice_date"].max().normalize()
+    order_counts = (
+        orders.groupby("customer_id_key")["invoice_key"].nunique()
+        if not orders.empty else pd.Series(dtype=int)
+    )
+    repeat_customers = int((order_counts >= 2).sum())
+    single_order_customers = int((order_counts == 1).sum())
     windows = []
     for days in [30, 60, 90, 180, 365]:
-        eligible = first_second[first_second["first_order_date"] <= observation_end - timedelta(days=days)]
-        returned = int((eligible["days_to_second_order"].notna() & (eligible["days_to_second_order"] <= days)).sum())
-        windows.append({"follow_up_days": days, "eligible_customers": len(eligible),
-                        "customers_with_second_order": returned,
-                        "second_order_within_window_pct": returned / len(eligible) * 100 if len(eligible) else np.nan})
+        eligible = first_second[
+            first_second["first_order_date"] <= observation_end - timedelta(days=days)
+        ]
+        returned = int((
+            eligible["days_to_second_order"].notna()
+            & eligible["days_to_second_order"].le(days)
+        ).sum())
+        windows.append({
+            "follow_up_days": days,
+            "eligible_customers": int(len(eligible)),
+            "customers_with_second_order": returned,
+            "second_order_within_window_pct": (
+                returned / len(eligible) * 100 if len(eligible) else np.nan
+            ),
+        })
     pd.DataFrame(windows).to_csv(OUT / "repeat_purchase_windows.csv", index=False)
 
     metrics = {
         "identified_customers": int(n),
         "identified_customer_historical_revenue_gbp": total,
-        "mean_historical_revenue_per_customer_gbp": float(cust["monetary"].mean()),
-        "median_historical_revenue_per_customer_gbp": float(cust["monetary"].median()),
-        "p90_historical_revenue_per_customer_gbp": float(cust["monetary"].quantile(.90)),
-        "p99_historical_revenue_per_customer_gbp": float(cust["monetary"].quantile(.99)),
-        "max_historical_revenue_per_customer_gbp": float(cust["monetary"].max()),
-        "mean_orders_per_customer": float(cust["frequency"].mean()),
-        "median_orders_per_customer": float(cust["frequency"].median()),
+        "mean_historical_revenue_per_customer_gbp": (
+            float(cust["monetary"].mean()) if n else None
+        ),
+        "median_historical_revenue_per_customer_gbp": (
+            float(cust["monetary"].median()) if n else None
+        ),
+        "p90_historical_revenue_per_customer_gbp": (
+            float(cust["monetary"].quantile(.90)) if n else None
+        ),
+        "p99_historical_revenue_per_customer_gbp": (
+            float(cust["monetary"].quantile(.99)) if n else None
+        ),
+        "max_historical_revenue_per_customer_gbp": (
+            float(cust["monetary"].max()) if n else None
+        ),
+        "mean_orders_per_customer": (
+            float(cust["frequency"].mean()) if n else None
+        ),
+        "median_orders_per_customer": (
+            float(cust["frequency"].median()) if n else None
+        ),
         "repeat_customers": repeat_customers,
-        "repeat_customer_share_pct": repeat_customers / n * 100,
+        "repeat_customer_share_pct": repeat_customers / n * 100 if n else 0.0,
         "single_order_customers": single_order_customers,
-        "single_order_customer_share_pct": single_order_customers / n * 100,
-        "customer_revenue_gini": gini(cust["monetary"]),
-        "median_days_to_second_order_among_repeaters": float(first_second["days_to_second_order"].dropna().median()),
-        "mean_days_to_second_order_among_repeaters": float(first_second["days_to_second_order"].dropna().mean()),
+        "single_order_customer_share_pct": (
+            single_order_customers / n * 100 if n else 0.0
+        ),
+        "customer_revenue_gini": gini(cust["monetary"]) if n else None,
+        "median_days_to_second_order_among_repeaters": (
+            float(first_second["days_to_second_order"].dropna().median())
+            if first_second["days_to_second_order"].notna().any() else None
+        ),
+        "mean_days_to_second_order_among_repeaters": (
+            float(first_second["days_to_second_order"].dropna().mean())
+            if first_second["days_to_second_order"].notna().any() else None
+        ),
+        "top_customer_concentration": top_rows,
+        "customer_pareto_thresholds": pareto_rows,
+        "repeat_purchase_windows": windows,
     }
-    metrics["top_customer_concentration"] = top_rows
-    metrics["customer_pareto_thresholds"] = pareto_rows
-    metrics["repeat_purchase_windows"] = windows
     return cust, seg, orders, metrics
 
 
@@ -215,28 +315,50 @@ def make_country_outputs(countries: pd.DataFrame):
 
 
 def make_product_outputs(sales: pd.DataFrame, products: pd.DataFrame):
+    """Build merchandise metrics without failing when no merchandise SKUs exist."""
     p = products.copy()
     p["product_type_clean"] = p["product_type"].astype(str).str.strip()
     for col in ["revenue", "units", "orders"]:
         p[col] = pd.to_numeric(p[col], errors="coerce").fillna(0)
-    merchandise_rows = p[p["product_type_clean"].str.lower() == "merchandise"].copy()
-    operational_rows = p[p["product_type_clean"].str.lower() != "merchandise"].copy()
+    merchandise_rows = p[p["product_type_clean"].str.lower().eq("merchandise")].copy()
+    operational_rows = p[~p["product_type_clean"].str.lower().eq("merchandise")].copy()
 
-    # Product performance is grouped by code + description in the source export;
-    # aggregate to one row per stock code for product-level concentration.
-    product_codes = (merchandise_rows.groupby("stock_code", as_index=False)
-                     .agg(revenue_gbp=("revenue", "sum"), units=("units", "sum"), orders=("orders", "sum")))
-    descriptions = (merchandise_rows.sort_values("revenue", ascending=False)
-                    .drop_duplicates("stock_code").set_index("stock_code")["description"])
-    product_codes["description"] = product_codes["stock_code"].map(descriptions)
-    product_codes = product_codes.sort_values("revenue_gbp", ascending=False).reset_index(drop=True)
-    total_merch = float(product_codes["revenue_gbp"].sum())
-    product_codes["revenue_share_pct"] = product_codes["revenue_gbp"] / total_merch * 100
-    product_codes["cumulative_revenue_share_pct"] = product_codes["revenue_gbp"].cumsum() / total_merch * 100
+    product_columns = [
+        "stock_code", "revenue_gbp", "units", "orders", "description",
+        "revenue_share_pct", "cumulative_revenue_share_pct",
+    ]
+    if merchandise_rows.empty:
+        product_codes = pd.DataFrame(columns=product_columns)
+    else:
+        product_codes = (
+            merchandise_rows.groupby("stock_code", as_index=False)
+            .agg(
+                revenue_gbp=("revenue", "sum"),
+                units=("units", "sum"),
+                orders=("orders", "sum"),
+            )
+        )
+        descriptions = (
+            merchandise_rows.sort_values("revenue", ascending=False)
+            .drop_duplicates("stock_code")
+            .set_index("stock_code")["description"]
+        )
+        product_codes["description"] = product_codes["stock_code"].map(descriptions)
+        product_codes = product_codes.sort_values(
+            "revenue_gbp", ascending=False
+        ).reset_index(drop=True)
+
+    total_merch = float(product_codes["revenue_gbp"].sum()) if not product_codes.empty else 0.0
+    if not product_codes.empty and total_merch > 0:
+        product_codes["revenue_share_pct"] = product_codes["revenue_gbp"] / total_merch * 100
+        product_codes["cumulative_revenue_share_pct"] = (
+            product_codes["revenue_gbp"].cumsum() / total_merch * 100
+        )
+    elif not product_codes.empty:
+        product_codes["revenue_share_pct"] = 0.0
+        product_codes["cumulative_revenue_share_pct"] = 0.0
 
     # Aggregate at invoice + SKU grain before deriving one-invoice maxima.
-    # A SKU can appear on multiple source lines within one invoice, so taking the
-    # maximum source-line quantity would understate the actual invoice quantity.
     sale_rows = sales.copy()
     sale_rows["stock_code_key"] = sale_rows["stock_code"].astype(str)
     sale_rows["invoice_key"] = sale_rows["invoice"].astype(str)
@@ -257,29 +379,50 @@ def make_product_outputs(sales: pd.DataFrame, products: pd.DataFrame):
         .reset_index()
         .rename(columns={"stock_code_key": "stock_code"})
     )
-    product_codes = product_codes.drop(columns=["orders"]).merge(
+    product_codes = product_codes.drop(columns=["orders"], errors="ignore").merge(
         invoice_stats, on="stock_code", how="left"
     )
-    # The invoice-level distinct count is the authoritative order count for a SKU;
-    # summing order counts across multiple source descriptions can double-count.
-    product_codes["orders"] = product_codes["distinct_invoices"].fillna(0).astype(int)
+    product_codes["distinct_invoices"] = (
+        product_codes["distinct_invoices"].fillna(0).astype(int)
+    )
+    product_codes["orders"] = product_codes["distinct_invoices"]
     product_codes.to_csv(OUT / "merchandise_product_concentration.csv", index=False)
 
-    one_order = product_codes[product_codes["distinct_invoices"] <= 1].copy()
+    one_order = product_codes.loc[product_codes["distinct_invoices"].le(1)].copy()
     one_order = one_order.sort_values("revenue_gbp", ascending=False)
     one_order.to_csv(OUT / "single_invoice_merchandise_products.csv", index=False)
+
     ops_total = float(operational_rows["revenue"].sum())
-    ops_summary = (operational_rows.groupby("stock_code", as_index=False)
-                   .agg(description=("description", "first"), revenue_gbp=("revenue", "sum"), units=("units", "sum"), orders=("orders", "sum"))
-                   .sort_values("revenue_gbp", ascending=False))
+    ops_summary = (
+        operational_rows.groupby("stock_code", as_index=False)
+        .agg(
+            description=("description", "first"),
+            revenue_gbp=("revenue", "sum"),
+            units=("units", "sum"),
+            orders=("orders", "sum"),
+        )
+        .sort_values("revenue_gbp", ascending=False)
+    )
     ops_summary.to_csv(OUT / "operational_non_merchandise_codes.csv", index=False)
 
     pareto = []
-    for threshold in [.50, .80, .90]:
-        k = int(np.argmax(product_codes["cumulative_revenue_share_pct"].to_numpy() >= threshold * 100) + 1)
-        pareto.append({"revenue_threshold_pct": threshold * 100, "stock_codes_required": k,
-                       "share_of_merchandise_stock_codes_pct": k / len(product_codes) * 100})
-    top10 = float(product_codes.head(10)["revenue_gbp"].sum() / total_merch * 100)
+    if not product_codes.empty:
+        cumulative = product_codes["cumulative_revenue_share_pct"].to_numpy()
+        for threshold in [.50, .80, .90]:
+            reached = np.flatnonzero(cumulative >= threshold * 100)
+            k = int(reached[0] + 1) if len(reached) else len(product_codes)
+            pareto.append({
+                "revenue_threshold_pct": threshold * 100,
+                "stock_codes_required": k,
+                "share_of_merchandise_stock_codes_pct": (
+                    k / len(product_codes) * 100
+                ),
+            })
+
+    top10 = (
+        float(product_codes.head(10)["revenue_gbp"].sum() / total_merch * 100)
+        if total_merch > 0 else 0.0
+    )
     metrics = {
         "merchandise_stock_codes": int(product_codes["stock_code"].nunique()),
         "merchandise_revenue_gbp": total_merch,
@@ -289,10 +432,7 @@ def make_product_outputs(sales: pd.DataFrame, products: pd.DataFrame):
         "single_invoice_merchandise_code_count": int(len(one_order)),
         "product_pareto_thresholds": pareto,
     }
-    metrics["product_pareto_thresholds"] = pareto
     return product_codes, ops_summary, metrics
-
-
 
 
 def make_product_affinity(sales: pd.DataFrame, products: pd.DataFrame):
@@ -391,9 +531,9 @@ def make_cohort_outputs(sales: pd.DataFrame):
     """
     x = sales.dropna(subset=["customer_id_key", "invoice_date"]).copy()
     if x.empty:
-        empty = pd.DataFrame()
-        empty.to_csv(OUT / "cohort_retention_recomputed.csv")
-        empty.to_csv(OUT / "cohort_active_customer_counts.csv")
+        empty = pd.DataFrame(columns=["cohort_month"])
+        empty.to_csv(OUT / "cohort_retention_recomputed.csv", index=False)
+        empty.to_csv(OUT / "cohort_active_customer_counts.csv", index=False)
         return pd.DataFrame(columns=[
             "months_since_first_purchase", "eligible_cohorts", "eligible_customers",
             "active_in_that_calendar_month", "weighted_monthly_active_retention_pct",
@@ -466,6 +606,13 @@ def make_churn_backtest(orders: pd.DataFrame, observation_end: pd.Timestamp):
             "orders_90d", "orders_180d", "orders_365d",
             "predicted_inactivity_score", "risk_rank_pct",
         ]).to_csv(OUT / "historical_inactivity_holdout_scores.csv", index=False)
+
+    if orders.empty:
+        write_skipped_outputs()
+        return {
+            "status": "SKIPPED",
+            "reason": "No identified-customer order history is available for a 90-day inactivity backtest.",
+        }
 
     start = orders["order_date"].min() + timedelta(days=90)
     end = observation_end - timedelta(days=90)
@@ -587,153 +734,297 @@ def make_churn_backtest(orders: pd.DataFrame, observation_end: pd.Timestamp):
 
 
 def make_charts(cust, seg, countries, products, repeat_windows, churn_metrics):
-    # Customer Pareto curve
+    FIG.mkdir(parents=True, exist_ok=True)
+
     fig, ax = plt.subplots(figsize=(9, 5))
-    ax.plot(cust["customer_share_cumulative"] * 100, cust["revenue_share_cumulative"] * 100)
-    ax.axhline(80, linestyle="--", linewidth=1)
-    ax.axvline(20, linestyle="--", linewidth=1)
-    ax.set(title="Identified-customer revenue concentration", xlabel="Cumulative share of customers (%)",
-           ylabel="Cumulative share of identified-customer revenue (%)", xlim=(0, 100), ylim=(0, 100))
+    if cust.empty:
+        ax.text(.5, .5, "No identifiable customers in this dataset", ha="center", va="center")
+    else:
+        ax.plot(cust["customer_share_cumulative"] * 100, cust["revenue_share_cumulative"] * 100)
+        ax.axhline(80, linestyle="--", linewidth=1)
+        ax.axvline(20, linestyle="--", linewidth=1)
+    ax.set(
+        title="Identified-customer revenue concentration",
+        xlabel="Cumulative share of customers (%)",
+        ylabel="Cumulative share of identified-customer revenue (%)",
+        xlim=(0, 100), ylim=(0, 100),
+    )
     ax.grid(alpha=.25)
-    fig.tight_layout(); fig.savefig(FIG / "customer_revenue_pareto.png", dpi=160); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(FIG / "customer_revenue_pareto.png", dpi=160)
+    plt.close(fig)
 
-    # Segment revenue and customer shares
-    ss = seg.sort_values("identified_revenue_share_pct", ascending=True)
-    y = np.arange(len(ss))
     fig, ax = plt.subplots(figsize=(9, 5))
-    ax.barh(y - .18, ss["customer_share_pct"], height=.35, label="Customer share")
-    ax.barh(y + .18, ss["identified_revenue_share_pct"], height=.35, label="Revenue share")
-    ax.set_yticks(y, ss["rfm_segment"]); ax.set_xlabel("Share (%)")
+    if seg.empty:
+        ax.text(.5, .5, "RFM segments unavailable: no identified customers", ha="center", va="center")
+    else:
+        ss = seg.sort_values("identified_revenue_share_pct", ascending=True)
+        y = np.arange(len(ss))
+        ax.barh(y - .18, ss["customer_share_pct"], height=.35, label="Customer share")
+        ax.barh(y + .18, ss["identified_revenue_share_pct"], height=.35, label="Revenue share")
+        ax.set_yticks(y, ss["rfm_segment"])
+        ax.set_xlabel("Share (%)")
+        ax.legend()
     ax.set_title("Customer share vs. historical revenue share by RFM segment")
-    ax.legend(); ax.grid(axis="x", alpha=.25); fig.tight_layout()
-    fig.savefig(FIG / "segment_share_comparison.png", dpi=160); plt.close(fig)
+    ax.grid(axis="x", alpha=.25)
+    fig.tight_layout()
+    fig.savefig(FIG / "segment_share_comparison.png", dpi=160)
+    plt.close(fig)
 
-    # Repurchase windows
     fig, ax = plt.subplots(figsize=(8, 4.5))
-    ax.bar(repeat_windows["follow_up_days"].astype(str), repeat_windows["second_order_within_window_pct"])
-    ax.set(title="Identified customers making a second purchase", xlabel="Follow-up window (days)", ylabel="Customers with second purchase (%)")
-    ax.set_ylim(0, 100); ax.grid(axis="y", alpha=.25); fig.tight_layout()
-    fig.savefig(FIG / "second_purchase_windows.png", dpi=160); plt.close(fig)
+    if repeat_windows["eligible_customers"].sum() == 0:
+        ax.text(.5, .5, "Repeat-purchase analysis unavailable: no identified customers", ha="center", va="center")
+    else:
+        ax.bar(repeat_windows["follow_up_days"].astype(str), repeat_windows["second_order_within_window_pct"])
+    ax.set(
+        title="Identified customers making a second purchase",
+        xlabel="Follow-up window (days)",
+        ylabel="Customers with second purchase (%)",
+    )
+    ax.set_ylim(0, 100)
+    ax.grid(axis="y", alpha=.25)
+    fig.tight_layout()
+    fig.savefig(FIG / "second_purchase_windows.png", dpi=160)
+    plt.close(fig)
 
-    # Top countries
     top = countries.head(10).sort_values("revenue", ascending=True)
     fig, ax = plt.subplots(figsize=(9, 5))
-    ax.barh(top["country"], top["revenue"] / 1_000_000)
+    if top.empty:
+        ax.text(.5, .5, "No country-level sales data", ha="center", va="center")
+    else:
+        ax.barh(top["country"], top["revenue"] / 1_000_000)
     ax.set(title="Revenue by country — top 10", xlabel="Revenue (£ millions)")
-    ax.grid(axis="x", alpha=.25); fig.tight_layout()
-    fig.savefig(FIG / "country_revenue_top10.png", dpi=160); plt.close(fig)
+    ax.grid(axis="x", alpha=.25)
+    fig.tight_layout()
+    fig.savefig(FIG / "country_revenue_top10.png", dpi=160)
+    plt.close(fig)
 
-    # Merchandise stock-code Pareto
-    top_products = products.copy()
     fig, ax = plt.subplots(figsize=(9, 5))
-    ax.plot(np.arange(1, len(top_products) + 1) / len(top_products) * 100,
-            top_products["cumulative_revenue_share_pct"])
-    ax.axhline(80, linestyle="--", linewidth=1)
-    ax.set(title="Merchandise revenue concentration by stock code", xlabel="Cumulative share of merchandise stock codes (%)",
-           ylabel="Cumulative merchandise revenue (%)", xlim=(0, 100), ylim=(0, 100))
-    ax.grid(alpha=.25); fig.tight_layout()
-    fig.savefig(FIG / "merchandise_product_pareto.png", dpi=160); plt.close(fig)
+    if products.empty:
+        ax.text(.5, .5, "Merchandise analysis unavailable: no merchandise stock codes", ha="center", va="center")
+    else:
+        ax.plot(
+            np.arange(1, len(products) + 1) / len(products) * 100,
+            products["cumulative_revenue_share_pct"],
+        )
+        ax.axhline(80, linestyle="--", linewidth=1)
+    ax.set(
+        title="Merchandise revenue concentration by stock code",
+        xlabel="Cumulative share of merchandise stock codes (%)",
+        ylabel="Cumulative merchandise revenue (%)",
+        xlim=(0, 100), ylim=(0, 100),
+    )
+    ax.grid(alpha=.25)
+    fig.tight_layout()
+    fig.savefig(FIG / "merchandise_product_pareto.png", dpi=160)
+    plt.close(fig)
 
-    # Historical monthly backtest AUC
     monthly_path = OUT / "historical_inactivity_monthly_backtest.csv"
     if monthly_path.exists():
         m = pd.read_csv(monthly_path)
         fig, ax = plt.subplots(figsize=(9, 4.5))
-        ax.plot(m["snapshot_date"], m["roc_auc"], marker="o")
-        ax.axhline(.5, linestyle="--", linewidth=1)
-        ax.set(title="Historical 90-day inactivity model: monthly holdout ROC-AUC", xlabel="Snapshot date", ylabel="ROC-AUC", ylim=(.4, 1.0))
-        ax.tick_params(axis="x", rotation=45); ax.grid(alpha=.25); fig.tight_layout()
-        fig.savefig(FIG / "inactivity_model_monthly_auc.png", dpi=160); plt.close(fig)
+        if m.empty:
+            ax.text(.5, .5, "Historical model skipped", ha="center", va="center")
+        else:
+            ax.plot(m["snapshot_date"], m["roc_auc"], marker="o")
+            ax.axhline(.5, linestyle="--", linewidth=1)
+        ax.set(
+            title="Historical 90-day inactivity model: monthly holdout ROC-AUC",
+            xlabel="Snapshot date", ylabel="ROC-AUC", ylim=(.4, 1.0),
+        )
+        ax.tick_params(axis="x", rotation=45)
+        ax.grid(alpha=.25)
+        fig.tight_layout()
+        fig.savefig(FIG / "inactivity_model_monthly_auc.png", dpi=160)
+        plt.close(fig)
 
 
 def build_report(metrics, country_metrics, product_metrics, affinity_metrics, affinity_rules, business_insights, churn_metrics, segments, windows, cohort_summary, kpis):
+    """Write a Phase 3 report that treats missing analytical dimensions explicitly."""
     total_sales = float(kpis["gross_sales_revenue_gbp"])
     identified = float(metrics["identified_customer_historical_revenue_gbp"])
-    unknown = float(kpis.get("unidentified_customer_sales_revenue_gbp", total_sales - identified))
+    customer_count = int(metrics["identified_customers"])
     risk_names = ["Hibernating", "At Risk", "Cannot Lose Them"]
     risk_seg = segments[segments["rfm_segment"].isin(risk_names)]
-    risk_count = int(risk_seg["customers"].sum())
-    risk_revenue = float(risk_seg["historical_revenue_gbp"].sum())
+    risk_count = int(risk_seg["customers"].sum()) if not risk_seg.empty else 0
+    risk_revenue = float(risk_seg["historical_revenue_gbp"].sum()) if not risk_seg.empty else 0.0
     top_customer_rows = pd.read_csv(OUT / "top_customer_concentration.csv")
-    pareto_rows = pd.read_csv(OUT / "customer_pareto_thresholds.csv")
     product_pareto = pd.DataFrame(product_metrics["product_pareto_thresholds"])
     countries_df = pd.read_csv(OUT / "country_concentration.csv")
     products_df = pd.read_csv(OUT / "merchandise_product_concentration.csv")
     anomalies = pd.read_csv(OUT / "single_invoice_merchandise_products.csv")
 
-    lines = []
-    lines += [
-        "# RetailPulse — Phase 3 Advanced Analytics Report", "",
-        "**Dataset:** UCI Online Retail II (processed sale-line extract)",
-        f"**Observation window:** {kpis['sales_date_min']} to {kpis['sales_date_max']}",
+    def top_share(pct: float) -> float | None:
+        match = top_customer_rows.loc[
+            top_customer_rows["top_customer_share_pct"].eq(pct),
+            "identified_revenue_share_pct",
+        ]
+        return float(match.iloc[0]) if not match.empty else None
+
+    lines = [
+        "# RetailPulse — Phase 3 Advanced Analytics Report",
+        "",
+        "**Dataset:** RetailPulse transaction extract",
+        f"**Observation window:** {kpis.get('sales_date_min')} to {kpis.get('sales_date_max')}",
         f"**Source sale lines:** {int(kpis['sales_lines']):,}",
-        "**Currency:** GBP (£), as recorded in the source", "",
-        "> This report analyses historical transactions. Revenue is not profit. Historical customer spend is not a forward-looking customer lifetime value (CLV) estimate. The churn-risk model predicts a defined 90-day inactivity proxy, not permanent churn.", "",
-        "## Executive summary", "",
-        f"- Gross sales-line revenue is **{pct_money(total_sales)}**. The identified-customer RFM file reconciles to **{pct_money(identified)}**; approximately **{(identified / total_sales * 100):.1f}%** of sales revenue is attributable to identified customer IDs.",
-        f"- The top **10%** of identified customers generate **{top_customer_rows.loc[top_customer_rows.top_customer_share_pct == 10, 'identified_revenue_share_pct'].iloc[0]:.1f}%** of identified-customer revenue; the top **20%** generate **{top_customer_rows.loc[top_customer_rows.top_customer_share_pct == 20, 'identified_revenue_share_pct'].iloc[0]:.1f}%**.",
-        f"- **{metrics['repeat_customer_share_pct']:.1f}%** of identified customers made at least two purchases within the dataset window. Among customers with a full 90-day follow-up window, **{windows.loc[windows.follow_up_days == 90, 'second_order_within_window_pct'].iloc[0]:.1f}%** made a second purchase within 90 days.",
-        f"- The **{country_metrics['top_country']}** accounts for **{country_metrics['top_country_revenue_share_pct']:.1f}%** of gross sales-line revenue; the top five countries account for **{country_metrics['top_five_country_revenue_share_pct']:.1f}%**.",
-        f"- Merchandise revenue totals **{pct_money(product_metrics['merchandise_revenue_gbp'])}** after excluding operational/non-merchandise codes; operational/non-merchandise revenue is **{pct_money(product_metrics['operational_non_merchandise_revenue_gbp'])}**. A single-invoice product anomaly is flagged for audit rather than removed.",
-        f"- The processed file contains **{int(kpis.get('rows_missing_customer_id_sales', 0)):,} sales lines with no customer ID**, representing **{float(kpis.get('unidentified_customer_revenue_share_pct', 0)):.1f}%** of sales revenue.",
-        "- A historical random-forest model achieved a holdout ROC-AUC of **{:.3f}** for 90-day inactivity. Treat this as a retrospective ranking proof-of-concept, not a deployable churn probability.".format(churn_metrics.get("roc_auc", float("nan"))) if churn_metrics.get("status") == "COMPLETED" else "- The historical inactivity model was skipped because there were insufficient snapshots.",
-        "", "## 0. Data scope and reconciliation", "",
-        f"The source workbook has **{int(kpis['rows_received']):,}** rows. Five rows fail core validation, leaving **{int(kpis['rows_after_core_validation']):,}**. The processed extract classifies **{int(kpis['sales_lines']):,}** sale lines, **{int(kpis['return_or_cancellation_lines']):,}** return/cancellation lines and **{int(kpis.get('rows_neither_sale_nor_return_cancellation', 0)):,}** other valid rows. These categories reconcile to the validated-row total.",
+        "**Currency:** GBP (£), as recorded in the source",
+        "",
+        "> This report analyses historical transactions. Revenue is not profit. Historical customer spend is not a forward-looking customer lifetime value (CLV) estimate. The inactivity model predicts a defined 90-day inactivity proxy, not permanent churn.",
+        "",
+        "## Executive summary",
+        "",
+        f"- Gross sales-line revenue is **{pct_money(total_sales)}**.",
+    ]
+    if customer_count:
+        lines += [
+            f"- Identified-customer RFM reconciles to **{pct_money(identified)}** across **{customer_count:,}** customers ({identified / total_sales * 100 if total_sales else 0:.1f}% of sales revenue).",
+            f"- The top 10% of identified customers generate **{top_share(10):.1f}%** of identified-customer revenue; the top 20% generate **{top_share(20):.1f}%**.",
+            f"- **{metrics['repeat_customer_share_pct']:.1f}%** of identified customers made at least two purchases within the dataset window.",
+        ]
+        repeat90 = windows.loc[windows["follow_up_days"].eq(90), "second_order_within_window_pct"]
+        if not repeat90.empty and pd.notna(repeat90.iloc[0]):
+            lines.append(
+                f"- Among customers with a full 90-day follow-up window, **{float(repeat90.iloc[0]):.1f}%** made a second purchase within 90 days."
+            )
+        else:
+            lines.append("- The 90-day repeat-purchase rate is unavailable because no customers had a complete follow-up window.")
+    else:
+        lines.append(
+            "- No usable customer IDs are present. Customer concentration, RFM, repeat-purchase, cohort and customer inactivity analyses are unavailable; sales-level reporting remains valid."
+        )
+
+    if not products_df.empty:
+        lines.append(
+            f"- Merchandise revenue totals **{pct_money(product_metrics['merchandise_revenue_gbp'])}** across **{product_metrics['merchandise_stock_codes']:,}** stock codes."
+        )
+    else:
+        lines.append(
+            "- No merchandise stock codes were classified. Merchandise Pareto and product-affinity analyses are unavailable; operational-code revenue is still reported separately."
+        )
+    lines += [
+        f"- The **{country_metrics['top_country']}** accounts for **{country_metrics['top_country_revenue_share_pct']:.1f}%** of gross sales-line revenue; the top five countries account for **{country_metrics['top_five_country_revenue_share_pct']:.1f}%.",
+        f"- The processed file contains **{int(kpis.get('rows_missing_customer_id_sales', 0)):,}** sales lines with no customer ID, representing **{float(kpis.get('unidentified_customer_revenue_share_pct', 0)):.1f}%** of sales revenue.",
+    ]
+    if churn_metrics.get("status") == "COMPLETED":
+        lines.append(
+            f"- The historical inactivity model achieved a holdout ROC-AUC of **{churn_metrics['roc_auc']:.3f}**. This is a retrospective ranking proof-of-concept, not a deployable churn probability."
+        )
+    else:
+        lines.append(
+            f"- The historical inactivity model was skipped: {churn_metrics.get('reason', 'insufficient observations')}."
+        )
+
+    lines += [
+        "",
+        "## 0. Data scope and reconciliation",
+        "",
+        f"The processed extract classifies **{int(kpis['sales_lines']):,}** sale lines, **{int(kpis['return_or_cancellation_lines']):,}** return/cancellation lines and **{int(kpis.get('rows_neither_sale_nor_return_cancellation', 0)):,}** other valid rows.",
         f"There are **{int(kpis.get('rows_missing_customer_id_sales', 0)):,}** sales lines without customer IDs, representing **{float(kpis.get('unidentified_customer_revenue_share_pct', 0)):.1f}%** of gross sales-line revenue. Identified and unidentified sales revenue reconcile to gross sales-line revenue.",
-        "", "## 1. Customer value and concentration", "",
-        f"Identified customers: **{metrics['identified_customers']:,}**. Mean historical spend per identified customer is **{pct_money(metrics['mean_historical_revenue_per_customer_gbp'])}**, while the median is **{pct_money(metrics['median_historical_revenue_per_customer_gbp'])}**. The gap shows a strongly right-skewed spend distribution; the median is more representative of a typical customer.",
-        f"The customer revenue Gini coefficient is **{metrics['customer_revenue_gini']:.3f}** (0 = equal distribution; 1 = maximum concentration). The top 1% contribute **{top_customer_rows.loc[top_customer_rows.top_customer_share_pct == 1, 'identified_revenue_share_pct'].iloc[0]:.1f}%** of identified revenue, and the top 5% contribute **{top_customer_rows.loc[top_customer_rows.top_customer_share_pct == 5, 'identified_revenue_share_pct'].iloc[0]:.1f}%**.",
-        "", "### RFM segment priorities", "",
-        "| Segment | Customers | Customer share | Historical revenue | Revenue share | Average recency (days) | Average orders |",
-        "|---|---:|---:|---:|---:|---:|---:|",
+        "",
+        "## 1. Customer value and concentration",
+        "",
     ]
-    for _, row in segments.iterrows():
-        lines.append(f"| {row['rfm_segment']} | {int(row['customers']):,} | {row['customer_share_pct']:.1f}% | {pct_money(row['historical_revenue_gbp'])} | {row['identified_revenue_share_pct']:.1f}% | {row['avg_recency_days']:.1f} | {row['avg_orders_per_customer']:.2f} |")
-    lines += [
-        "", f"The combined Hibernating, At Risk and Cannot Lose Them groups contain **{risk_count:,} customers** and represent **{risk_count / metrics['identified_customers'] * 100:.1f}%** of the identified base. Their historical spend is **{pct_money(risk_revenue)}** ({risk_revenue / identified * 100:.1f}% of identified-customer revenue). This is historical spend, not expected future revenue at risk.",
-        "", "## 2. Repeat purchasing and retention", "",
-        f"The mean number of orders per identified customer is **{metrics['mean_orders_per_customer']:.2f}**, with a median of **{metrics['median_orders_per_customer']:.0f}**. **{metrics['repeat_customers']:,}** customers purchased more than once, while **{metrics['single_order_customers']:,}** purchased once in the observed window.",
-        f"Among customers with at least 90 days of follow-up after their first observed purchase, **{windows.loc[windows.follow_up_days == 90, 'second_order_within_window_pct'].iloc[0]:.1f}%** placed a second order within 90 days. The median interval from first to second order among repeat buyers is **{metrics['median_days_to_second_order_among_repeaters']:.1f} days**.",
-        "", "| Follow-up window | Eligible first-time customers | Second purchase within window |",
-        "|---:|---:|---:|",
-    ]
-    for _, row in windows.iterrows():
-        lines.append(f"| {int(row['follow_up_days'])} days | {int(row['eligible_customers']):,} | {row['second_order_within_window_pct']:.1f}% |")
-    lines += [
-        "", "Cohort heatmap values represent the share of each acquisition cohort that was active in a specific calendar month relative to first purchase. They are point-in-time monthly activity rates, not cumulative survival probabilities. A later month can rise above an earlier month because customers can skip a month and return later. Blank cells are unobserved follow-up, not zero retention.",
-        "", "| Months after first purchase | Eligible customers | Active in that exact calendar month |",
-        "|---:|---:|---:|",
-    ]
-    for _, row in cohort_summary.iterrows():
-        if pd.notna(row["weighted_monthly_active_retention_pct"]):
-            lines.append(f"| {int(row['months_since_first_purchase'])} | {int(row['eligible_customers']):,} | {row['weighted_monthly_active_retention_pct']:.1f}% |")
-    lines += [
-        "", "## 3. Merchandise and product concentration", "",
-        f"The merchandise table contains **{product_metrics['merchandise_stock_codes']:,} stock codes** with total recorded revenue of **{pct_money(product_metrics['merchandise_revenue_gbp'])}**. The top 10 stock codes contribute **{product_metrics['top_10_merchandise_stock_code_revenue_share_pct']:.1f}%** of merchandise revenue. This is a materially less concentrated pattern than customer revenue.",
-        "", "| Merchandise Pareto threshold | Stock codes required | Share of merchandise codes |", "|---:|---:|---:|",
-    ]
-    for _, row in product_pareto.iterrows():
-        lines.append(f"| {row['revenue_threshold_pct']:.0f}% of merchandise revenue | {int(row['stock_codes_required']):,} | {row['share_of_merchandise_stock_codes_pct']:.1f}% |")
-    if not anomalies.empty:
-        a = anomalies.iloc[0]
-        lines += ["", "### Product record requiring manual review", "",
-                  f"Stock code **{a['stock_code']}** ({a['description']}) records **{int(a['units']):,} units**, **{int(a['distinct_invoices']):,} distinct invoice(s)** and **{pct_money(a['revenue_gbp'])}** revenue. The source transaction export shows a single invoice for 80,995 units (invoice 581483, dated 9 December 2011). It has been retained in revenue totals and flagged for source-document review; it has not been deleted as an error."]
-    lines += [
-        "", "Operational/non-merchandise codes are excluded from merchandise rankings, but their sales-line revenue remains part of gross sales. No product cost or gross margin data is present, so high revenue must not be interpreted as high profitability.",
-        "", "### Top merchandise stock codes", "",
-        "| Stock code | Product description | Revenue | Distinct invoices | Units |",
-        "|---|---|---:|---:|---:|",
-    ]
-    for _, row in products_df.head(10).iterrows():
-        lines.append(f"| {row['stock_code']} | {row['description']} | {pct_money(row['revenue_gbp'])} | {int(row['distinct_invoices']):,} | {int(row['units']):,} |")
+    if customer_count:
+        lines += [
+            f"Identified customers: **{customer_count:,}**. Mean historical spend per identified customer is **{pct_money(metrics['mean_historical_revenue_per_customer_gbp'])}**, while the median is **{pct_money(metrics['median_historical_revenue_per_customer_gbp'])}**.",
+            f"The customer revenue Gini coefficient is **{metrics['customer_revenue_gini']:.3f}** (0 = equal distribution; 1 = maximum concentration). The top 1% contribute **{top_share(1):.1f}%** of identified revenue, and the top 5% contribute **{top_share(5):.1f}%**.",
+            "",
+            "### RFM segment priorities",
+            "",
+            "| Segment | Customers | Customer share | Historical revenue | Revenue share | Average recency (days) | Average orders |",
+            "|---|---:|---:|---:|---:|---:|---:|",
+        ]
+        for _, row in segments.iterrows():
+            lines.append(
+                f"| {row['rfm_segment']} | {int(row['customers']):,} | {row['customer_share_pct']:.1f}% | {pct_money(row['historical_revenue_gbp'])} | {row['identified_revenue_share_pct']:.1f}% | {row['avg_recency_days']:.1f} | {row['avg_orders_per_customer']:.2f} |"
+            )
+        lines.append(
+            f"The combined Hibernating, At Risk and Cannot Lose Them groups contain **{risk_count:,} customers** ({risk_count / customer_count * 100:.1f}% of the identified base), with historical spend of **{pct_money(risk_revenue)}**. This is historical spend, not expected future revenue at risk."
+        )
+    else:
+        lines.append(
+            "No valid customer identifiers were present. RFM segments, customer concentration, customer value distributions and customer-level prioritisation cannot be estimated from this dataset."
+        )
+
+    lines += ["", "## 2. Repeat purchasing and retention", ""]
+    if customer_count:
+        median_days = metrics["median_days_to_second_order_among_repeaters"]
+        median_days_text = f"{median_days:.1f} days" if median_days is not None else "unavailable"
+        lines += [
+            f"The mean number of orders per identified customer is **{metrics['mean_orders_per_customer']:.2f}**, with a median of **{metrics['median_orders_per_customer']:.0f}**. **{metrics['repeat_customers']:,}** customers purchased more than once, while **{metrics['single_order_customers']:,}** purchased once.",
+            f"The median interval from first to second order among repeat buyers is **{median_days_text}**.",
+            "",
+            "| Follow-up window | Eligible first-time customers | Second purchase within window |",
+            "|---:|---:|---:|",
+        ]
+        for _, row in windows.iterrows():
+            rate = f"{row['second_order_within_window_pct']:.1f}%" if pd.notna(row["second_order_within_window_pct"]) else "N/A"
+            lines.append(
+                f"| {int(row['follow_up_days'])} days | {int(row['eligible_customers']):,} | {rate} |"
+            )
+        lines += [
+            "",
+            "Cohort values represent point-in-time calendar-month activity relative to the first purchase. They are not cumulative survival probabilities. Blank cells are unobserved follow-up, not zero retention.",
+            "",
+            "| Months after first purchase | Eligible customers | Active in that exact calendar month |",
+            "|---:|---:|---:|",
+        ]
+        for _, row in cohort_summary.iterrows():
+            if pd.notna(row["weighted_monthly_active_retention_pct"]):
+                lines.append(
+                    f"| {int(row['months_since_first_purchase'])} | {int(row['eligible_customers']):,} | {row['weighted_monthly_active_retention_pct']:.1f}% |"
+                )
+    else:
+        lines.append(
+            "Customer repeat-purchase and cohort retention analyses are unavailable because the source contains no usable customer IDs. No customers are fabricated or inferred from anonymous invoices."
+        )
+
+    lines += ["", "## 3. Merchandise and product concentration", ""]
+    if not products_df.empty:
+        lines += [
+            f"The merchandise table contains **{product_metrics['merchandise_stock_codes']:,} stock codes** with total recorded revenue of **{pct_money(product_metrics['merchandise_revenue_gbp'])}**. The top 10 stock codes contribute **{product_metrics['top_10_merchandise_stock_code_revenue_share_pct']:.1f}%** of merchandise revenue.",
+            "",
+            "| Merchandise Pareto threshold | Stock codes required | Share of merchandise codes |",
+            "|---:|---:|---:|",
+        ]
+        for _, row in product_pareto.iterrows():
+            lines.append(
+                f"| {row['revenue_threshold_pct']:.0f}% of merchandise revenue | {int(row['stock_codes_required']):,} | {row['share_of_merchandise_stock_codes_pct']:.1f}% |"
+            )
+        if not anomalies.empty:
+            a = anomalies.iloc[0]
+            lines += [
+                "",
+                "### Product record requiring manual review",
+                "",
+                f"Stock code **{a['stock_code']}** ({a['description']}) records **{int(a['units']):,} units**, **{int(a['distinct_invoices']):,} distinct invoice(s)** and **{pct_money(a['revenue_gbp'])}** revenue. The record is retained and flagged for source-document review rather than removed as an assumed error.",
+            ]
+        lines += [
+            "",
+            "Operational/non-merchandise codes are excluded from merchandise rankings, but their sales-line revenue remains part of gross sales. Revenue is not profitability.",
+            "",
+            "### Top merchandise stock codes",
+            "",
+            "| Stock code | Product description | Revenue | Distinct invoices | Units |",
+            "|---|---|---:|---:|---:|",
+        ]
+        for _, row in products_df.head(10).iterrows():
+            lines.append(
+                f"| {row['stock_code']} | {row['description']} | {pct_money(row['revenue_gbp'])} | {int(row['distinct_invoices']):,} | {int(row['units']):,} |"
+            )
+    else:
+        lines.append(
+            "No merchandise stock codes were classified in this dataset. The product-affinity and merchandise Pareto analyses are unavailable; operational/non-merchandise transaction values are retained in sales-level totals and reported separately."
+        )
+
     lines += [
         "",
         "### Products frequently purchased together",
         "",
-        f"Invoice-level baskets include **{affinity_metrics['merchandise_baskets']:,} merchandise invoices**. The minimum co-purchase threshold is **{affinity_metrics['minimum_joint_orders']:,} invoices**. Association rules are ranked by lift after this frequency filter.",
+        f"Invoice-level baskets include **{affinity_metrics['merchandise_baskets']:,} merchandise invoices**. The minimum co-purchase threshold is **{affinity_metrics['minimum_joint_orders']:,} invoices**.",
     ]
     if affinity_rules.empty:
-        lines.append("No product pairs met the minimum co-purchase threshold in this dataset.")
+        lines.append("No product pairs met the minimum co-purchase frequency threshold in this dataset.")
     else:
         lines += [
             "",
@@ -750,41 +1041,48 @@ def build_report(metrics, country_metrics, product_metrics, affinity_metrics, af
         lines.append(
             "These are historical co-purchase associations, not causal effects or proof that a bundle will increase profit. Validate merchandising changes with a controlled experiment and margin data."
         )
-    lines += ["", "## 4. Country concentration", "",
-        f"The source includes **{country_metrics['country_count']} countries**. {country_metrics['top_country']} contributes **{country_metrics['top_country_revenue_share_pct']:.1f}%** of total sales-line revenue, and the top five countries contribute **{country_metrics['top_five_country_revenue_share_pct']:.1f}%**. This indicates substantial geographic concentration.",
-        "", "| Country | Revenue | Revenue share | Orders | Identified customers |",
+
+    lines += [
+        "",
+        "## 4. Country concentration",
+        "",
+        f"The source includes **{country_metrics['country_count']} countries**. {country_metrics['top_country']} contributes **{country_metrics['top_country_revenue_share_pct']:.1f}%** of total sales-line revenue, and the top five countries contribute **{country_metrics['top_five_country_revenue_share_pct']:.1f}%.",
+        "",
+        "| Country | Revenue | Revenue share | Orders | Identified customers |",
         "|---|---:|---:|---:|---:|",
     ]
     for _, row in countries_df.head(10).iterrows():
-        lines.append(f"| {row['country']} | {pct_money(row['revenue'])} | {row['revenue_share_pct']:.2f}% | {int(row['orders']):,} | {int(row['customers']):,} |")
-    lines += [
-        "", "## 5. Historical 90-day inactivity model", "",
-    ]
+        lines.append(
+            f"| {row['country']} | {pct_money(row['revenue'])} | {row['revenue_share_pct']:.2f}% | {int(row['orders']):,} | {int(row['customers']):,} |"
+        )
+
+    lines += ["", "## 5. Historical 90-day inactivity model", ""]
     if churn_metrics.get("status") == "COMPLETED":
         lines += [
-            f"A Random Forest model was trained on monthly customer snapshots up to **{churn_metrics['training_snapshot_end']}**. The latest training label window ends **{churn_metrics['training_label_observation_end']}**. A 90-day temporal embargo is applied; held-out snapshots begin **{churn_metrics['test_snapshot_start']}** and run through **{churn_metrics['test_snapshot_end']}**. There were **{churn_metrics['train_snapshot_customer_observations']:,}** training and **{churn_metrics['test_snapshot_customer_observations']:,}** test customer-snapshot observations. The 90-day inactivity rate was **{churn_metrics['train_90d_inactivity_prevalence_pct']:.1f}%** in training and **{churn_metrics['test_90d_inactivity_prevalence_pct']:.1f}%** in test, showing temporal distribution shift.",
-            "", "| Metric | Historical holdout result |", "|---|---:|",
+            f"A Random Forest model was trained on monthly customer snapshots up to **{churn_metrics['training_snapshot_end']}**. The latest training label window ends **{churn_metrics['training_label_observation_end']}**. A 90-day temporal embargo is applied; held-out snapshots begin **{churn_metrics['test_snapshot_start']}** and run through **{churn_metrics['test_snapshot_end']}**. There were **{churn_metrics['train_snapshot_customer_observations']:,}** training and **{churn_metrics['test_snapshot_customer_observations']:,}** test customer-snapshot observations.",
+            "",
+            "| Metric | Historical holdout result |",
+            "|---|---:|",
             f"| ROC-AUC | {churn_metrics['roc_auc']:.3f} |",
             f"| Average precision | {churn_metrics['average_precision']:.3f} |",
             f"| Brier score | {churn_metrics['brier_score']:.3f} |",
-            f"| Accuracy at 0.50 threshold | {churn_metrics['accuracy_at_0_5']:.1%} |",
-            f"| Precision at 0.50 threshold | {churn_metrics['precision_at_0_5']:.1%} |",
-            f"| Recall at 0.50 threshold | {churn_metrics['recall_at_0_5']:.1%} |",
-            f"| Inactivity rate in top 20% risk-ranked snapshots | {churn_metrics['top_20pct_risk_observed_inactivity_rate_pct']:.1f}% |",
-            f"| Lift in top 20% vs. test prevalence | {churn_metrics['top_20pct_risk_lift']:.2f}x |",
-            "", "The strongest feature importances are lifetime order count, 180-day revenue/orders and 365-day order/revenue history. The model is useful as a retrospective proof of concept for prioritising historical snapshots, but it is not ready for operational deployment.",
         ]
     else:
-        lines += [f"Model status: {churn_metrics.get('status')}. {churn_metrics.get('reason', '')}"]
+        lines.append(
+            f"Model status: {churn_metrics.get('status')}. {churn_metrics.get('reason', '')}"
+        )
     lines += [
-        "", "### Model limitations", "",
-        "- The target is no recorded order within 90 days, not permanent customer loss. For an intermittent retailer, 90 days of inactivity may be normal.",
+        "",
+        "### Model limitations",
+        "",
+        "- The target is no recorded order within 90 days, not permanent customer loss.",
         "- A 90-day embargo ensures the final training snapshot's inactivity label is observable before the first held-out snapshot; test snapshots still overlap one another in their 90-day outcome windows.",
         "- Customer-month snapshots repeatedly include the same people; rows are correlated, so row counts should not be interpreted as independent customers.",
-        "- The training and test inactivity rates differ materially, indicating temporal/seasonal distribution shift.",
-        "- Predicted scores are not calibrated for expected revenue loss or campaign economics.",
-        "- This historical dataset ends on 9 December 2011; it cannot estimate current customer risk in 2026.",
-        "", "## 6. Business decision brief", "",
+        "- The model is a retrospective proof-of-concept, not calibrated for expected revenue loss or campaign economics.",
+        "- This historical dataset ends on 9 December 2011; it cannot estimate current customer risk.",
+        "",
+        "## 6. Business decision brief",
+        "",
     ]
     if business_insights:
         lines += [
@@ -804,28 +1102,30 @@ def build_report(metrics, country_metrics, product_metrics, affinity_metrics, af
         for insight in business_insights:
             lines.append(f"- **{insight['insight_id']}** — {insight['guardrail']}")
     else:
-        lines.append("No pre-defined decision rule crossed its evidence threshold in this run. This is not evidence that no business risk or opportunity exists.")
+        lines.append(
+            "No pre-defined decision rule crossed its evidence threshold in this run. This is not evidence that no business risk or opportunity exists."
+        )
+
     lines += [
-        "", "## 7. Recommended business actions", "",
-        "1. **Protect the Champions segment.** Use service and loyalty experiments, measure incremental repeat revenue and margin, and avoid assuming all Champions need discounts.",
-        "2. **Create a win-back test for Cannot Lose Them and At Risk.** Prioritise historically valuable customers with long recency, but use a randomised control group to measure incremental reactivation.",
-        "3. **Improve second-purchase conversion.** Test onboarding, replenishment reminders and product recommendations during the first 30–90 days.",
-        "4. **Investigate anonymous sales.** Customer IDs are missing from 236,121 sales lines in the processed dataset. Better customer identification would improve retention and lifetime-value analysis.",
-        "5. **Audit the one-invoice bulk product record.** Validate the Paper Craft, Little Birdie transaction before using its one-off volume as a demand forecast.",
-        "6. **Reduce geographic dependence carefully.** Evaluate international markets using margin, shipping, returns, customer repeat rates and acquisition costs—not revenue alone.",
-        "7. **Add cost and margin data.** Product profitability and economic CLV cannot be calculated from sales prices alone.",
-        "", "## 8. Definitions and caveats", "",
-        "- **Gross sales-line revenue:** Sum of included positive-quantity, positive-price sales-line values. It is not profit and is not net of recorded returns/cancellations.",
-        "- **Historical customer revenue:** Recorded sales revenue associated with a known customer ID over the source period. It is not a forecast of future lifetime value.",
-        "- **Repeat purchase:** A second distinct invoice associated with the same customer ID.",
-        "- **90-day inactivity:** No identified-customer invoice during the 90 days following a historical monthly snapshot.",
-        "- **RFM segments:** Rule-based recency/frequency/monetary groups; the segment label is not itself a churn probability.",
-        "- **Merchandise stock-code concentration:** Product revenue aggregated to one row per stock code after excluding operational/non-merchandise types.",
-        "", "## 9. Reproducibility", "",
-        "Run from the RetailPulse project root:", "```bash", "source .venv/bin/activate", "python scripts/run_phase3_analysis.py", "```",
-        "Outputs are written to `reports/phase3/`. The script uses the processed exports already generated by the main RetailPulse pipeline.", "",
+        "",
+        "## 7. Definitions and caveats",
+        "",
+        "- Gross sales-line revenue is not profit and is not net of recorded returns/cancellations.",
+        "- Historical customer revenue is not a forecast of future lifetime value.",
+        "- Repeat purchase is a second distinct invoice associated with a known customer ID.",
+        "- 90-day inactivity is a historical proxy, not permanent churn.",
+        "- RFM segments and business insight rules are diagnostic heuristics.",
+        "- Merchandise stock-code concentration excludes operational/non-merchandise types.",
+        "",
+        "## 8. Reproducibility",
+        "",
+        "Run from the RetailPulse project root: python scripts/run_phase3_analysis.py",
+        "Outputs are written to reports/phase3/ from completed core pipeline exports.",
+        "",
     ]
-    (OUT / "PHASE3_ADVANCED_ANALYTICS.md").write_text("\n".join(lines), encoding="utf-8")
+    (OUT / "PHASE3_ADVANCED_ANALYTICS.md").write_text(
+        "\n".join(lines), encoding="utf-8"
+    )
 
 
 def main():
@@ -907,7 +1207,10 @@ def main():
         "output_dir": str(OUT),
         "identified_customers": customer_metrics["identified_customers"],
         "repeat_customer_share_pct": round(customer_metrics["repeat_customer_share_pct"], 2),
-        "customer_revenue_gini": round(customer_metrics["customer_revenue_gini"], 3),
+        "customer_revenue_gini": (
+            round(customer_metrics["customer_revenue_gini"], 3)
+            if customer_metrics["customer_revenue_gini"] is not None else None
+        ),
         "top_country": country_metrics["top_country"],
         "top_country_revenue_share_pct": round(country_metrics["top_country_revenue_share_pct"], 2),
         "historical_inactivity_model_status": churn_metrics.get("status"),
