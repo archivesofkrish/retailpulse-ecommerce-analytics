@@ -58,7 +58,7 @@ def test_verify_outputs_passes_for_consistent_manifests(tmp_path):
 
     assert report["status"] == "PASS"
     assert report["checks_failed"] == 0
-    assert report["checks_passed"] == 5
+    assert report["checks_passed"] == 6
 
 
 def test_verify_outputs_fails_when_an_export_is_modified(tmp_path):
