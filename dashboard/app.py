@@ -49,10 +49,74 @@ st.set_page_config(
 st.markdown(
     """
     <style>
-      .block-container {padding-top: 1.5rem; padding-bottom: 2rem;}
-      [data-testid="stMetric"] {background: rgba(128,128,128,.07); padding: 14px 16px; border-radius: 12px;}
-      .rp-muted {color: #8a94a6; font-size: .88rem;}
-      .rp-kicker {text-transform: uppercase; letter-spacing: .09em; font-size: .72rem; color: #8a94a6; font-weight: 700;}
+      :root { --rp-ink:#14213a; --rp-muted:#66758c; --rp-accent:#6558d3; --rp-line:#e4eaf3; }
+      [data-testid="stAppViewContainer"] {
+        background:
+          radial-gradient(ellipse at 88% 0%, rgba(122,112,237,.10), transparent 28%),
+          radial-gradient(ellipse at 2% 28%, rgba(25,181,164,.07), transparent 25%),
+          linear-gradient(180deg,#f7f9fd 0%,#f2f5fb 100%);
+      }
+      [data-testid="stHeader"] { background:transparent; }
+      .block-container { max-width:1540px; padding-top:1.65rem; padding-bottom:3rem; }
+      [data-testid="stSidebar"] { background:linear-gradient(180deg,#111a30 0%,#202d4a 100%); }
+      [data-testid="stSidebar"] * { color:#eaf0fa; }
+      [data-testid="stSidebar"] [data-testid="stWidgetLabel"] p { color:#d3dced; }
+      [data-testid="stMetric"] {
+        background:rgba(255,255,255,.92); border:1px solid var(--rp-line);
+        border-radius:17px; padding:17px 19px; box-shadow:0 12px 34px rgba(25,42,77,.055);
+      }
+      [data-testid="stMetricLabel"] p { color:#66758c; font-size:.78rem; font-weight:650; }
+      [data-testid="stMetricValue"] { color:#14213a; font-weight:780; letter-spacing:-.035em; }
+      [data-baseweb="tab-list"] {
+        gap:7px; padding:7px; border:1px solid #e3e9f2; border-radius:16px;
+        background:rgba(255,255,255,.84); box-shadow:0 8px 25px rgba(25,42,77,.04);
+      }
+      [data-baseweb="tab"] { border-radius:10px; color:#63718a; font-weight:650; }
+      [data-baseweb="tab"][aria-selected="true"] {
+        background:#202d4a; color:white; box-shadow:0 4px 12px rgba(20,33,58,.18);
+      }
+      div[data-testid="stPlotlyChart"] {
+        background:rgba(255,255,255,.86); border:1px solid #e7ecf4;
+        border-radius:16px; padding:8px 8px 2px; box-shadow:0 8px 25px rgba(25,42,77,.035);
+      }
+      .rp-hero {
+        position:relative; overflow:hidden; border-radius:25px; padding:29px 34px 25px;
+        margin:0 0 22px; color:#f6f8ff;
+        background:linear-gradient(112deg,#111c35 0%,#263963 52%,#5a4ec0 100%);
+        box-shadow:0 22px 60px rgba(34,46,92,.19);
+        border:1px solid rgba(255,255,255,.17);
+      }
+      .rp-hero:after {
+        content:""; position:absolute; width:360px; height:360px; right:-95px; top:-230px;
+        border-radius:50%; border:1px solid rgba(255,255,255,.18);
+        box-shadow:0 0 0 28px rgba(255,255,255,.035),0 0 0 62px rgba(255,255,255,.025);
+        pointer-events:none;
+      }
+      .rp-hero-top,.rp-hero-meta { display:flex; flex-wrap:wrap; align-items:center; gap:9px; }
+      .rp-hero-badge {
+        text-transform:uppercase; letter-spacing:.15em; font-size:.68rem; font-weight:800;
+        color:#a8f1e7; background:rgba(60,220,193,.11); border:1px solid rgba(130,245,224,.22);
+        border-radius:99px; padding:6px 10px;
+      }
+      .rp-hero-edition { color:#c1cce1; font-size:.72rem; letter-spacing:.08em; }
+      .rp-hero-title { font-size:clamp(2.1rem,4vw,3.4rem); line-height:1.05; font-weight:850; letter-spacing:-.055em; margin:18px 0 8px; }
+      .rp-hero-title span { color:#8fe9dc; }
+      .rp-hero-sub { color:#d5def0; font-size:1.03rem; max-width:760px; }
+      .rp-hero-meta { margin-top:23px; }
+      .rp-hero-chip { font-size:.69rem; color:#e2e9f7; border:1px solid #ffffff28; background:#ffffff0c; border-radius:99px; padding:6px 10px; }
+      .rp-section-head {
+        display:flex; justify-content:space-between; align-items:flex-end; gap:12px;
+        margin:3px 0 18px; padding:0 0 13px; border-bottom:1px solid #e1e7f0;
+      }
+      .rp-section-title { color:#162541; font-size:1.45rem; font-weight:800; letter-spacing:-.035em; }
+      .rp-section-sub { color:#718098; font-size:.83rem; margin-top:3px; }
+      .rp-section-tag { color:#5d55c7; background:#eeedff; border:1px solid #dcd9ff; padding:6px 10px; border-radius:99px; font-size:.68rem; font-weight:750; white-space:nowrap; }
+      .rp-note {
+        border:1px solid #dce5f2; background:linear-gradient(110deg,#f0f5ff,#f5f2ff);
+        color:#52627b; border-radius:14px; padding:13px 16px; font-size:.82rem;
+      }
+      .rp-muted { color:#7b879b; font-size:.88rem; }
+      .rp-kicker { text-transform:uppercase; letter-spacing:.09em; font-size:.72rem; color:#8a94a6; font-weight:700; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -108,6 +172,7 @@ def phase3_ready(source_path: Path) -> tuple[bool, str]:
         "historical_inactivity_monthly_backtest.csv",
         "historical_inactivity_feature_importance.csv",
         "cohort_retention_recomputed.csv",
+        "customer_cohort_value.csv",
         "weighted_cohort_retention.csv",
     ]
     missing = [name for name in required if not (PHASE3 / name).exists()]
@@ -163,8 +228,25 @@ result = load_analytics(str(input_path), input_stat.st_mtime_ns, input_stat.st_s
 kpis = result["kpis"]
 sales = result["sales"].copy()
 
-st.title("RetailPulse")
-st.caption("Professional Edition · E-commerce Business Intelligence · Sales, Customers, Retention & Risk")
+st.markdown(
+    """
+    <section class="rp-hero">
+      <div class="rp-hero-top">
+        <span class="rp-hero-badge">Retail Intelligence · Evidence First</span>
+        <span class="rp-hero-edition">PROFESSIONAL EDITION · v1.4.0</span>
+      </div>
+      <div class="rp-hero-title">RetailPulse<span>✦</span></div>
+      <div class="rp-hero-sub">See the story behind every order — from revenue performance to customer retention and historical value.</div>
+      <div class="rp-hero-meta">
+        <span class="rp-hero-chip">PYTHON · PANDAS · PLOTLY</span>
+        <span class="rp-hero-chip">COHORT INTELLIGENCE</span>
+        <span class="rp-hero-chip">REPRODUCIBLE ANALYTICS</span>
+        <span class="rp-hero-chip">HISTORICAL UCI DATA</span>
+      </div>
+    </section>
+    """,
+    unsafe_allow_html=True,
+)
 if is_demo:
     st.warning("DEMO MODE — using the included synthetic sample. Run `python scripts/download_data.py` to retrieve UCI Online Retail II.")
 else:
@@ -205,8 +287,8 @@ if filtered.empty:
     st.stop()
 
 # Phase navigation
-labels = ["Overview", "Customer Intelligence", "Retention", "Products & Markets", "Decision Brief", "Scenario Lab", "Inactivity Model", "Data Quality"]
-tab_overview, tab_customer, tab_retention, tab_products, tab_decisions, tab_scenarios, tab_model, tab_quality = st.tabs(labels)
+labels = ["Overview", "Customer Intelligence", "Customer Value Studio", "Retention", "Products & Markets", "Decision Brief", "Scenario Lab", "Inactivity Model", "Data Quality"]
+tab_overview, tab_customer, tab_value, tab_retention, tab_products, tab_decisions, tab_scenarios, tab_model, tab_quality = st.tabs(labels)
 
 # -----------------------------------------------------------------------------
 # OVERVIEW — filter-aware
@@ -408,6 +490,228 @@ with tab_customer:
                 st.info(f"Approximately {t80['customer_base_share_pct']:.1f}% of identified customers account for 80% of identified-customer revenue. This is a historical concentration pattern, not a forecast.")
 
 # -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# CUSTOMER VALUE STUDIO — historical cohort economics
+# -----------------------------------------------------------------------------
+with tab_value:
+    st.markdown(
+        '<div class="rp-section-head"><div><div class="rp-kicker">CUSTOMER ECONOMICS · COHORT LENS</div>'
+        '<div class="rp-section-title">Customer Value Studio</div>'
+        '<div class="rp-section-sub">See how observed revenue yield and customer activity evolve after first purchase.</div></div>'
+        '<span class="rp-section-tag">HISTORICAL · NOT FORECAST</span></div>',
+        unsafe_allow_html=True,
+    )
+    if not p3:
+        st.info("Run the Phase 3 analysis to build the customer cohort value panel.")
+    else:
+        value_panel = phase3_csv("customer_cohort_value.csv")
+        if value_panel is None or value_panel.empty:
+            st.info("No identified-customer cohort value data is available for this source.")
+        else:
+            value_panel = value_panel.copy()
+            value_panel["age_month"] = pd.to_numeric(
+                value_panel["age_month"], errors="coerce"
+            ).fillna(0).astype(int)
+            for column in [
+                "cohort_customers", "active_customers", "retention_pct",
+                "observed_revenue_gbp",
+                "revenue_per_acquired_customer_gbp",
+                "cumulative_revenue_per_acquired_customer_gbp",
+            ]:
+                value_panel[column] = pd.to_numeric(
+                    value_panel[column], errors="coerce"
+                ).fillna(0.0)
+            value_panel["is_partial_period"] = (
+                value_panel["is_partial_period"].astype(str).str.lower().eq("true")
+            )
+
+            cohort_sizes = value_panel.groupby("cohort_month")["cohort_customers"].first()
+            matured = value_panel.loc[
+                value_panel["age_month"].eq(11)
+                & ~value_panel["is_partial_period"]
+            ].copy()
+            matured_months = set(matured["cohort_month"].astype(str))
+            matured_base = float(matured["cohort_customers"].sum())
+            twelve_month_value = (
+                float(
+                    (
+                        matured["cumulative_revenue_per_acquired_customer_gbp"]
+                        * matured["cohort_customers"]
+                    ).sum() / matured_base
+                )
+                if matured_base else None
+            )
+            twelve_month_retention = (
+                float(matured["active_customers"].sum() / matured_base * 100)
+                if matured_base else None
+            )
+
+            k1, k2, k3, k4 = st.columns(4)
+            k1.metric("Acquisition cohorts", f"{len(cohort_sizes):,}")
+            k2.metric("Identified customers", f"{int(cohort_sizes.sum()):,}")
+            k3.metric("Mature 12-period cohorts", f"{len(matured_months):,}")
+            k4.metric(
+                "12-month observed revenue / customer",
+                gbp(twelve_month_value, 2) if twelve_month_value is not None else "N/A",
+                help="Weighted historical gross revenue per original cohort customer across fully observed 12-calendar-month cohorts.",
+            )
+            if twelve_month_value is None:
+                st.info("The source does not yet contain a complete 12-calendar-month observation window for a cohort. Missing months are not extrapolated.")
+
+            comparable = (
+                value_panel.loc[
+                    value_panel["cohort_month"].astype(str).isin(matured_months)
+                ].copy()
+                if matured_months else value_panel.copy()
+            )
+            curve_rows = []
+            for age, group in comparable.groupby("age_month", sort=True):
+                base = float(group["cohort_customers"].sum())
+                if base <= 0:
+                    continue
+                curve_rows.append({
+                    "age_month": int(age),
+                    "cohort_customers": int(base),
+                    "active_customers": int(group["active_customers"].sum()),
+                    "retention_pct": float(group["active_customers"].sum() / base * 100),
+                    "monthly_revenue_per_acquired_customer_gbp": float(
+                        group["observed_revenue_gbp"].sum() / base
+                    ),
+                    "cumulative_revenue_per_acquired_customer_gbp": float(
+                        (
+                            group["cumulative_revenue_per_acquired_customer_gbp"]
+                            * group["cohort_customers"]
+                        ).sum() / base
+                    ),
+                })
+            curve = pd.DataFrame(curve_rows)
+
+            left, right = st.columns(2)
+            with left:
+                st.markdown("**Cumulative observed revenue per acquired customer**")
+                fig = go.Figure()
+                if not curve.empty:
+                    fig.add_trace(go.Scatter(
+                        x=curve["age_month"],
+                        y=curve["cumulative_revenue_per_acquired_customer_gbp"],
+                        mode="lines+markers",
+                        line=dict(color="#6558d3", width=3, shape="spline"),
+                        marker=dict(size=7, color="#6558d3", line=dict(width=2, color="#ffffff")),
+                        fill="tozeroy",
+                        fillcolor="rgba(101,88,211,.12)",
+                        customdata=curve[["cohort_customers"]],
+                        hovertemplate="Month %{x}<br>Observed revenue/customer £%{y:,.2f}<br>Comparable cohort customers %{customdata[0]:,.0f}<extra></extra>",
+                    ))
+                fig.update_layout(
+                    height=350, margin=dict(l=10, r=10, t=14, b=10),
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    font=dict(color="#475467"), xaxis_title="Months since first purchase",
+                    yaxis_title="Cumulative gross revenue (£)",
+                )
+                st.plotly_chart(fig, width="stretch")
+            with right:
+                st.markdown("**Active customers by cohort age**")
+                fig = go.Figure()
+                if not curve.empty:
+                    fig.add_trace(go.Scatter(
+                        x=curve["age_month"], y=curve["retention_pct"],
+                        mode="lines+markers",
+                        line=dict(color="#0e9f8a", width=3, shape="spline"),
+                        marker=dict(size=7, color="#0e9f8a", line=dict(width=2, color="#ffffff")),
+                        fill="tozeroy", fillcolor="rgba(14,159,138,.11)",
+                        customdata=curve[["active_customers", "cohort_customers"]],
+                        hovertemplate="Month %{x}<br>Active share %{y:.1f}%<br>Active %{customdata[0]:,.0f} of %{customdata[1]:,.0f}<extra></extra>",
+                    ))
+                fig.update_layout(
+                    height=350, margin=dict(l=10, r=10, t=14, b=10),
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    font=dict(color="#475467"), xaxis_title="Months since first purchase",
+                    yaxis_title="Customers active in that calendar month (%)",
+                    yaxis=dict(range=[0, 100]),
+                )
+                st.plotly_chart(fig, width="stretch")
+
+            if not matured.empty:
+                st.markdown("**12-month observed value by acquisition cohort**")
+                maturity_chart = matured.sort_values("cohort_month").copy()
+                fig = px.bar(
+                    maturity_chart, x="cohort_month",
+                    y="cumulative_revenue_per_acquired_customer_gbp",
+                    color="retention_pct",
+                    color_continuous_scale=["#d8e4ff", "#8277df", "#302a75"],
+                    labels={
+                        "cohort_month": "First-purchase cohort",
+                        "cumulative_revenue_per_acquired_customer_gbp": "Observed gross revenue/customer (£)",
+                        "retention_pct": "Month-12 active share (%)",
+                    },
+                    hover_data={"cohort_customers": True, "active_customers": True},
+                )
+                fig.update_layout(
+                    height=340, margin=dict(l=10, r=10, t=14, b=10),
+                    paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                    font=dict(color="#475467"), coloraxis_colorbar=dict(title="Active %"),
+                )
+                st.plotly_chart(fig, width="stretch")
+            else:
+                st.caption("The cohort-by-cohort 12-month comparison appears once at least one acquisition cohort has 12 complete observed calendar months.")
+
+            st.markdown("**Cohort value matrix · cumulative observed revenue per original customer**")
+            matrix = value_panel.pivot(
+                index="cohort_month", columns="age_month",
+                values="cumulative_revenue_per_acquired_customer_gbp",
+            ).sort_index()
+            fig = go.Figure(data=go.Heatmap(
+                z=matrix.to_numpy(dtype=float),
+                x=[int(value) for value in matrix.columns],
+                y=[str(value) for value in matrix.index],
+                colorscale=[
+                    [0.0, "#f1efff"], [0.25, "#c8c3f5"],
+                    [0.55, "#8a80df"], [1.0, "#302a75"],
+                ],
+                colorbar=dict(title="£ / acquired customer"),
+                hovertemplate="Cohort %{y}<br>Age %{x} months<br>Cumulative observed revenue/customer £%{z:,.2f}<extra></extra>",
+                connectgaps=False,
+            ))
+            fig.update_layout(
+                height=max(360, min(760, 22 * len(matrix.index) + 150)),
+                margin=dict(l=10, r=10, t=12, b=10),
+                paper_bgcolor="rgba(0,0,0,0)", plot_bgcolor="rgba(0,0,0,0)",
+                font=dict(color="#475467"),
+                xaxis_title="Months since first purchase",
+                yaxis_title="First-purchase cohort",
+            )
+            st.plotly_chart(fig, width="stretch")
+            if value_panel["is_partial_period"].any():
+                st.caption("The final source calendar month is partial and is excluded from the mature 12-month comparison. Empty heatmap cells are right-censored future periods, not zero revenue.")
+
+            st.download_button(
+                "Download cohort value data",
+                data=value_panel.to_csv(index=False).encode("utf-8"),
+                file_name="retailpulse_customer_cohort_value.csv",
+                mime="text/csv",
+            )
+            with st.expander("Methodology and interpretation"):
+                st.markdown(
+                    """
+                    - **Cohort:** calendar month of each identified customer's first observed invoice.
+                    - **Monthly retention:** customers with an invoice in that calendar month divided by the original cohort size.
+                    - **Monthly revenue yield:** gross sales revenue in that month divided by the original cohort size.
+                    - **Cumulative revenue yield:** cumulative observed gross sales revenue divided by the original cohort size.
+                    - **12-period comparison:** only cohorts with all 12 calendar months observed are included; a partial final calendar month is excluded.
+                    """
+                )
+                st.warning(
+                    "This is observed historical revenue yield, not projected customer lifetime value (CLV), "
+                    "a forecast or profit. It excludes customers without IDs, future months after the source ends, "
+                    "gross margin, acquisition costs, campaign spend, fulfilment costs and a returns-adjusted accounting measure."
+                )
+            if not matured.empty and twelve_month_retention is not None:
+                st.caption(
+                    f"Comparable matured cohorts: {len(matured_months):,} · "
+                    f"weighted month-12 active share: {twelve_month_retention:.1f}% · "
+                    f"analysis end: {value_panel['observation_end_date'].max()}."
+                )
+
 # RETENTION — repeat purchase + point-in-time cohort activity
 # -----------------------------------------------------------------------------
 with tab_retention:

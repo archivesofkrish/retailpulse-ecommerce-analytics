@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.4.0 - 2026-11-15
+
+- Add a Customer Value Studio with cohort-comparable 12-calendar-month observed revenue yield, retention curves and a cohort value heatmap.
+- Add a reproducible monthly cohort-value export with original cohort size, active customers, revenue yield, cumulative yield and partial-period flags.
+- Exclude partial final months from mature-cohort comparisons and preserve right-censored future periods as unobserved.
+- Redesign the Streamlit interface with a responsive gradient hero, refined navigation, premium metric cards and cohesive Plotly styling.
+- Add reusable cohort-value calculations, regression tests, methodology notes and portfolio walkthrough updates.
+- Explicitly distinguish observed historical gross-revenue yield from projected CLV, forecasts and profit.
+
+
 ## 1.3.0 - 2026-11-15
 
 - Add an interactive Repeat-Purchase Scenario Lab to the Streamlit dashboard.
