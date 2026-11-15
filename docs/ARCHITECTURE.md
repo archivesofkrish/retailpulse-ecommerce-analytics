@@ -52,7 +52,7 @@ reports/phase3/ (local tables + figures + report + matching phase3_manifest.json
 - `src/retailpulse/analysis.py` contains reusable transaction, KPI, RFM and cohort logic.
 - `scripts/` orchestrates download, the core pipeline, source validation, SQL and Phase 3 analytics.
 - `dashboard/app.py` reads the local raw workbook through the shared analysis functions and reads generated Phase 3 outputs for the full-period intelligence tabs.
-- `tests/` checks transaction rules, reconciliations, RFM tie handling, cohort right-censoring and temporal embargo logic.
+- `tests/` checks transaction rules, reconciliations, RFM tie handling, cohort right-censoring, temporal embargo logic, and a synthetic core-to-Phase-3 integration run.
 - `reports/` and `presentations/` contain aggregated portfolio artefacts. Raw data, processed transaction rows, customer-level tables and local validation JSON are excluded from Git.
 
 ## Design principles
@@ -78,3 +78,7 @@ Each successful core run writes `data/processed/pipeline_manifest.json` last. It
 The Phase 3 runner refuses incomplete core outputs and writes `reports/phase3/phase3_manifest.json` only after its outputs and summary are complete. The dashboard compares the two run IDs and source fingerprints and checks the current source file signature before enabling full-period advanced panels. This prevents a refreshed source workbook or a new core run from being combined with stale Phase 3 reports. Streamlit cache keys include each input file's modification time and size so regenerated outputs are reloaded.
 
 The SQL example runner also requires a completed core manifest before opening the generated CSV views.
+
+## End-to-end smoke validation
+
+The automated suite runs the synthetic demonstration file through the same core pipeline and Phase 3 orchestration used by the project. It verifies that core and advanced manifests agree on the pipeline run ID and source SHA-256 digest, that the expected advanced output files are created, and that a core run explicitly marked as incomplete is rejected by Phase 3. The demo is intentionally too small to guarantee a meaningful inactivity-model backtest; a skipped model is a valid outcome and must not prevent the remaining analytical outputs from being published.

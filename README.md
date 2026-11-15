@@ -197,7 +197,7 @@ The held-out ROC-AUC is 0.791 and average precision is 0.843. Training and test 
 
 ## Validation
 
-The release test suite includes input-schema ambiguity checks, blank-identifier checks, finite numeric and line-value checks, customer-ID normalisation, transaction, RFM, row-reconciliation, merchandise-classification, right-censoring and temporal-embargo regression tests. See [Data Contracts](docs/DATA_CONTRACTS.md) for accepted input fields and rejection rules. The CI workflow tests Python 3.10, 3.11 and 3.12, installs the package in editable mode, builds distribution artefacts, and checks dependency consistency. The full UCI workbook validator checks eight data-quality and reconciliation conditions.
+The release test suite includes input-schema ambiguity checks, blank-identifier checks, finite numeric and line-value checks, customer-ID normalisation, transaction, RFM, row-reconciliation, merchandise-classification, right-censoring and temporal-embargo regression tests, plus a synthetic-data integration smoke test that executes the core pipeline through Phase 3 and validates the lineage manifests. See [Data Contracts](docs/DATA_CONTRACTS.md) for accepted input fields and rejection rules. The CI workflow tests Python 3.10, 3.11 and 3.12, installs the package in editable mode, builds distribution artefacts, and checks dependency consistency. The full UCI workbook validator checks eight data-quality and reconciliation conditions.
 
 ```bash
 python -W error::DeprecationWarning -m pytest -q
