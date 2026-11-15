@@ -67,8 +67,8 @@ def load_inputs():
             "Core pipeline outputs are incomplete. Run scripts/run_analysis.py before Phase 3."
         )
 
-    sales = pd.read_csv(DATA / "sales_lines.csv", low_memory=False)
-    rfm = pd.read_csv(DATA / "customer_rfm.csv", low_memory=False)
+    sales = pd.read_csv(DATA / "sales_lines.csv", low_memory=False, dtype={"customer_id": "string"})
+    rfm = pd.read_csv(DATA / "customer_rfm.csv", low_memory=False, dtype={"customer_id": "string"})
     segments = pd.read_csv(DATA / "rfm_segment_summary.csv", low_memory=False)
     products = pd.read_csv(DATA / "product_performance.csv", low_memory=False)
     countries = pd.read_csv(DATA / "country_performance.csv", low_memory=False)
@@ -83,7 +83,10 @@ def load_inputs():
         raise ValueError(f"customer_rfm.csv missing columns: {sorted(needed_rfm - set(rfm.columns))}")
 
     sales["invoice_date"] = pd.to_datetime(sales["invoice_date"], errors="coerce")
-    sales["customer_id_num"] = pd.to_numeric(sales["customer_id"], errors="coerce")
+    sales["customer_id_key"] = sales["customer_id"].astype("string").str.strip()
+    sales["customer_id_key"] = sales["customer_id_key"].mask(sales["customer_id_key"].eq(""), pd.NA)
+    rfm["customer_id"] = rfm["customer_id"].astype("string").str.strip()
+    rfm["customer_id"] = rfm["customer_id"].mask(rfm["customer_id"].eq(""), pd.NA)
     sales["invoice_key"] = sales["invoice"].astype(str)
     sales["stock_code_key"] = sales["stock_code"].astype(str)
     for col in ["quantity", "revenue"]:
@@ -110,7 +113,8 @@ def pct_money(x: float) -> str:
 
 def make_customer_outputs(sales: pd.DataFrame, rfm: pd.DataFrame, kpis: dict):
     cust = rfm.copy()
-    cust["customer_id"] = pd.to_numeric(cust["customer_id"], errors="coerce")
+    cust["customer_id"] = cust["customer_id"].astype("string").str.strip()
+    cust["customer_id"] = cust["customer_id"].mask(cust["customer_id"].eq(""), pd.NA)
     cust = cust.dropna(subset=["customer_id", "monetary"]).copy()
     cust["monetary"] = cust["monetary"].clip(lower=0)
     cust = cust.sort_values("monetary", ascending=False).reset_index(drop=True)
@@ -146,17 +150,17 @@ def make_customer_outputs(sales: pd.DataFrame, rfm: pd.DataFrame, kpis: dict):
     seg.to_csv(OUT / "customer_segment_value.csv", index=False)
 
     # Customer-level order history and repeat purchase timing.
-    sales_known = sales.dropna(subset=["customer_id_num", "invoice_date", "invoice_key"]).copy()
-    orders = (sales_known.groupby(["customer_id_num", "invoice_key"], as_index=False)
+    sales_known = sales.dropna(subset=["customer_id_key", "invoice_date", "invoice_key"]).copy()
+    orders = (sales_known.groupby(["customer_id_key", "invoice_key"], as_index=False)
               .agg(order_date=("invoice_date", "min"), order_revenue=("revenue", "sum")))
-    orders = orders.sort_values(["customer_id_num", "order_date", "invoice_key"])
-    orders["order_number"] = orders.groupby("customer_id_num").cumcount() + 1
-    order_counts = orders.groupby("customer_id_num")["invoice_key"].nunique()
+    orders = orders.sort_values(["customer_id_key", "order_date", "invoice_key"])
+    orders["order_number"] = orders.groupby("customer_id_key").cumcount() + 1
+    order_counts = orders.groupby("customer_id_key")["invoice_key"].nunique()
     repeat_customers = int((order_counts >= 2).sum())
     single_order_customers = int((order_counts == 1).sum())
-    first_orders = orders[orders["order_number"] == 1][["customer_id_num", "order_date"]].rename(columns={"order_date": "first_order_date"})
-    second_orders = orders[orders["order_number"] == 2][["customer_id_num", "order_date"]].rename(columns={"order_date": "second_order_date"})
-    first_second = first_orders.merge(second_orders, on="customer_id_num", how="left")
+    first_orders = orders[orders["order_number"] == 1][["customer_id_key", "order_date"]].rename(columns={"order_date": "first_order_date"})
+    second_orders = orders[orders["order_number"] == 2][["customer_id_key", "order_date"]].rename(columns={"order_date": "second_order_date"})
+    first_second = first_orders.merge(second_orders, on="customer_id_key", how="left")
     first_second["days_to_second_order"] = (first_second["second_order_date"] - first_second["first_order_date"]).dt.total_seconds() / 86400
     first_second.to_csv(OUT / "customer_first_second_order.csv", index=False)
     observation_end = sales["invoice_date"].max().normalize()
@@ -230,16 +234,35 @@ def make_product_outputs(sales: pd.DataFrame, products: pd.DataFrame):
     product_codes["revenue_share_pct"] = product_codes["revenue_gbp"] / total_merch * 100
     product_codes["cumulative_revenue_share_pct"] = product_codes["revenue_gbp"].cumsum() / total_merch * 100
 
-    # Derive distinct invoices directly from line-level sales to identify one-off bulk lines.
+    # Aggregate at invoice + SKU grain before deriving one-invoice maxima.
+    # A SKU can appear on multiple source lines within one invoice, so taking the
+    # maximum source-line quantity would understate the actual invoice quantity.
     sale_rows = sales.copy()
     sale_rows["stock_code_key"] = sale_rows["stock_code"].astype(str)
     sale_rows["invoice_key"] = sale_rows["invoice"].astype(str)
-    line_orders = sale_rows.groupby("stock_code_key").agg(
-        distinct_invoices=("invoice_key", "nunique"),
-        max_single_invoice_units=("quantity", "max"),
-        max_single_line_revenue_gbp=("revenue", "max"),
-    ).reset_index().rename(columns={"stock_code_key": "stock_code"})
-    product_codes = product_codes.merge(line_orders, on="stock_code", how="left")
+    invoice_sku = (
+        sale_rows.groupby(["stock_code_key", "invoice_key"], as_index=False)
+        .agg(
+            invoice_units=("quantity", "sum"),
+            invoice_revenue_gbp=("revenue", "sum"),
+        )
+    )
+    invoice_stats = (
+        invoice_sku.groupby("stock_code_key")
+        .agg(
+            distinct_invoices=("invoice_key", "nunique"),
+            max_single_invoice_units=("invoice_units", "max"),
+            max_single_invoice_revenue_gbp=("invoice_revenue_gbp", "max"),
+        )
+        .reset_index()
+        .rename(columns={"stock_code_key": "stock_code"})
+    )
+    product_codes = product_codes.drop(columns=["orders"]).merge(
+        invoice_stats, on="stock_code", how="left"
+    )
+    # The invoice-level distinct count is the authoritative order count for a SKU;
+    # summing order counts across multiple source descriptions can double-count.
+    product_codes["orders"] = product_codes["distinct_invoices"].fillna(0).astype(int)
     product_codes.to_csv(OUT / "merchandise_product_concentration.csv", index=False)
 
     one_order = product_codes[product_codes["distinct_invoices"] <= 1].copy()
@@ -366,7 +389,7 @@ def make_cohort_outputs(sales: pd.DataFrame):
     A zero means the calendar month was observed but no cohort member purchased.
     NaN means that cohort had not yet reached that month before the source ended.
     """
-    x = sales.dropna(subset=["customer_id_num", "invoice_date"]).copy()
+    x = sales.dropna(subset=["customer_id_key", "invoice_date"]).copy()
     if x.empty:
         empty = pd.DataFrame()
         empty.to_csv(OUT / "cohort_retention_recomputed.csv")
@@ -377,9 +400,9 @@ def make_cohort_outputs(sales: pd.DataFrame):
         ])
 
     x["invoice_month"] = x["invoice_date"].dt.to_period("M")
-    cm = x[["customer_id_num", "invoice_month"]].drop_duplicates()
-    first_month = cm.groupby("customer_id_num")["invoice_month"].min().rename("cohort_month")
-    cm = cm.merge(first_month, on="customer_id_num", how="left")
+    cm = x[["customer_id_key", "invoice_month"]].drop_duplicates()
+    first_month = cm.groupby("customer_id_key")["invoice_month"].min().rename("cohort_month")
+    cm = cm.merge(first_month, on="customer_id_key", how="left")
     cm["months_since_first_purchase"] = (
         (cm["invoice_month"].dt.year - cm["cohort_month"].dt.year) * 12
         + (cm["invoice_month"].dt.month - cm["cohort_month"].dt.month)
@@ -397,7 +420,7 @@ def make_cohort_outputs(sales: pd.DataFrame):
         observed_offsets = end_month.ordinal - cohort_month.ordinal
         observed_counts = (
             cm.loc[cm["cohort_month"].eq(cohort_month)]
-            .groupby("months_since_first_purchase")["customer_id_num"]
+            .groupby("months_since_first_purchase")["customer_id_key"]
             .nunique()
             .reindex(range(observed_offsets + 1), fill_value=0)
         )
@@ -438,7 +461,7 @@ def make_churn_backtest(orders: pd.DataFrame, observation_end: pd.Timestamp):
             OUT / "historical_inactivity_feature_importance.csv", index=False
         )
         pd.DataFrame(columns=[
-            "customer_id_num", "snapshot_date", "inactive_next_90d",
+            "customer_id_key", "snapshot_date", "inactive_next_90d",
             "recency_days", "lifetime_orders", "lifetime_revenue",
             "orders_90d", "orders_180d", "orders_365d",
             "predicted_inactivity_score", "risk_rank_pct",
@@ -458,7 +481,7 @@ def make_churn_backtest(orders: pd.DataFrame, observation_end: pd.Timestamp):
         hist = orders[orders["order_date"] <= cut]
         if hist.empty:
             continue
-        gb = hist.groupby("customer_id_num")
+        gb = hist.groupby("customer_id_key")
         base = gb.agg(first_order=("order_date", "min"), last_order=("order_date", "max"),
                       lifetime_orders=("invoice_key", "nunique"), lifetime_revenue=("order_revenue", "sum")).reset_index()
         base["recency_days"] = (cut - base["last_order"]).dt.days
@@ -466,14 +489,14 @@ def make_churn_backtest(orders: pd.DataFrame, observation_end: pd.Timestamp):
         base["avg_order_value"] = base["lifetime_revenue"] / base["lifetime_orders"].clip(lower=1)
         for days, label in [(90, "90d"), (180, "180d"), (365, "365d")]:
             window = hist[hist["order_date"] > cut - timedelta(days=days)]
-            agg = window.groupby("customer_id_num").agg(
+            agg = window.groupby("customer_id_key").agg(
                 **{f"orders_{label}": ("invoice_key", "nunique"), f"revenue_{label}": ("order_revenue", "sum")})
-            base = base.merge(agg, on="customer_id_num", how="left")
+            base = base.merge(agg, on="customer_id_key", how="left")
             base[f"orders_{label}"] = base[f"orders_{label}"].fillna(0)
             base[f"revenue_{label}"] = base[f"revenue_{label}"].fillna(0)
         future = orders[(orders["order_date"] > cut) & (orders["order_date"] <= cut + timedelta(days=90))]
-        future_n = future.groupby("customer_id_num")["invoice_key"].nunique()
-        base["future_orders_90d"] = base["customer_id_num"].map(future_n).fillna(0)
+        future_n = future.groupby("customer_id_key")["invoice_key"].nunique()
+        base["future_orders_90d"] = base["customer_id_key"].map(future_n).fillna(0)
         base["inactive_next_90d"] = (base["future_orders_90d"] == 0).astype(int)
         base["snapshot_date"] = cut
         base["snapshot_month"] = cut.month
@@ -518,7 +541,7 @@ def make_churn_backtest(orders: pd.DataFrame, observation_end: pd.Timestamp):
                         "average_precision": float(average_precision_score(labels, prob)) if labels.sum() > 0 else np.nan})
     pd.DataFrame(monthly).to_csv(OUT / "historical_inactivity_monthly_backtest.csv", index=False)
 
-    scored = test[["customer_id_num", "snapshot_date", "inactive_next_90d", "recency_days", "lifetime_orders",
+    scored = test[["customer_id_key", "snapshot_date", "inactive_next_90d", "recency_days", "lifetime_orders",
                    "lifetime_revenue", "orders_90d", "orders_180d", "orders_365d"]].copy()
     scored["predicted_inactivity_score"] = probabilities
     scored["risk_rank_pct"] = scored["predicted_inactivity_score"].rank(pct=True) * 100
