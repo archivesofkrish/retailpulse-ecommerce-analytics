@@ -3,8 +3,8 @@
 **Version:** 1.3.0  
 **Merged to main:** 15 November 2026  
 **Repository:** [archivesofkrish/retailpulse-ecommerce-analytics](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics)  
-**Main commit:** `e3c2586e8a875d08783718bb9e26abf46e45a1c2`  
-**Status:** v1.3.0 adds the interactive repeat-purchase Scenario Lab to the v1.2.0 analytics platform. The Scenario Lab is assumption-driven planning arithmetic over historical 90-day repeat-purchase metrics, not a live forecast or causal model. PR #17 contains the release candidate; merge and post-merge validation are pending. The GitHub Release/tag will be published only after `main` validation passes.
+**Main commit:** `ff564656aa70164c83d580065dd07149a430653b`  
+**Status:** v1.3.0, including the interactive repeat-purchase Scenario Lab, is merged to `main`. PR #17 passed the Python 3.11–3.14 matrix, package build, synthetic end-to-end/output-integrity checks, Docker health, CodeQL and dependency audit before merge. Post-merge checks are running against the main commit. The GitHub Release/tag will be published after post-merge validation passes.
 
 ## Delivered capabilities
 
