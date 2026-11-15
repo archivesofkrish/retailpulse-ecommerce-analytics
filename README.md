@@ -8,6 +8,8 @@
 
 **RetailPulse is a reproducible, end-to-end business intelligence project** built around the UCI Online Retail II transaction dataset. It combines Python data engineering, SQL analytics, customer segmentation, cohort activity, merchandise and market analysis, a historical inactivity-model backtest, and an eight-section Streamlit dashboard.
 
+**Current release:** `1.3.0` — includes the interactive Repeat-Purchase Scenario Lab, validated scenario calculations, and gross-revenue sensitivity analysis.
+
 > **Historical-data notice:** The source workbook covers **1 December 2009–9 December 2011**. RetailPulse is an analytical case study, not a live retailer feed. Its reported revenue is not profit, historical customer spend is not projected customer lifetime value, and the inactivity model is not a production churn score.
 
 ## Project at a glance
