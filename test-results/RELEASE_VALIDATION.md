@@ -17,7 +17,7 @@ The latest artifact-integrity increment (PR #12) was merged only after all eight
 | CodeQL Python | PASS | [CodeQL workflow](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43714434309) |
 | Dependency vulnerability audit | PASS | [Dependency audit](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43714434303) |
 
-**Total:** 164 passing test executions across four supported Python versions, plus Docker, CodeQL and dependency-audit checks.
+**PR #12 total:** 164 passing test executions across four supported Python versions, plus Docker, CodeQL and dependency-audit checks.
 
 The v1.2.0 suite covers:
 - SHA-256 and byte-size manifests for generated core and Phase 3 artifacts.
@@ -27,6 +27,27 @@ The v1.2.0 suite covers:
 - Rejection of edited core exports before Phase 3 ingestion.
 - Detection of modified Phase 3 reports after generation.
 - Existing data contracts, RFM, product affinity, customer-ID integrity, empty-dimension behaviour, cohort censoring and model temporal-embargo regressions.
+
+## v1.2.0 release-candidate validation (PR #13)
+
+The release metadata, public verification CLI and end-to-end CI smoke test passed on head commit `0fde9b783203706e9037582c14ab5b1bb8cf105e`.
+
+| Validation | Result | Evidence |
+|---|---:|---|
+| Python 3.11 | 45 passed | [RetailPulse CI run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715134768) |
+| Python 3.12 | 45 passed | [RetailPulse CI run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715134768) |
+| Python 3.13 | 45 passed | [RetailPulse CI run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715134768) |
+| Python 3.14 | 45 passed; sdist/wheel build and dependency consistency passed | [RetailPulse CI run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715134768) |
+| Public output-verification CLI | PASS — 6 checks, 0 failed | [Python 3.14 job log](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715134768/job/132814910575) |
+| Core artifact manifest | 13 artifacts verified | Same CLI smoke test |
+| Phase 3 artifact manifest | 27 artifacts verified | Same CLI smoke test |
+| Docker build and Streamlit health | PASS | [RetailPulse CI run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715134768) |
+| CodeQL Python | PASS | [CodeQL run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715134729) |
+| Dependency vulnerability audit | PASS | [Dependency audit run](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43715134767) |
+
+**PR #13 total:** 180 passing test executions across four Python versions. The Python 3.14 workflow builds the synthetic core and Phase 3 outputs, then runs `python scripts/verify_outputs.py`; the command returns `PASS` after verifying the two manifests, all 40 artifacts, shared run ID and matching source fingerprint.
+
+The CI workflow also now uses Node 24-compatible releases of checkout and upload-artifact, removing the prior Node 20 deprecation warnings from those steps.
 
 ## Previous automated feature increments
 
