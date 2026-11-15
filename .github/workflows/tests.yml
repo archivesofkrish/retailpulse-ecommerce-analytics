@@ -38,7 +38,7 @@ jobs:
         run: python -W error::DeprecationWarning -m pytest --strict-config --strict-markers -q --junitxml="test-results/ci/junit-python-${{ matrix.python-version }}.xml"
       - name: Upload JUnit test report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: retailpulse-junit-python-${{ matrix.python-version }}
           path: test-results/ci/junit-python-${{ matrix.python-version }}.xml
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
       - name: Build runtime image
         run: docker build --pull -t retailpulse:ci .
       - name: Start dashboard container
