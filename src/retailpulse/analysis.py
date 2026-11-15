@@ -7,7 +7,12 @@ import re
 import uuid
 from datetime import datetime, timezone
 
-from retailpulse.provenance import (\n    build_artifact_manifest,\n    build_pipeline_manifest,\n    file_fingerprint,\n    write_json_atomic,\n)
+from retailpulse.provenance import (
+    build_artifact_manifest,
+    build_pipeline_manifest,
+    file_fingerprint,
+    write_json_atomic,
+)
 
 import numpy as np
 import pandas as pd
