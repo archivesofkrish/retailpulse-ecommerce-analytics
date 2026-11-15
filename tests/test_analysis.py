@@ -1,6 +1,7 @@
 from pathlib import Path
 import sys
 import pandas as pd
+import json
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
@@ -47,8 +48,13 @@ def test_cohort_month_zero_is_100_percent():
 def test_demo_pipeline_writes_expected_outputs(tmp_path):
     sample = ROOT / "data/sample/sample_retail_transactions.csv"
     result = run_pipeline(sample, tmp_path)
-    expected = ["sales_lines.csv", "return_cancellation_lines.csv", "excluded_non_sale_non_return_lines.csv", "monthly_sales.csv", "customer_rfm.csv", "cohort_retention.csv", "kpis.json"]
+    expected = ["sales_lines.csv", "return_cancellation_lines.csv", "excluded_non_sale_non_return_lines.csv", "monthly_sales.csv", "customer_rfm.csv", "cohort_retention.csv", "kpis.json", "pipeline_manifest.json"]
     assert all((tmp_path / name).exists() for name in expected)
+    manifest = json.loads((tmp_path / "pipeline_manifest.json").read_text(encoding="utf-8"))
+    assert manifest["status"] == "complete"
+    assert manifest["run_id"] == result["pipeline_manifest"]["run_id"]
+    assert manifest["source"]["file_name"] == sample.name
+    assert len(manifest["source"]["sha256"]) == 64
     assert result["kpis"]["sales_orders"] > 0
     saved_cohorts = pd.read_csv(tmp_path / "cohort_retention.csv")
     assert saved_cohorts.columns[0] == "cohort_month"

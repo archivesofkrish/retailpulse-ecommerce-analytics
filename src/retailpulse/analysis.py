@@ -4,6 +4,10 @@ from __future__ import annotations
 from pathlib import Path
 import json
 import re
+import uuid
+from datetime import datetime, timezone
+
+from retailpulse.provenance import build_pipeline_manifest, write_json_atomic
 
 import numpy as np
 import pandas as pd
@@ -353,11 +357,23 @@ def calculate_analytics(df: pd.DataFrame, stats: dict) -> dict[str, pd.DataFrame
 
 def run_pipeline(input_path: str | Path, output_dir: str | Path) -> dict:
     """Run the complete data pipeline and persist reusable analysis outputs."""
+    source_path = Path(input_path).resolve()
+    source_stat_before = source_path.stat()
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
-    raw = read_source(input_path)
+    raw = read_source(source_path)
     prepared, stats = prepare_transactions(raw)
     result = calculate_analytics(prepared, stats)
+
+    source_stat_after = source_path.stat()
+    if (source_stat_before.st_size, source_stat_before.st_mtime_ns) != (
+        source_stat_after.st_size, source_stat_after.st_mtime_ns
+    ):
+        raise RuntimeError("The source dataset changed while the analytics pipeline was running.")
+
+    manifest = build_pipeline_manifest(source_path, stats, result["kpis"], uuid.uuid4().hex)
+    manifest_path = output_dir / "pipeline_manifest.json"
+    write_json_atomic(manifest_path, manifest)
 
     exports = {
         "sales_lines.csv": result["sales"],
@@ -374,5 +390,9 @@ def run_pipeline(input_path: str | Path, output_dir: str | Path) -> dict:
     }
     for name, frame in exports.items():
         frame.to_csv(output_dir / name, index=(Path(name).stem == "cohort_retention"))
-    (output_dir / "kpis.json").write_text(json.dumps(result["kpis"], indent=2), encoding="utf-8")
+    write_json_atomic(output_dir / "kpis.json", result["kpis"])
+    manifest["status"] = "complete"
+    manifest["completed_at_utc"] = datetime.now(timezone.utc).isoformat()
+    write_json_atomic(manifest_path, manifest)
+    result["pipeline_manifest"] = manifest
     return result
