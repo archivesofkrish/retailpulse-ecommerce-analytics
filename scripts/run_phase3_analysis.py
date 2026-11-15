@@ -37,7 +37,7 @@ from sklearn.metrics import (
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from retailpulse.provenance import read_json_object, write_json_atomic
+from retailpulse.provenance import (\n    build_artifact_manifest,\n    read_json_object,\n    verify_artifact_manifest,\n    write_json_atomic,\n)
 from retailpulse.insights import generate_business_insights, INSIGHT_COLUMNS
 
 DATA = ROOT / "data" / "processed"
@@ -65,6 +65,14 @@ def load_inputs():
     if pipeline_manifest.get("status") != "complete":
         raise RuntimeError(
             "Core pipeline outputs are incomplete. Run scripts/run_analysis.py before Phase 3."
+        )
+    artifacts_valid, artifacts_message = verify_artifact_manifest(
+        DATA, pipeline_manifest.get("artifacts")
+    )
+    if not artifacts_valid:
+        raise RuntimeError(
+            f"Core pipeline export integrity failed: {artifacts_message} "
+            "Re-run scripts/run_analysis.py before Phase 3."
         )
 
     sales = pd.read_csv(DATA / "sales_lines.csv", low_memory=False, dtype={"customer_id": "string"})
@@ -1132,7 +1140,7 @@ def main():
     sales, rfm, segments_source, products, countries, kpis, pipeline_manifest = load_inputs()
     phase3_manifest_path = OUT / "phase3_manifest.json"
     write_json_atomic(phase3_manifest_path, {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": "building",
         "pipeline_run_id": pipeline_manifest["run_id"],
         "source_sha256": pipeline_manifest["source"]["sha256"],
@@ -1194,12 +1202,23 @@ def main():
         raise RuntimeError(
             "The core pipeline changed while Phase 3 was running. Re-run Phase 3 against the latest core outputs."
         )
+    core_artifacts_valid, core_artifacts_message = verify_artifact_manifest(
+        DATA, current_pipeline_manifest.get("artifacts")
+    )
+    if not core_artifacts_valid:
+        raise RuntimeError(
+            "Core pipeline outputs changed while Phase 3 was running: "
+            f"{core_artifacts_message} Re-run the core pipeline and Phase 3."
+        )
     phase3_manifest = {
-        "schema_version": 1,
+        "schema_version": 2,
         "status": "complete",
         "pipeline_run_id": pipeline_manifest["run_id"],
         "source_sha256": pipeline_manifest["source"]["sha256"],
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "artifacts": build_artifact_manifest(
+            OUT, exclude={"phase3_manifest.json"}
+        ),
     }
     write_json_atomic(phase3_manifest_path, phase3_manifest)
     print(json.dumps({
