@@ -133,3 +133,16 @@ def test_rules_reject_negative_and_fractional_count_fields():
     assert "second_purchase_conversion" not in ids
     assert "product_cross_sell_candidate" not in ids
     assert "merchandise_assortment_concentration" not in ids
+
+
+def test_repeat_purchase_rule_rejects_rates_outside_percentage_domain():
+    kwargs = _base_inputs()
+    kwargs["repeat_purchase_windows"] = [
+        {"follow_up_days": 90, "eligible_customers": 4000, "second_order_within_window_pct": 125.0}
+    ]
+
+    insights = generate_business_insights(**kwargs)
+
+    assert "second_purchase_conversion" not in {
+        item["insight_id"] for item in insights
+    }
