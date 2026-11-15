@@ -133,7 +133,7 @@ def generate_business_insights(
     # 4. Repeat purchase friction: only surface with a meaningful eligible base.
     repeat90 = _find_record(repeat_purchase_windows, "follow_up_days", 90)
     if repeat90:
-        repeat_rate = _number(repeat90.get("second_order_within_window_pct"))
+        repeat_rate = percentage(repeat90.get("second_order_within_window_pct"))
         eligible = non_negative_count(repeat90.get("eligible_customers")) or 0
         if repeat_rate is not None and eligible >= minimum_repeat_eligible_customers and repeat_rate <= 40.0:
             priority = "High" if repeat_rate <= 25.0 else "Medium"
