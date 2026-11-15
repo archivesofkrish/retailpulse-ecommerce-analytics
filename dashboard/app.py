@@ -1398,8 +1398,17 @@ with tab_experiments:
 
     with st.expander("Evaluate a completed A/B test", expanded=False):
         st.caption(
-            "Enter the number of conversions and total eligible participants observed in each arm. "
-            "Use the same pre-specified binary outcome and observation window."
+            "Enter conversions and eligible participants for both arms. Set the pre-declared allocation "
+            "ratio so RetailPulse can check whether the observed sample split is unexpectedly imbalanced."
+        )
+        expected_control_share_pct = st.slider(
+            "Expected control allocation (%)",
+            min_value=1.0,
+            max_value=99.0,
+            value=50.0,
+            step=1.0,
+            key="experiment_expected_control_share",
+            help="Use the allocation specified before launch (for example 50/50 or 90/10).",
         )
         e1, e2 = st.columns(2)
         with e1:
@@ -1431,6 +1440,7 @@ with tab_experiments:
                     variant_successes=int(variant_successes),
                     variant_trials=int(variant_trials),
                     significance_level=significance_level,
+                    expected_control_share=float(expected_control_share_pct) / 100,
                 )
                 o1, o2, o3, o4 = st.columns(4)
                 o1.metric("Control conversion", f"{outcome['control_conversion_rate_pct']:.2f}%")
@@ -1460,17 +1470,70 @@ with tab_experiments:
                         "The observed data do not establish a difference at the selected significance level. "
                         "This is not proof that the experiences are equivalent."
                     )
+
+                srm = outcome["sample_ratio_diagnostic"]
+                st.markdown("### Experiment integrity · allocation check")
+                integrity_left, integrity_right = st.columns([1, 1.35])
+                with integrity_left:
+                    srm_p_value = "<0.0001" if srm["p_value"] < 0.0001 else f"{srm['p_value']:.4f}"
+                    st.metric("Sample-ratio diagnostic p-value", srm_p_value)
+                    st.caption(
+                        f"Observed control share: {srm['observed_control_share_pct']:.1f}% "
+                        f"vs expected {srm['expected_control_share_pct']:.1f}% "
+                        f"({srm['allocation_deviation_pp']:+.2f} pp)."
+                    )
+                    if srm["status"] == "SAMPLE_RATIO_MISMATCH":
+                        st.error(
+                            "Sample-ratio mismatch flagged. Investigate assignment, eligibility, exposure logging "
+                            "and event instrumentation before interpreting the conversion result."
+                        )
+                    elif srm["status"] == "LOW_EXPECTED_COUNT":
+                        st.warning(
+                            "Expected arm counts are below five. The chi-square approximation is not dependable; "
+                            "collect more observations or use an appropriate exact allocation test."
+                        )
+                    else:
+                        st.success(
+                            "No allocation imbalance was flagged at p < 0.001. "
+                            "This does not certify randomisation or instrumentation quality."
+                        )
+                with integrity_right:
+                    allocation_figure = go.Figure()
+                    allocation_figure.add_trace(go.Bar(
+                        name="Expected allocation",
+                        x=["Control", "Variant"],
+                        y=[srm["expected_control_share_pct"], srm["expected_variant_share_pct"]],
+                        marker_color="#a5afd0",
+                    ))
+                    allocation_figure.add_trace(go.Bar(
+                        name="Observed allocation",
+                        x=["Control", "Variant"],
+                        y=[srm["observed_control_share_pct"], srm["observed_variant_share_pct"]],
+                        marker_color=["#6558d3", "#0e9f8a"],
+                    ))
+                    allocation_figure.update_layout(
+                        barmode="group", height=300,
+                        margin=dict(l=10, r=10, t=18, b=10),
+                        paper_bgcolor="rgba(0,0,0,0)",
+                        plot_bgcolor="rgba(0,0,0,0)",
+                        font=dict(color="#475467"),
+                        yaxis=dict(title="Share of enrolled participants (%)", range=[0, 100]),
+                        legend=dict(orientation="h", y=1.15, x=0),
+                    )
+                    st.plotly_chart(allocation_figure, width="stretch")
                 with st.expander("Statistical interpretation and guardrails"):
                     if outcome["relative_lift_pct"] is None:
                         relative_text = "Undefined because the control conversion rate is zero."
                     else:
                         relative_text = f"{outcome['relative_lift_pct']:.2f}%"
                     st.markdown(
-                        f"- Test: {outcome['method']}.\n"
-                        f"- z statistic: **{outcome['z_score']:.3f}**.\n"
-                        f"- Relative lift: **{relative_text}**."
+                        f"- Conversion test: {outcome['method']}.\\n"
+                        f"- z statistic: **{outcome['z_score']:.3f}**.\\n"
+                        f"- Relative lift: **{relative_text}**.\\n"
+                        f"- Allocation test: {srm['method']}.\\n"
+                        f"- Allocation threshold: **p < {srm['significance_level']:.3f}**."
                     )
-                    for limitation in outcome["limitations"]:
+                    for limitation in outcome["limitations"] + srm["limitations"]:
                         st.markdown(f"- {limitation}")
             except ValueError as exc:
                 st.error(str(exc))

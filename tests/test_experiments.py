@@ -128,3 +128,72 @@ def test_evaluator_handles_equal_zero_outcomes():
 def test_evaluator_rejects_invalid_counts_and_alpha(kwargs, message):
     with pytest.raises(ValueError, match=message):
         evaluate_two_proportion_experiment(**kwargs)
+
+
+def test_sample_ratio_diagnostic_accepts_expected_equal_allocation():
+    from retailpulse.experiments import evaluate_sample_ratio_mismatch
+
+    result = evaluate_sample_ratio_mismatch(control_trials=10_000, variant_trials=10_000)
+    assert result["status"] == "OK"
+    assert result["p_value"] == 1
+    assert result["sample_ratio_mismatch"] is False
+    assert result["approximation_adequate"] is True
+    assert result["allocation_deviation_pp"] == 0
+
+
+def test_sample_ratio_diagnostic_flags_large_allocation_imbalance():
+    from retailpulse.experiments import evaluate_sample_ratio_mismatch
+
+    result = evaluate_sample_ratio_mismatch(
+        control_trials=12_000, variant_trials=8_000, expected_control_share=0.5
+    )
+    assert result["status"] == "SAMPLE_RATIO_MISMATCH"
+    assert result["sample_ratio_mismatch"] is True
+    assert result["p_value"] < 0.001
+    assert result["allocation_deviation_pp"] == pytest.approx(10)
+
+
+def test_sample_ratio_diagnostic_respects_predeclared_non_equal_allocation():
+    from retailpulse.experiments import evaluate_sample_ratio_mismatch
+
+    result = evaluate_sample_ratio_mismatch(
+        control_trials=9_000, variant_trials=1_000, expected_control_share=0.9
+    )
+    assert result["status"] == "OK"
+    assert result["p_value"] == pytest.approx(1)
+    assert result["expected_variant_share_pct"] == pytest.approx(10)
+
+
+def test_sample_ratio_diagnostic_warns_for_small_expected_counts():
+    from retailpulse.experiments import evaluate_sample_ratio_mismatch
+
+    result = evaluate_sample_ratio_mismatch(control_trials=2, variant_trials=1)
+    assert result["status"] == "LOW_EXPECTED_COUNT"
+    assert result["approximation_adequate"] is False
+    assert result["minimum_expected_arm_count"] < 5
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "message"),
+    [
+        ({"control_trials": 0, "variant_trials": 10}, "greater than zero"),
+        ({"control_trials": True, "variant_trials": 10}, "must be an integer"),
+        ({"control_trials": 10, "variant_trials": 10, "expected_control_share": 0}, "greater than 0"),
+        ({"control_trials": 10, "variant_trials": 10, "expected_control_share": math.nan}, "finite number"),
+        ({"control_trials": 10, "variant_trials": 10, "significance_level": 0}, "significance_level"),
+    ],
+)
+def test_sample_ratio_diagnostic_rejects_invalid_inputs(kwargs, message):
+    from retailpulse.experiments import evaluate_sample_ratio_mismatch
+
+    with pytest.raises(ValueError, match=message):
+        evaluate_sample_ratio_mismatch(**kwargs)
+
+
+def test_two_proportion_evaluator_includes_sample_ratio_diagnostic():
+    result = evaluate_two_proportion_experiment(
+        control_successes=60, control_trials=12_000,
+        variant_successes=100, variant_trials=8_000,
+        expected_control_share=0.5,
+    )
+    assert result["sample_ratio_diagnostic"]["status"] == "SAMPLE_RATIO_MISMATCH"
