@@ -25,7 +25,12 @@ from retailpulse.analysis import (  # noqa: E402
     prepare_transactions,
     read_source,
 )
-from retailpulse.provenance import (\n    file_fingerprint,\n    phase3_freshness,\n    read_json_object,\n    verify_artifact_manifest,\n)
+from retailpulse.provenance import (
+    file_fingerprint,
+    phase3_freshness,
+    read_json_object,
+    verify_artifact_manifest,
+)
 
 PROCESSED = ROOT / "data" / "processed"
 PHASE3 = ROOT / "reports" / "phase3"
