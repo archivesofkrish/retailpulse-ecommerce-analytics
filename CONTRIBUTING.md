@@ -37,4 +37,4 @@ For changes to the dashboard, launch `streamlit run dashboard/app.py` and visual
 
 ## Pull requests
 
-Describe the analytical question, the code or methodology change, the tests run, and any effect on reported metrics. CI must pass the Python 3.11, 3.12 and 3.13 test jobs and the Docker health smoke test. Include updated documentation when definitions or interpretation change.
+Describe the analytical question, the code or methodology change, the tests run, and any effect on reported metrics. CI must pass the Python 3.11, 3.12, 3.13 and 3.14 test jobs, Docker health smoke test, CodeQL analysis and dependency audit. Include updated documentation when definitions or interpretation change.
