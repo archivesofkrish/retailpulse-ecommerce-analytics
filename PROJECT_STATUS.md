@@ -22,11 +22,11 @@
 ## Engineering controls
 
 - Python package metadata and reproducible install configuration.
-- CI matrix, strict deprecation-warning tests, package build and dependency checks.
+- Python 3.11–3.14 CI matrix, strict deprecation-warning tests, package build and dependency consistency checks.
 - Synthetic end-to-end analytics integration test.
 - Docker image build and Streamlit health smoke test.
 - JUnit test-result artefacts retained in GitHub Actions.
-- CodeQL static analysis and Dependabot dependency-update proposals.
+- CodeQL static analysis, pip-audit vulnerability scanning, and Dependabot proposals for Python, GitHub Actions and Docker.
 - Documented security boundaries and data-handling rules.
 
 ## Validation boundaries
@@ -39,4 +39,4 @@
 
 ## Remaining repository-administrator actions
 
-The GitHub main branch is not yet protected. An administrator should enable branch protection requiring pull requests and the Python 3.11, 3.12, 3.13, Docker health and CodeQL checks, while blocking force-pushes and branch deletion. Private vulnerability reporting should also be enabled in repository security settings.
+The GitHub main branch is not yet protected. An administrator should enable branch protection requiring pull requests and the Python 3.11, 3.12, 3.13, 3.14, Docker health, CodeQL and dependency-audit checks, while blocking force-pushes and branch deletion. Private vulnerability reporting should also be enabled in repository security settings.
