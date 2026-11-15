@@ -736,63 +736,109 @@ def make_churn_backtest(orders: pd.DataFrame, observation_end: pd.Timestamp):
 
 
 def make_charts(cust, seg, countries, products, repeat_windows, churn_metrics):
-    # Customer Pareto curve
+    FIG.mkdir(parents=True, exist_ok=True)
+
     fig, ax = plt.subplots(figsize=(9, 5))
-    ax.plot(cust["customer_share_cumulative"] * 100, cust["revenue_share_cumulative"] * 100)
-    ax.axhline(80, linestyle="--", linewidth=1)
-    ax.axvline(20, linestyle="--", linewidth=1)
-    ax.set(title="Identified-customer revenue concentration", xlabel="Cumulative share of customers (%)",
-           ylabel="Cumulative share of identified-customer revenue (%)", xlim=(0, 100), ylim=(0, 100))
+    if cust.empty:
+        ax.text(.5, .5, "No identifiable customers in this dataset", ha="center", va="center")
+    else:
+        ax.plot(cust["customer_share_cumulative"] * 100, cust["revenue_share_cumulative"] * 100)
+        ax.axhline(80, linestyle="--", linewidth=1)
+        ax.axvline(20, linestyle="--", linewidth=1)
+    ax.set(
+        title="Identified-customer revenue concentration",
+        xlabel="Cumulative share of customers (%)",
+        ylabel="Cumulative share of identified-customer revenue (%)",
+        xlim=(0, 100), ylim=(0, 100),
+    )
     ax.grid(alpha=.25)
-    fig.tight_layout(); fig.savefig(FIG / "customer_revenue_pareto.png", dpi=160); plt.close(fig)
+    fig.tight_layout()
+    fig.savefig(FIG / "customer_revenue_pareto.png", dpi=160)
+    plt.close(fig)
 
-    # Segment revenue and customer shares
-    ss = seg.sort_values("identified_revenue_share_pct", ascending=True)
-    y = np.arange(len(ss))
     fig, ax = plt.subplots(figsize=(9, 5))
-    ax.barh(y - .18, ss["customer_share_pct"], height=.35, label="Customer share")
-    ax.barh(y + .18, ss["identified_revenue_share_pct"], height=.35, label="Revenue share")
-    ax.set_yticks(y, ss["rfm_segment"]); ax.set_xlabel("Share (%)")
+    if seg.empty:
+        ax.text(.5, .5, "RFM segments unavailable: no identified customers", ha="center", va="center")
+    else:
+        ss = seg.sort_values("identified_revenue_share_pct", ascending=True)
+        y = np.arange(len(ss))
+        ax.barh(y - .18, ss["customer_share_pct"], height=.35, label="Customer share")
+        ax.barh(y + .18, ss["identified_revenue_share_pct"], height=.35, label="Revenue share")
+        ax.set_yticks(y, ss["rfm_segment"])
+        ax.set_xlabel("Share (%)")
+        ax.legend()
     ax.set_title("Customer share vs. historical revenue share by RFM segment")
-    ax.legend(); ax.grid(axis="x", alpha=.25); fig.tight_layout()
-    fig.savefig(FIG / "segment_share_comparison.png", dpi=160); plt.close(fig)
+    ax.grid(axis="x", alpha=.25)
+    fig.tight_layout()
+    fig.savefig(FIG / "segment_share_comparison.png", dpi=160)
+    plt.close(fig)
 
-    # Repurchase windows
     fig, ax = plt.subplots(figsize=(8, 4.5))
-    ax.bar(repeat_windows["follow_up_days"].astype(str), repeat_windows["second_order_within_window_pct"])
-    ax.set(title="Identified customers making a second purchase", xlabel="Follow-up window (days)", ylabel="Customers with second purchase (%)")
-    ax.set_ylim(0, 100); ax.grid(axis="y", alpha=.25); fig.tight_layout()
-    fig.savefig(FIG / "second_purchase_windows.png", dpi=160); plt.close(fig)
+    if repeat_windows["eligible_customers"].sum() == 0:
+        ax.text(.5, .5, "Repeat-purchase analysis unavailable: no identified customers", ha="center", va="center")
+    else:
+        ax.bar(repeat_windows["follow_up_days"].astype(str), repeat_windows["second_order_within_window_pct"])
+    ax.set(
+        title="Identified customers making a second purchase",
+        xlabel="Follow-up window (days)",
+        ylabel="Customers with second purchase (%)",
+    )
+    ax.set_ylim(0, 100)
+    ax.grid(axis="y", alpha=.25)
+    fig.tight_layout()
+    fig.savefig(FIG / "second_purchase_windows.png", dpi=160)
+    plt.close(fig)
 
-    # Top countries
     top = countries.head(10).sort_values("revenue", ascending=True)
     fig, ax = plt.subplots(figsize=(9, 5))
-    ax.barh(top["country"], top["revenue"] / 1_000_000)
+    if top.empty:
+        ax.text(.5, .5, "No country-level sales data", ha="center", va="center")
+    else:
+        ax.barh(top["country"], top["revenue"] / 1_000_000)
     ax.set(title="Revenue by country — top 10", xlabel="Revenue (£ millions)")
-    ax.grid(axis="x", alpha=.25); fig.tight_layout()
-    fig.savefig(FIG / "country_revenue_top10.png", dpi=160); plt.close(fig)
+    ax.grid(axis="x", alpha=.25)
+    fig.tight_layout()
+    fig.savefig(FIG / "country_revenue_top10.png", dpi=160)
+    plt.close(fig)
 
-    # Merchandise stock-code Pareto
-    top_products = products.copy()
     fig, ax = plt.subplots(figsize=(9, 5))
-    ax.plot(np.arange(1, len(top_products) + 1) / len(top_products) * 100,
-            top_products["cumulative_revenue_share_pct"])
-    ax.axhline(80, linestyle="--", linewidth=1)
-    ax.set(title="Merchandise revenue concentration by stock code", xlabel="Cumulative share of merchandise stock codes (%)",
-           ylabel="Cumulative merchandise revenue (%)", xlim=(0, 100), ylim=(0, 100))
-    ax.grid(alpha=.25); fig.tight_layout()
-    fig.savefig(FIG / "merchandise_product_pareto.png", dpi=160); plt.close(fig)
+    if products.empty:
+        ax.text(.5, .5, "Merchandise analysis unavailable: no merchandise stock codes", ha="center", va="center")
+    else:
+        ax.plot(
+            np.arange(1, len(products) + 1) / len(products) * 100,
+            products["cumulative_revenue_share_pct"],
+        )
+        ax.axhline(80, linestyle="--", linewidth=1)
+    ax.set(
+        title="Merchandise revenue concentration by stock code",
+        xlabel="Cumulative share of merchandise stock codes (%)",
+        ylabel="Cumulative merchandise revenue (%)",
+        xlim=(0, 100), ylim=(0, 100),
+    )
+    ax.grid(alpha=.25)
+    fig.tight_layout()
+    fig.savefig(FIG / "merchandise_product_pareto.png", dpi=160)
+    plt.close(fig)
 
-    # Historical monthly backtest AUC
     monthly_path = OUT / "historical_inactivity_monthly_backtest.csv"
     if monthly_path.exists():
         m = pd.read_csv(monthly_path)
         fig, ax = plt.subplots(figsize=(9, 4.5))
-        ax.plot(m["snapshot_date"], m["roc_auc"], marker="o")
-        ax.axhline(.5, linestyle="--", linewidth=1)
-        ax.set(title="Historical 90-day inactivity model: monthly holdout ROC-AUC", xlabel="Snapshot date", ylabel="ROC-AUC", ylim=(.4, 1.0))
-        ax.tick_params(axis="x", rotation=45); ax.grid(alpha=.25); fig.tight_layout()
-        fig.savefig(FIG / "inactivity_model_monthly_auc.png", dpi=160); plt.close(fig)
+        if m.empty:
+            ax.text(.5, .5, "Historical model skipped", ha="center", va="center")
+        else:
+            ax.plot(m["snapshot_date"], m["roc_auc"], marker="o")
+            ax.axhline(.5, linestyle="--", linewidth=1)
+        ax.set(
+            title="Historical 90-day inactivity model: monthly holdout ROC-AUC",
+            xlabel="Snapshot date", ylabel="ROC-AUC", ylim=(.4, 1.0),
+        )
+        ax.tick_params(axis="x", rotation=45)
+        ax.grid(alpha=.25)
+        fig.tight_layout()
+        fig.savefig(FIG / "inactivity_model_monthly_auc.png", dpi=160)
+        plt.close(fig)
 
 
 def build_report(metrics, country_metrics, product_metrics, affinity_metrics, affinity_rules, business_insights, churn_metrics, segments, windows, cohort_summary, kpis):
