@@ -1,4 +1,5 @@
 from pathlib import Path
+import shutil
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -82,3 +83,20 @@ def test_json_manifest_writer_round_trips_atomically(tmp_path):
 
     assert read_json_object(path) == {"status": "complete", "count": 3}
     assert not path.with_suffix(".json.tmp").exists()
+
+
+
+def test_same_source_copy_at_a_different_path_remains_current(tmp_path):
+    source = tmp_path / "host" / "online_retail_II.xlsx"
+    source.parent.mkdir()
+    source.write_bytes(b"stable source workbook bytes")
+    pipeline, phase3 = _complete_manifests(source)
+
+    mounted_copy = tmp_path / "container" / "online_retail_II.xlsx"
+    mounted_copy.parent.mkdir()
+    shutil.copy2(source, mounted_copy)
+
+    current, reason = phase3_freshness(pipeline, phase3, mounted_copy)
+
+    assert current is True
+    assert "match" in reason.lower()

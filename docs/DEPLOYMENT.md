@@ -58,7 +58,7 @@ docker compose up --build -d
 
 The image includes a Docker health check against Streamlit's `/_stcore/health` endpoint. GitHub Actions builds the image, starts the dashboard, and verifies that endpoint as a separate CI job. The image runs as the unprivileged `retailpulse` user and Compose drops Linux capabilities and enables `no-new-privileges`.
 
-The raw workbook, core exports and Phase 3 outputs are mounted read-only. Run ingestion and analytics before starting or refreshing the dashboard. If the source workbook changes, rebuild the core and Phase 3 outputs using the commands above; provenance checks keep stale Phase 3 panels disabled.
+The raw workbook, core exports and Phase 3 outputs are mounted read-only. Run ingestion and analytics before starting or refreshing the dashboard. If the source workbook changes, rebuild the core and Phase 3 outputs using the commands above; provenance checks keep stale Phase 3 panels disabled. The source's absolute path may differ between the host and container: freshness uses the filename and file signature, and the manifests retain the SHA-256 digest as the content identity.
 
 ## Security considerations
 

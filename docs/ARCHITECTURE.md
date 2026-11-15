@@ -82,3 +82,5 @@ The SQL example runner also requires a completed core manifest before opening th
 ## End-to-end smoke validation
 
 The automated suite runs the synthetic demonstration file through the same core pipeline and Phase 3 orchestration used by the project. It verifies that core and advanced manifests agree on the pipeline run ID and source SHA-256 digest, that the expected advanced output files are created, and that a core run explicitly marked as incomplete is rejected by Phase 3. The demo is intentionally too small to guarantee a meaningful inactivity-model backtest; a skipped model is a valid outcome and must not prevent the remaining analytical outputs from being published.
+
+The source's absolute path is retained for audit traceability but is not required to match across deployment environments. Freshness checks use the source filename and file signature, while both manifests retain the SHA-256 content digest. This allows the same read-only workbook to be mounted at a different path inside a container without falsely invalidating its derived analytics.

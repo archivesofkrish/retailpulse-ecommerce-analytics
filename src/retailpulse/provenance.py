@@ -94,8 +94,11 @@ def phase3_freshness(
         stat = current.stat()
     except OSError:
         return False, "The source dataset is unavailable. Restore it and rebuild the analytics."
-    if source.get("path") != str(current):
-        return False, "The dashboard is using a different source file from the core analytics run."
+    # Absolute paths differ between host and container deployments. The source
+    # basename plus size/mtime signature identifies the mounted copy while the
+    # recorded SHA-256 remains the durable content identity in the manifests.
+    if source.get("file_name") != current.name:
+        return False, "The dashboard is using a different source file name from the core analytics run."
     if source.get("size_bytes") != stat.st_size or source.get("modified_ns") != stat.st_mtime_ns:
         return False, "The source dataset changed after the last core run. Re-run scripts/run_analysis.py and Phase 3."
     return True, "Advanced outputs match the current source dataset and core-pipeline run."
