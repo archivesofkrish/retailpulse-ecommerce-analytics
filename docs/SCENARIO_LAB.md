@@ -58,9 +58,9 @@ The Scenario Lab is unavailable when there is no positive 90-day eligible base, 
 
 From the project root:
 
-\`\`\`bash
+```bash
 python scripts/run_analysis.py
 python scripts/run_phase3_analysis.py
 python -m pytest -q
 streamlit run dashboard/app.py
-\`\`\`
+```
