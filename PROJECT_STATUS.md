@@ -23,7 +23,7 @@
 - Output-level SHA-256 manifests for generated core exports and Phase 3 tables, reports, summaries and figures.
 - Standalone `scripts/verify_outputs.py` command for machine-readable checksum and cross-manifest validation.
 - Phase 3 rejects modified core exports; the dashboard verifies both output manifests before enabling advanced panels.
-- Seven-section Streamlit dashboard, including an evidence-based Decision Brief.
+- Eight-section Streamlit dashboard, including an evidence-based Decision Brief and interactive repeat-purchase Scenario Lab.
 - Non-root Docker deployment with read-only data mounts and health-check CI.
 - DuckDB SQL examples, notebook walkthrough, executive report and 11-slide presentation.
 
