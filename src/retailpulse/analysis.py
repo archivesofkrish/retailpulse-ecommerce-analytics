@@ -61,12 +61,12 @@ def _normalise_customer_id(value: object) -> object:
         return str(int(numeric)) if np.isfinite(numeric) and numeric.is_integer() else pd.NA
 
     text = str(value).strip()
-    if text.casefold() in {"", "nan", "none", "null", "<na>", "nat"}:
+    if text.casefold() in {"", "nan", "none", "null", "<na>", "nat", "inf", "+inf", "-inf", "infinity", "+infinity", "-infinity"}:
         return pd.NA
     # Keep integer strings exactly as supplied (for example, "00123").
     if re.fullmatch(r"[+-]?[0-9]+", text):
         return text
-    numeric_pattern = r"[+-]?(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)(?:[eE][+-]?[0-9]+)?"
+    numeric_pattern = r"[+-]?(?:[0-9]+(?:[.][0-9]*)?|[.][0-9]+)(?:[eE][+-]?[0-9]+)?"
     if re.fullmatch(numeric_pattern, text):
         numeric = float(text)
         return str(int(numeric)) if np.isfinite(numeric) and numeric.is_integer() else pd.NA
