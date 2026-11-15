@@ -37,7 +37,12 @@ from sklearn.metrics import (
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-from retailpulse.provenance import (\n    build_artifact_manifest,\n    read_json_object,\n    verify_artifact_manifest,\n    write_json_atomic,\n)
+from retailpulse.provenance import (
+    build_artifact_manifest,
+    read_json_object,
+    verify_artifact_manifest,
+    write_json_atomic,
+)
 from retailpulse.insights import generate_business_insights, INSIGHT_COLUMNS
 
 DATA = ROOT / "data" / "processed"
