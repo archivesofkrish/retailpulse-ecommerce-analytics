@@ -25,6 +25,7 @@ from retailpulse.analysis import (  # noqa: E402
     prepare_transactions,
     read_source,
 )
+from retailpulse.provenance import phase3_freshness, read_json_object
 
 PROCESSED = ROOT / "data" / "processed"
 PHASE3 = ROOT / "reports" / "phase3"
@@ -50,21 +51,20 @@ st.markdown(
 
 
 @st.cache_data(show_spinner="Loading and preparing transaction data...")
-def load_analytics(path: str):
+def load_analytics(path: str, modified_ns: int, size_bytes: int):
     raw = read_source(path)
     prepared, stats = prepare_transactions(raw)
     return calculate_analytics(prepared, stats)
 
 
 @st.cache_data(show_spinner=False)
-def read_csv(path: str) -> pd.DataFrame:
+def read_csv(path: str, modified_ns: int, size_bytes: int) -> pd.DataFrame:
     return pd.read_csv(path, low_memory=False)
 
 
 @st.cache_data(show_spinner=False)
-def read_json(path: str) -> dict:
-    with open(path, encoding="utf-8") as handle:
-        return json.load(handle)
+def read_json(path: str, modified_ns: int, size_bytes: int) -> dict:
+    return read_json_object(path)
 
 
 def gbp(value: float, decimals: int = 0) -> str:
@@ -73,11 +73,15 @@ def gbp(value: float, decimals: int = 0) -> str:
 
 def phase3_csv(name: str) -> pd.DataFrame | None:
     path = PHASE3 / name
-    return read_csv(str(path)) if path.exists() else None
+    if not path.exists():
+        return None
+    stat = path.stat()
+    return read_csv(str(path), stat.st_mtime_ns, stat.st_size)
 
 
-def phase3_ready() -> bool:
+def phase3_ready(source_path: Path) -> tuple[bool, str]:
     required = [
+        "phase3_manifest.json",
         "phase3_summary.json",
         "customer_segment_value.csv",
         "customer_revenue_concentration.csv",
@@ -89,7 +93,21 @@ def phase3_ready() -> bool:
         "cohort_retention_recomputed.csv",
         "weighted_cohort_retention.csv",
     ]
-    return all((PHASE3 / name).exists() for name in required)
+    missing = [name for name in required if not (PHASE3 / name).exists()]
+    if missing:
+        return False, (
+            "Advanced analytics are missing or incomplete. Run scripts/run_analysis.py "
+            "and then scripts/run_phase3_analysis.py."
+        )
+    pipeline_path = PROCESSED / "pipeline_manifest.json"
+    if not pipeline_path.exists():
+        return False, "Core pipeline provenance is missing. Run scripts/run_analysis.py before Phase 3."
+    try:
+        pipeline_manifest = read_json_object(pipeline_path)
+        phase3_manifest = read_json_object(PHASE3 / "phase3_manifest.json")
+    except (OSError, ValueError, json.JSONDecodeError):
+        return False, "Pipeline provenance files are invalid. Re-run core and Phase 3 analytics."
+    return phase3_freshness(pipeline_manifest, phase3_manifest, source_path)
 
 
 real_path = ROOT / "data" / "raw" / "online_retail_II.xlsx"
@@ -97,7 +115,8 @@ sample_path = ROOT / "data" / "sample" / "sample_retail_transactions.csv"
 input_path = real_path if real_path.exists() else sample_path
 is_demo = input_path == sample_path
 
-result = load_analytics(str(input_path))
+input_stat = input_path.stat()
+result = load_analytics(str(input_path), input_stat.st_mtime_ns, input_stat.st_size)
 kpis = result["kpis"]
 sales = result["sales"].copy()
 
@@ -108,13 +127,14 @@ if is_demo:
 else:
     st.info("HISTORICAL DATA MODE — UCI Online Retail II · 1,067,371 source rows · observation period 1 Dec 2009–9 Dec 2011. This is not a live business feed.")
 
-if not phase3_ready():
-    st.info("Phase 3 outputs are not complete yet. Run `python scripts/run_phase3_analysis.py` from the project root to enable all advanced intelligence panels.")
-    p3 = False
+p3, phase3_message = phase3_ready(input_path)
+if not p3:
+    st.warning(phase3_message)
     phase3_summary = {}
 else:
-    p3 = True
-    phase3_summary = read_json(str(PHASE3 / "phase3_summary.json"))
+    summary_path = PHASE3 / "phase3_summary.json"
+    summary_stat = summary_path.stat()
+    phase3_summary = read_json(str(summary_path), summary_stat.st_mtime_ns, summary_stat.st_size)
 
 with st.sidebar:
     st.header("Overview filters")
@@ -508,7 +528,10 @@ with tab_quality:
     st.json({k: kpis[k] for k in quality_keys if k in kpis})
     validation_path = ROOT / "test-results" / "real_data_validation.json"
     if validation_path.exists():
-        validation = read_json(str(validation_path))
+        validation_stat = validation_path.stat()
+        validation = read_json(
+            str(validation_path), validation_stat.st_mtime_ns, validation_stat.st_size
+        )
         v1, v2, v3 = st.columns(3)
         v1.metric("Real-data checks passed", f"{validation.get('checks_passed', 0)}")
         v2.metric("Checks failed", f"{validation.get('checks_failed', 0)}")

@@ -134,7 +134,7 @@ The source queries are in `sql/analysis.sql` and use the CSV outputs under `data
 
 ## Reproduce the project
 
-The main pipeline writes core exports to `data/processed/`. The Phase 3 runner reads those exports and writes advanced tables, figures and `phase3_summary.json` to `reports/phase3/`. The real-data validator writes `test-results/real_data_validation.json`.
+The main pipeline writes core exports and a `pipeline_manifest.json` to `data/processed/`. The manifest records a run ID, source-file SHA-256 fingerprint, source file signature, reporting period and row counts. The Phase 3 runner reads those exports and writes advanced tables, figures, `phase3_summary.json` and a matching `phase3_manifest.json` to `reports/phase3/`. The dashboard enables advanced panels only when the two manifests match the current source file. Re-run the core pipeline and then Phase 3 after replacing the source workbook. The SQL runner refuses incomplete core exports. The real-data validator writes `test-results/real_data_validation.json`.
 
 Generated raw workbooks, processed transaction exports, per-customer outputs and machine-specific validation JSON are ignored by Git. They can be regenerated with the commands above. Aggregated executive reports, methodological notes, static charts and the presentation are included as portfolio artefacts.
 

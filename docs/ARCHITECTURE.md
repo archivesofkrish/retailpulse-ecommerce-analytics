@@ -30,7 +30,7 @@ UCI Online Retail II workbook (two Excel worksheets)
              +-------------------------> sales / weekday / hour / KPI tables
                    |
                    v
-       data/processed/ (local generated exports)
+       data/processed/ (local exports + pipeline_manifest.json)
              |           |             |
              v           v             v
          DuckDB SQL   Streamlit   Executive report + charts
@@ -44,7 +44,7 @@ scripts/run_phase3_analysis.py
        |--> product and country concentration
        |--> chronological 90-day inactivity backtest
        v
-reports/phase3/ (local generated tables + figures + report)
+reports/phase3/ (local tables + figures + report + matching phase3_manifest.json)
 ```
 
 ## Runtime boundaries
@@ -70,3 +70,11 @@ reports/phase3/ (local generated tables + figures + report)
 The pipeline requires the invoice, stock code, quantity, invoice date, unit price and country fields. Description and customer ID are optional. Header aliases are normalised, but duplicate normalised headers or multiple aliases for one canonical field fail fast rather than silently choosing a column.
 
 Blank invoice/stock-code values, invalid dates, missing numeric transaction values, non-finite quantity or price values, negative unit prices, and non-finite extended line values are excluded from the valid transaction set. Customer IDs are normalised separately: integral numeric values are represented consistently, zero-padded digit strings remain unchanged, non-integral numeric IDs are treated as unavailable, and alphanumeric identifiers are preserved. Unidentified or invalid customer IDs do not remove otherwise valid sales lines from sales-level reporting.
+
+## Data lineage and freshness
+
+Each successful core run writes `data/processed/pipeline_manifest.json` last. It contains a unique run ID, source path, file size, modification signature, SHA-256 digest, reporting dates and core row counts. The manifest is first marked `building`; it becomes `complete` only after all core exports and KPIs have been written.
+
+The Phase 3 runner refuses incomplete core outputs and writes `reports/phase3/phase3_manifest.json` only after its outputs and summary are complete. The dashboard compares the two run IDs and source fingerprints and checks the current source file signature before enabling full-period advanced panels. This prevents a refreshed source workbook or a new core run from being combined with stale Phase 3 reports. Streamlit cache keys include each input file's modification time and size so regenerated outputs are reloaded.
+
+The SQL example runner also requires a completed core manifest before opening the generated CSV views.
