@@ -22,6 +22,8 @@ Pull request #12 passed all eight required checks before merge:
 - CodeQL Python analysis passed.
 - Dependency vulnerability audit passed.
 
+The v1.2.0 release-candidate CI matrix passed 45 tests on each of Python 3.11, 3.12, 3.13 and 3.14 (180 executions). On Python 3.14, CI runs the full synthetic core pipeline and Phase 3 flow, then executes `python scripts/verify_outputs.py`: all six checks passed, covering 13 core artifacts and 27 Phase 3 artifacts. Docker health, CodeQL and dependency audit also passed.
+
 See the release validation record for exact run links, validation scope and historical full-workbook evidence.
 
 ## Upgrade note
