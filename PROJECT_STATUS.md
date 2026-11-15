@@ -3,8 +3,9 @@
 **Version:** 1.3.0  
 **Merged to main:** 15 November 2026  
 **Repository:** [archivesofkrish/retailpulse-ecommerce-analytics](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics)  
-**Main commit:** `ff564656aa70164c83d580065dd07149a430653b`  
-**Status:** v1.3.0, including the interactive repeat-purchase Scenario Lab, is merged to `main`. PR #17 passed the Python 3.11–3.14 matrix, package build, synthetic end-to-end/output-integrity checks, Docker health, CodeQL and dependency audit before merge. Post-merge checks are running against the main commit. The GitHub Release/tag will be published after post-merge validation passes.
+**Release merge commit:** `ff564656aa70164c83d580065dd07149a430653b`  
+**Post-merge validation commit:** `0eb2f25a68bdd73f773319915abf8ede6b38e9f2`  
+**Status:** v1.3.0, including the interactive repeat-purchase Scenario Lab, is merged to `main`. PR #17 passed the Python 3.11–3.14 matrix, package build, synthetic end-to-end/output-integrity checks, Docker health, CodeQL and dependency audit before merge. Post-merge Python 3.11–3.14 CI, package build, synthetic end-to-end/output-integrity checks, Docker health, CodeQL and dependency audit all passed against the post-merge validation commit. The GitHub Release/tag will be published after post-merge validation passes.
 
 ## Delivered capabilities
 
