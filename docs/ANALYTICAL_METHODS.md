@@ -65,3 +65,9 @@ The product analysis tags 13 source stock codes as operational/non-merchandise: 
 ### Cohort censoring
 
 A cohort's Month 0 is the first observed purchase month and has 100% retention. For each cohort, only months up to the final month present in the source data are observable. Within that window, a zero indicates no cohort member purchased in that month. Months after the final observed month are `NaN`/blank, not zero. This avoids making recent cohorts appear to have zero retention in months that have not yet occurred.
+
+## 7. Input validation and identifier handling
+
+The ingestion layer rejects blank invoice and stock-code identifiers, unparseable dates, missing numeric transaction values, non-finite quantities or prices, negative unit prices, and line values that overflow to a non-finite result. This prevents malformed numeric data from contaminating revenue aggregates.
+
+Header names are normalised against explicit aliases. If two input columns map to the same canonical field, ingestion fails with an actionable error rather than silently selecting one. Customer identifiers are optional for sales reporting. Numeric integral identifiers are normalised consistently across common Excel/CSV representations, digit-only string identifiers retain leading zeroes, non-integral numeric identifiers are treated as unavailable, and non-numeric identifiers are preserved as strings.

@@ -15,6 +15,7 @@ UCI Online Retail II workbook (two Excel worksheets)
                    |
                    v
           prepare_transactions()
+          | schema, identifiers, finite-number checks
           |        |         |
           |        |         +--> other valid rows
           |        +------------> return / cancellation lines
@@ -63,3 +64,9 @@ reports/phase3/ (local generated tables + figures + report)
 5. **Multiple consumption paths:** common processed exports support the dashboard, SQL, reports and downstream analysis.
 6. **Offline-first development:** a labelled synthetic fixture supports tests and basic dashboard exploration without the full source workbook.
 ```
+
+## Input contract and validation
+
+The pipeline requires the invoice, stock code, quantity, invoice date, unit price and country fields. Description and customer ID are optional. Header aliases are normalised, but duplicate normalised headers or multiple aliases for one canonical field fail fast rather than silently choosing a column.
+
+Blank invoice/stock-code values, invalid dates, missing numeric transaction values, non-finite quantity or price values, negative unit prices, and non-finite extended line values are excluded from the valid transaction set. Customer IDs are normalised separately: integral numeric values are represented consistently, zero-padded digit strings remain unchanged, non-integral numeric IDs are treated as unavailable, and alphanumeric identifiers are preserved. Unidentified or invalid customer IDs do not remove otherwise valid sales lines from sales-level reporting.

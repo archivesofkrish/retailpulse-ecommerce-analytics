@@ -14,7 +14,7 @@
 | Product and market analytics | Merchandise classification, SKU Pareto, country concentration |
 | Historical model | Random Forest, chronological holdout, 90-day embargo |
 | Dashboard | Streamlit, Plotly |
-| Quality | pytest, reconciliation validator, temporal and cohort regression tests |
+| Quality | schema and finite-value contracts, pytest, reconciliation validator, temporal and cohort regression tests |
 | Deliverables | Executive report, 11-slide presentation, portfolio guide |
 
 ## Key findings from the historical dataset
@@ -197,7 +197,7 @@ The held-out ROC-AUC is 0.791 and average precision is 0.843. Training and test 
 
 ## Validation
 
-The release test suite includes transaction, RFM, row-reconciliation, merchandise-classification, right-censoring and temporal-embargo regression tests. The full UCI workbook validator checks eight data-quality and reconciliation conditions.
+The release test suite includes input-schema ambiguity checks, blank-identifier checks, finite numeric and line-value checks, customer-ID normalisation, transaction, RFM, row-reconciliation, merchandise-classification, right-censoring and temporal-embargo regression tests. See [Data Contracts](docs/DATA_CONTRACTS.md) for accepted input fields and rejection rules. The CI workflow tests Python 3.10, 3.11 and 3.12, installs the package in editable mode, builds distribution artefacts, and checks dependency consistency. The full UCI workbook validator checks eight data-quality and reconciliation conditions.
 
 ```bash
 python -W error::DeprecationWarning -m pytest -q

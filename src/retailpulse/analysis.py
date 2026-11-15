@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Iterable
 import json
 import re
 
@@ -51,16 +50,51 @@ def read_source(path: str | Path) -> pd.DataFrame:
     raise ValueError(f"Unsupported file type: {suffix}. Use CSV or Excel.")
 
 
+def _normalise_customer_id(value: object) -> object:
+    """Normalise customer identifiers without collapsing zero-padded string IDs."""
+    if pd.isna(value) or isinstance(value, (bool, np.bool_)):
+        return pd.NA
+    if isinstance(value, (int, np.integer)):
+        return str(int(value))
+    if isinstance(value, (float, np.floating)):
+        numeric = float(value)
+        return str(int(numeric)) if np.isfinite(numeric) and numeric.is_integer() else pd.NA
+
+    text = str(value).strip()
+    if text.casefold() in {"", "nan", "none", "null", "<na>", "nat", "inf", "+inf", "-inf", "infinity", "+infinity", "-infinity"}:
+        return pd.NA
+    # Keep integer strings exactly as supplied (for example, "00123").
+    if re.fullmatch(r"[+-]?[0-9]+", text):
+        return text
+    numeric_pattern = r"[+-]?(?:[0-9]+(?:[.][0-9]*)?|[.][0-9]+)(?:[eE][+-]?[0-9]+)?"
+    if re.fullmatch(numeric_pattern, text):
+        numeric = float(text)
+        return str(int(numeric)) if np.isfinite(numeric) and numeric.is_integer() else pd.NA
+    return text
+
+
 def standardise_columns(raw: pd.DataFrame) -> pd.DataFrame:
-    """Map UCI column names and common CSV variants to a stable schema."""
+    """Map source headers to a stable schema and reject ambiguous aliases."""
     out = raw.copy()
-    lookup = {_normalise_header(c): c for c in out.columns}
+    lookup: dict[str, list[object]] = {}
+    for column in out.columns:
+        lookup.setdefault(_normalise_header(column), []).append(column)
+
+    duplicate_headers = [key for key, columns in lookup.items() if len(columns) > 1]
+    if duplicate_headers:
+        raise ValueError(f"Ambiguous source headers after normalisation: {sorted(duplicate_headers)}")
+
     rename = {}
     for canonical, aliases in COLUMN_ALIASES.items():
-        for alias in aliases:
-            if alias in lookup:
-                rename[lookup[alias]] = canonical
-                break
+        matches = [lookup[alias][0] for alias in aliases if alias in lookup]
+        if len(matches) > 1:
+            raise ValueError(
+                f"Multiple source columns map to '{canonical}': {matches}. "
+                "Keep one source column or resolve the ambiguity before ingestion."
+            )
+        if matches:
+            rename[matches[0]] = canonical
+
     out = out.rename(columns=rename)
     missing = sorted(REQUIRED_COLUMNS - set(out.columns))
     if missing:
@@ -85,7 +119,7 @@ def prepare_transactions(raw: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
 
     for col in ["invoice", "stock_code", "description", "country"]:
         df[col] = df[col].astype("string").str.strip()
-    df["invoice"] = df["invoice"].str.upper()
+    df["invoice"] = df["invoice"].str.upper().replace("", pd.NA)
     df["description"] = df["description"].replace({"": pd.NA}).fillna("Unknown product")
     df["country"] = df["country"].replace({"": pd.NA}).fillna("Unknown")
     df["stock_code"] = df["stock_code"].replace({"": pd.NA})
@@ -94,20 +128,32 @@ def prepare_transactions(raw: pd.DataFrame) -> tuple[pd.DataFrame, dict]:
     df["unit_price"] = pd.to_numeric(df["unit_price"], errors="coerce")
     df["invoice_date"] = pd.to_datetime(df["invoice_date"], errors="coerce", dayfirst=True)
 
-    if pd.api.types.is_numeric_dtype(df["customer_id"]):
-        numeric_id = pd.to_numeric(df["customer_id"], errors="coerce")
-        df["customer_id"] = numeric_id.round().astype("Int64").astype("string")
-    else:
-        df["customer_id"] = df["customer_id"].astype("string").str.strip()
-    df["customer_id"] = df["customer_id"].replace({"": pd.NA, "<NA>": pd.NA, "nan": pd.NA})
+    original_customer_id = df["customer_id"].copy()
+    df["customer_id"] = df["customer_id"].map(_normalise_customer_id).astype("string")
+    stats["rows_invalid_customer_id"] = int(
+        original_customer_id.notna().sum() - df["customer_id"].notna().sum()
+    )
+
+    quantity_values = df["quantity"].to_numpy(dtype=float, na_value=np.nan)
+    price_values = df["unit_price"].to_numpy(dtype=float, na_value=np.nan)
+    quantity_finite = pd.Series(np.isfinite(quantity_values), index=df.index)
+    price_finite = pd.Series(np.isfinite(price_values), index=df.index)
+    stats["rows_non_finite_numeric_values"] = int(
+        ((~quantity_finite & df["quantity"].notna()) | (~price_finite & df["unit_price"].notna())).sum()
+    )
 
     required_valid = (
         df["invoice"].notna() & df["stock_code"].notna() & df["invoice_date"].notna()
-        & df["quantity"].notna() & df["unit_price"].notna() & df["unit_price"].ge(0)
+        & quantity_finite & price_finite & df["unit_price"].ge(0)
     )
     stats["rows_dropped_invalid_core_fields"] = int((~required_valid).sum())
     df = df.loc[required_valid].copy()
-    df["line_value"] = df["quantity"] * df["unit_price"]
+    with np.errstate(over="ignore", invalid="ignore"):
+        df["line_value"] = df["quantity"] * df["unit_price"]
+    finite_line_value = np.isfinite(df["line_value"].to_numpy(dtype=float, na_value=np.nan))
+    stats["rows_dropped_non_finite_line_value"] = int((~finite_line_value).sum())
+    stats["rows_dropped_invalid_core_fields"] += stats["rows_dropped_non_finite_line_value"]
+    df = df.loc[finite_line_value].copy()
     df["is_cancellation"] = df["invoice"].str.startswith("C", na=False)
     df["is_return_or_cancellation"] = df["is_cancellation"] | df["quantity"].lt(0)
     df["is_sale"] = (~df["is_return_or_cancellation"]) & df["quantity"].gt(0) & df["unit_price"].gt(0)
