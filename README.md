@@ -217,7 +217,7 @@ The Phase 3 pipeline evaluates explicit, documented thresholds for customer-ID c
 
 ## Validation
 
-The release test suite includes input-schema ambiguity checks, blank-identifier checks, finite numeric and line-value checks, customer-ID normalisation, transaction, RFM, row-reconciliation, merchandise-classification, right-censoring and temporal-embargo regression tests, plus a synthetic-data integration smoke test that executes the core pipeline through Phase 3 and validates the lineage manifests. See [Data Contracts](docs/DATA_CONTRACTS.md) for accepted input fields and rejection rules. The CI workflow tests supported Python 3.11, 3.12 and 3.13, installs the package in editable mode, builds distribution artefacts, checks dependency consistency, and publishes downloadable JUnit test reports. CodeQL analyses Python code; Dependabot proposes dependency and GitHub Actions updates. The full UCI workbook validator checks eight data-quality and reconciliation conditions.
+The release test suite includes input-schema ambiguity checks, blank-identifier checks, finite numeric and line-value checks, customer-ID normalisation, transaction, RFM, row-reconciliation, merchandise-classification, right-censoring and temporal-embargo regression tests, plus a synthetic-data integration smoke test that executes the core pipeline through Phase 3 and validates the lineage manifests. See [Data Contracts](docs/DATA_CONTRACTS.md) for accepted input fields and rejection rules. The CI workflow tests Python 3.11, 3.12, 3.13 and 3.14, installs the package in editable mode, builds distribution artefacts on Python 3.14, checks dependency consistency, and publishes downloadable JUnit test reports. CodeQL analyses Python code; pip-audit checks the resolved dependency graph; Dependabot proposes Python, GitHub Actions and Docker base-image updates. The full UCI workbook validator checks eight data-quality and reconciliation conditions.
 
 ```bash
 python -W error::DeprecationWarning -m pytest -q
@@ -228,7 +228,7 @@ See `test-results/RELEASE_VALIDATION.md` for the validation scope and what was r
 
 ## Security and supported runtime
 
-RetailPulse requires Python 3.11 or newer. Python 3.10 reached upstream end-of-life on 1 October 2026. CI tests Python 3.11–3.13, and the dashboard container runs Python 3.12. See [Security posture](docs/SECURITY_POSTURE.md) and [Security Policy](SECURITY.md).
+RetailPulse requires Python 3.11 or newer. Python 3.10 reached upstream end-of-life on 1 October 2026. CI tests Python 3.11–3.14, and the dashboard container runs Python 3.12. See [Security posture](docs/SECURITY_POSTURE.md) and [Security Policy](SECURITY.md).
 
 The repository includes CodeQL code scanning, Dependabot update proposals, multi-version tests, downloadable JUnit results and a non-root Docker runtime. These controls do not replace review of dependency alerts or repository settings. In particular, the main branch still needs administrator-configured branch protection and private vulnerability reporting.
 
