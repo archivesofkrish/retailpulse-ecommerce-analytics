@@ -663,7 +663,7 @@ with tab_scenarios:
                         min_value=0.0,
                         max_value=float(maximum_base_uplift),
                         value=float(min(5.0, maximum_base_uplift)),
-                        step=0.5,
+                        step=float(min(0.5, maximum_base_uplift)),
                         help="This is an assumption to explore, not a model prediction or measured treatment effect.",
                     )
                 with controls_right:
