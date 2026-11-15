@@ -49,6 +49,15 @@ jobs:
         run: python -m build
       - name: Verify dependency consistency
         run: python -m pip check
+      - name: Build synthetic core outputs for CLI integrity smoke test
+        if: matrix.python-version == '3.14'
+        run: python scripts/run_analysis.py
+      - name: Generate synthetic Phase 3 outputs
+        if: matrix.python-version == '3.14'
+        run: python scripts/run_phase3_analysis.py
+      - name: Verify generated outputs with the public CLI
+        if: matrix.python-version == '3.14'
+        run: python scripts/verify_outputs.py
 
   container-smoke:
     name: Docker build and dashboard health smoke test
