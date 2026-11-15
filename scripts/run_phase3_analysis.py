@@ -285,6 +285,13 @@ def make_customer_outputs(sales: pd.DataFrame, rfm: pd.DataFrame, kpis: dict):
         "mean_orders_per_customer": (
             float(cust["frequency"].mean()) if n else None
         ),
+        "identified_customer_order_count": int(len(orders)),
+        "average_identified_customer_order_value_gbp": (
+            float(orders["order_revenue"].mean()) if not orders.empty else None
+        ),
+        "median_identified_customer_order_value_gbp": (
+            float(orders["order_revenue"].median()) if not orders.empty else None
+        ),
         "median_orders_per_customer": (
             float(cust["frequency"].median()) if n else None
         ),

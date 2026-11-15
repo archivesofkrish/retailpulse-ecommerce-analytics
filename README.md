@@ -6,7 +6,7 @@
 [![Python](https://img.shields.io/badge/Python-3.11--3.14-blue)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**RetailPulse is a reproducible, end-to-end business intelligence project** built around the UCI Online Retail II transaction dataset. It combines Python data engineering, SQL analytics, customer segmentation, cohort activity, merchandise and market analysis, a historical inactivity-model backtest, and a seven-section Streamlit dashboard.
+**RetailPulse is a reproducible, end-to-end business intelligence project** built around the UCI Online Retail II transaction dataset. It combines Python data engineering, SQL analytics, customer segmentation, cohort activity, merchandise and market analysis, a historical inactivity-model backtest, and an eight-section Streamlit dashboard.
 
 > **Historical-data notice:** The source workbook covers **1 December 2009–9 December 2011**. RetailPulse is an analytical case study, not a live retailer feed. Its reported revenue is not profit, historical customer spend is not projected customer lifetime value, and the inactivity model is not a production churn score.
 
@@ -19,6 +19,7 @@
 | Customer analytics | RFM, customer concentration, repeat purchase, cohorts |
 | Product and market analytics | Merchandise classification, SKU Pareto, country concentration, basket associations (support/confidence/lift) |
 | Decision intelligence | Transparent business insight rules, threshold evidence, recommended actions and guardrails |
+| Commercial scenario planning | Interactive repeat-purchase scenarios, sensitivity analysis and assumption-driven gross-revenue calculations |
 | Historical model | Random Forest, chronological holdout, 90-day embargo |
 | Dashboard | Streamlit, Plotly (seven sections) |
 | Quality | schema and finite-value contracts, pytest, reconciliation validator, temporal and cohort regression tests |
@@ -73,15 +74,16 @@ The dataset has five malformed rows excluded during core validation. The remaini
 
 ## Dashboard
 
-The Professional Edition dashboard has seven sections:
+The Professional Edition dashboard has eight sections:
 
 1. **Overview** — filter-aware sales KPIs, revenue trend, country sales, merchandise rankings and weekday activity.
 2. **Customer Intelligence** — historical customer spend, Pareto concentration, Gini and RFM segment economics.
 3. **Retention** — repeat-purchase windows and right-censored cohort activity.
 4. **Products & Markets** — merchandise-only rankings, SKU concentration, country concentration, product affinity and unusual one-invoice product records.
 5. **Decision Brief** — transparent business insights, evidence thresholds, suggested experiments and interpretation guardrails.
-6. **Inactivity Model** — historical 90-day inactivity backtest, monthly holdout AUC, feature importance and interpretation limits.
-7. **Data Quality** — row classification, revenue reconciliation, definitions and reproducibility instructions.
+6. **Scenario Lab** — conservative, base and stretch repeat-purchase scenarios, configurable conversion uplift and average-order-value assumptions, and a gross-revenue sensitivity curve.
+7. **Inactivity Model** — historical 90-day inactivity backtest, monthly holdout AUC, feature importance and interpretation limits.
+8. **Data Quality** — row classification, revenue reconciliation, definitions and reproducibility instructions.
 
 Overview charts respond to the sidebar filters. The advanced Phase 3 panels use the full source period and are labelled accordingly; they do not silently change with the overview filters.
 
@@ -100,7 +102,7 @@ The repository includes a small **synthetic demonstration sample** for smoke tes
 
 ## Quick start
 
-Requires Python 3.11 or newer. The full seven-section Professional Edition uses the full UCI workbook.
+Requires Python 3.11 or newer. The full eight-section Professional Edition uses the full UCI workbook.
 
 ### Linux / macOS
 
@@ -209,7 +211,7 @@ RetailPulse/
 │   └── phase3/                # Aggregate report and static analytical figures
 ├── scripts/                  # Download, core analysis, validation and Phase 3 runner
 ├── sql/analysis.sql          # DuckDB examples
-├── src/retailpulse/          # Reusable analysis and decision-intelligence functions
+├── src/retailpulse/          # Reusable analysis, decision-intelligence and scenario functions
 ├── tests/                    # Core, cohort and temporal split tests
 ├── test-results/             # Curated validation evidence
 ├── DATA_LICENSE.md
@@ -247,6 +249,10 @@ Operational/non-merchandise stock codes remain in gross sales-line revenue but a
 The Random Forest target is no identified-customer invoice during the 90 days after a historical monthly snapshot. Features are built from information available on or before each snapshot. Training snapshots end 31 October 2010; a 90-day label horizon and embargo precede held-out snapshots from 31 January through 31 August 2011.
 
 The held-out ROC-AUC is 0.791 and average precision is 0.843. Training and test inactivity prevalence differ (48.1% vs 64.1%). Customer-month observations repeat the same customers and are not independent; test 90-day windows can overlap. Model scores are not calibrated for financial forecasts or current customer risk. This is a retrospective ranking proof of concept, not a deployable churn model.
+
+## Commercial scenario planning
+
+The dashboard's Scenario Lab uses the historical 90-day eligible first-time-customer base, observed second-purchase rate and average order value across identified-customer invoices. It lets a user define conservative, base and stretch conversion improvements, adjust the historical order-value assumption, and inspect the resulting expected additional second orders and gross revenue. The calculations are transparent and deterministic. They are scenario arithmetic—not predictive modelling, causal lift, profit forecasts or current-customer estimates. See [Scenario Lab methodology](docs/SCENARIO_LAB.md).
 
 ## Business decision intelligence
 

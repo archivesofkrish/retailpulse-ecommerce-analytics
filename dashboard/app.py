@@ -31,6 +31,10 @@ from retailpulse.provenance import (
     read_json_object,
     verify_artifact_manifest,
 )
+from retailpulse.scenarios import (
+    build_repeat_purchase_scenarios,
+    build_repeat_purchase_sensitivity,
+)
 
 PROCESSED = ROOT / "data" / "processed"
 PHASE3 = ROOT / "reports" / "phase3"
@@ -201,8 +205,8 @@ if filtered.empty:
     st.stop()
 
 # Phase navigation
-labels = ["Overview", "Customer Intelligence", "Retention", "Products & Markets", "Decision Brief", "Inactivity Model", "Data Quality"]
-tab_overview, tab_customer, tab_retention, tab_products, tab_decisions, tab_model, tab_quality = st.tabs(labels)
+labels = ["Overview", "Customer Intelligence", "Retention", "Products & Markets", "Decision Brief", "Scenario Lab", "Inactivity Model", "Data Quality"]
+tab_overview, tab_customer, tab_retention, tab_products, tab_decisions, tab_scenarios, tab_model, tab_quality = st.tabs(labels)
 
 # -----------------------------------------------------------------------------
 # OVERVIEW — filter-aware
@@ -601,6 +605,200 @@ with tab_decisions:
 
 
 # -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# COMMERCIAL SCENARIO LAB — assumption-driven repeat-purchase planning
+# -----------------------------------------------------------------------------
+with tab_scenarios:
+    st.subheader("Repeat-purchase scenario lab")
+    st.caption(
+        "Explore what-if revenue outcomes when more eligible first-time customers "
+        "make a second purchase within 90 days. All improvements are user-defined assumptions."
+    )
+    if not p3:
+        st.info("Run the core pipeline and Phase 3 analytics to populate the scenario lab.")
+    else:
+        customer_metrics = phase3_summary.get("customer_metrics", {})
+        repeat90 = next(
+            (
+                item for item in customer_metrics.get("repeat_purchase_windows", [])
+                if int(item.get("follow_up_days", 0)) == 90
+            ),
+            None,
+        )
+        eligible = int(repeat90.get("eligible_customers", 0)) if repeat90 else 0
+        baseline_rate = repeat90.get("second_order_within_window_pct") if repeat90 else None
+        historical_aov = customer_metrics.get("average_identified_customer_order_value_gbp")
+
+        if (
+            eligible <= 0
+            or baseline_rate is None
+            or not np.isfinite(float(baseline_rate))
+            or historical_aov is None
+            or not np.isfinite(float(historical_aov))
+            or float(historical_aov) <= 0
+        ):
+            st.warning(
+                "The 90-day eligible cohort or identified-customer order value is unavailable. "
+                "Regenerate the Phase 3 outputs with python scripts/run_phase3_analysis.py "
+                "after running the core pipeline. Small synthetic samples may not have a complete 90-day cohort."
+            )
+        else:
+            baseline_rate = float(baseline_rate)
+            historical_aov = float(historical_aov)
+            available_headroom = max(0.0, 100.0 - baseline_rate)
+            maximum_base_uplift = min(20.0, available_headroom)
+
+            c1, c2, c3 = st.columns(3)
+            c1.metric("Eligible first-time customers", f"{eligible:,}")
+            c2.metric("Observed 90-day second-purchase rate", f"{baseline_rate:.1f}%")
+            c3.metric("Historical identified-customer AOV", gbp(historical_aov, 2))
+
+            if maximum_base_uplift <= 0:
+                st.info("The observed 90-day repeat-purchase rate is already 100%; there is no mathematical headroom for an uplift scenario.")
+            else:
+                controls_left, controls_right = st.columns(2)
+                with controls_left:
+                    base_uplift = st.slider(
+                        "Assumed base-case improvement (percentage points)",
+                        min_value=0.0,
+                        max_value=float(maximum_base_uplift),
+                        value=float(min(5.0, maximum_base_uplift)),
+                        step=float(min(0.5, maximum_base_uplift)),
+                        help="This is an assumption to explore, not a model prediction or measured treatment effect.",
+                    )
+                with controls_right:
+                    aov_adjustment = st.slider(
+                        "Assumed average order value change",
+                        min_value=-20,
+                        max_value=20,
+                        value=0,
+                        step=1,
+                        format="%d%%",
+                        help="Applies a user-defined adjustment to the historical identified-customer average order value.",
+                    )
+
+                scenario_aov = historical_aov * (1 + float(aov_adjustment) / 100)
+                stretch_uplift = min(base_uplift * 1.5, available_headroom)
+                uplift_cases = {
+                    "Conservative": round(base_uplift * 0.5, 4),
+                    "Base": round(base_uplift, 4),
+                    "Stretch": round(stretch_uplift, 4),
+                }
+                scenario_result = build_repeat_purchase_scenarios(
+                    eligible_customers=eligible,
+                    baseline_repeat_rate_pct=baseline_rate,
+                    average_order_value_gbp=scenario_aov,
+                    uplift_scenarios_pp=uplift_cases,
+                )
+                rows = pd.DataFrame(scenario_result["scenarios"])
+                base_row = next(row for row in scenario_result["scenarios"] if row["scenario"] == "Base")
+
+                st.markdown("### Base-case illustration")
+                m1, m2, m3 = st.columns(3)
+                m1.metric(
+                    "Expected additional repeat customers",
+                    f"{base_row['expected_incremental_repeat_customers']:,.1f}",
+                )
+                m2.metric(
+                    "Expected additional second orders",
+                    f"{base_row['expected_incremental_orders']:,.1f}",
+                )
+                m3.metric(
+                    "Illustrative incremental gross revenue",
+                    gbp(base_row["expected_incremental_gross_revenue_gbp"], 2),
+                )
+
+                left, right = st.columns([1.1, 1])
+                with left:
+                    st.markdown("**Scenario comparison**")
+                    display = rows[[
+                        "scenario",
+                        "uplift_percentage_points",
+                        "target_repeat_rate_pct",
+                        "expected_incremental_repeat_customers",
+                        "expected_incremental_orders",
+                        "expected_incremental_gross_revenue_gbp",
+                    ]].rename(columns={
+                        "scenario": "Scenario",
+                        "uplift_percentage_points": "Assumed uplift (pp)",
+                        "target_repeat_rate_pct": "Scenario repeat rate (%)",
+                        "expected_incremental_repeat_customers": "Expected extra repeat customers",
+                        "expected_incremental_orders": "Expected extra orders",
+                        "expected_incremental_gross_revenue_gbp": "Incremental gross revenue (£)",
+                    })
+                    st.dataframe(
+                        display.style.format({
+                            "Assumed uplift (pp)": "{:.1f}",
+                            "Scenario repeat rate (%)": "{:.1f}%",
+                            "Expected extra repeat customers": "{:,.1f}",
+                            "Expected extra orders": "{:,.1f}",
+                            "Incremental gross revenue (£)": "£{:,.2f}",
+                        }),
+                        width="stretch",
+                        hide_index=True,
+                    )
+                with right:
+                    st.markdown("**Gross revenue by scenario**")
+                    chart = rows.rename(columns={
+                        "scenario": "Scenario",
+                        "expected_incremental_gross_revenue_gbp": "Incremental gross revenue (£)",
+                    })
+                    fig = px.bar(
+                        chart,
+                        x="Scenario",
+                        y="Incremental gross revenue (£)",
+                        text_auto=",.0f",
+                        labels={"Scenario": "Assumption set"},
+                    )
+                    fig.update_layout(height=350, margin=dict(l=10, r=10, t=20, b=10))
+                    st.plotly_chart(fig, width="stretch")
+
+                sensitivity = pd.DataFrame(build_repeat_purchase_sensitivity(
+                    eligible_customers=eligible,
+                    baseline_repeat_rate_pct=baseline_rate,
+                    average_order_value_gbp=scenario_aov,
+                    maximum_uplift_pp=stretch_uplift,
+                    points=21,
+                ))
+                st.markdown("**Sensitivity to repeat-rate improvement**")
+                fig = px.line(
+                    sensitivity,
+                    x="uplift_percentage_points",
+                    y="expected_incremental_gross_revenue_gbp",
+                    markers=True,
+                    labels={
+                        "uplift_percentage_points": "Assumed repeat-rate improvement (percentage points)",
+                        "expected_incremental_gross_revenue_gbp": "Illustrative incremental gross revenue (£)",
+                    },
+                )
+                fig.update_layout(height=330, margin=dict(l=10, r=10, t=20, b=10))
+                st.plotly_chart(fig, width="stretch")
+
+                st.download_button(
+                    "Download scenario comparison (CSV)",
+                    data=rows.to_csv(index=False).encode("utf-8"),
+                    file_name="retailpulse_repeat_purchase_scenarios.csv",
+                    mime="text/csv",
+                )
+                st.warning(
+                    "This is not a forecast or causal estimate. The scenario assumes each "
+                    "incremental repeat customer places one additional order at the adjusted "
+                    "historical identified-customer AOV. Revenue is not profit: margin, campaign "
+                    "cost, returns, customer acquisition cost and operational capacity are not modelled."
+                )
+                with st.expander("View assumptions and methodology"):
+                    st.markdown(
+                        f"- Eligible base: {eligible:,} first-time identified customers with a complete 90-day observation window.\n"
+                        f"- Observed baseline: {baseline_rate:.2f}% second-purchase rate within 90 days.\n"
+                        f"- Historical identified-customer AOV: {gbp(historical_aov, 2)}.\n"
+                        f"- Scenario AOV after user adjustment: {gbp(scenario_aov, 2)}.\n"
+                        "- Each incremental repeat customer contributes one additional second order in the scenario.\n"
+                        "- Expected counts are not rounded to whole customers; they are arithmetic expectations."
+                    )
+                    for limitation in scenario_result["limitations"]:
+                        st.markdown(f"- {limitation}")
+
+
 # HISTORICAL INACTIVITY MODEL — backtest, not live customer scoring
 # -----------------------------------------------------------------------------
 with tab_model:
