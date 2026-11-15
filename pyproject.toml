@@ -1,14 +1,14 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools>=77", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "retailpulse"
-version = "1.1.0"
-description = "End-to-end e-commerce analytics: sales, customers, RFM, and cohorts"
+version = "1.2.0"
+description = "Reproducible e-commerce analytics, data lineage, and evidence-based decision intelligence"
 readme = "README.md"
 requires-python = ">=3.11"
-license = {text = "MIT"}
+license = "MIT"
 authors = [{name = "RetailPulse Project"}]
 dependencies = [
   "pandas>=2.2,<3.0", "numpy>=1.26,<3.0", "openpyxl>=3.1,<4.0",
