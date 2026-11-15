@@ -1,0 +1,23 @@
+services:
+  retailpulse:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: retailpulse:local
+    container_name: retailpulse-dashboard
+    ports:
+      # Bind to localhost; put a TLS/authenticated reverse proxy in front for remote access.
+      - "127.0.0.1:8501:8501"
+    environment:
+      STREAMLIT_BROWSER_GATHER_USAGE_STATS: "false"
+      PYTHONDONTWRITEBYTECODE: "1"
+    volumes:
+      # Source data and generated analytical outputs are kept outside the image and mounted read-only.
+      - ./data/raw:/app/data/raw:ro
+      - ./data/processed:/app/data/processed:ro
+      - ./reports/phase3:/app/reports/phase3:ro
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL

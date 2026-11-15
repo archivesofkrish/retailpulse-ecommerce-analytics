@@ -96,6 +96,20 @@ streamlit run dashboard/app.py
 
 Open the local URL printed by Streamlit (normally `http://localhost:8501`). Keep the terminal process running while using the dashboard. Stop it with `Ctrl+C`.
 
+### Container deployment
+
+RetailPulse includes a non-root Docker image, a read-only Compose deployment for the source and generated analytical data, and a CI container health check. Run the data pipeline on the host first, then start the dashboard container:
+
+```bash
+mkdir -p data/raw data/processed reports/phase3
+python scripts/download_data.py
+python scripts/run_analysis.py
+python scripts/run_phase3_analysis.py
+docker compose up --build -d
+```
+
+Open `http://localhost:8501`. The container mounts the raw workbook and generated analytical outputs read-only; source data is not copied into the image. For complete setup, update and security guidance, see [Container deployment](docs/DEPLOYMENT.md).
+
 ### Windows PowerShell
 
 ```powershell
