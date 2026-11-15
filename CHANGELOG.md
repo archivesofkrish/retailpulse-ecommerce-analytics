@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.6.0 - 2026-11-16
+
+- Add a sample-ratio-mismatch diagnostic using a one-degree-of-freedom Pearson chi-square goodness-of-fit test against the pre-declared allocation.
+- Support non-equal planned allocations, a conservative p < 0.001 default alert threshold and explicit low-expected-count warnings.
+- Integrate expected-versus-observed control/variant allocation visualisation into the Experiment Studio results panel.
+- Add finite-input and count validation, tests for balanced, imbalanced, custom-allocation and low-count cases, and experiment-quality documentation.
+- Clarify that the allocation diagnostic flags an imbalance signal but cannot prove random assignment, exposure integrity or instrumentation correctness.
+
 ## 1.5.0 - 2026-11-15
 
 - Add an Experiment Studio for two-proportion A/B-test sample-size planning with configurable baseline conversion, minimum detectable effect, alpha and power.

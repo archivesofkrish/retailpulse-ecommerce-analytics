@@ -8,7 +8,7 @@
 
 **RetailPulse is a reproducible, end-to-end business intelligence project** built around the UCI Online Retail II transaction dataset. It combines Python data engineering, SQL analytics, customer segmentation, cohort activity, merchandise and market analysis, a historical inactivity-model backtest, and a ten-section Streamlit dashboard.
 
-**Current release:** `1.5.0` — adds an Experiment Studio for two-proportion A/B-test sample-size planning, detectable-effect sensitivity analysis, and post-test significance and confidence-interval readouts, alongside cohort-value intelligence and the refreshed ten-section dashboard.
+**Current release:** `1.6.0` — strengthens the Experiment Studio with sample-ratio-mismatch diagnostics, expected-versus-observed allocation visualisation and small-count warnings, alongside two-proportion sample-size planning, cohort-value intelligence and the ten-section dashboard.
 
 > **Historical-data notice:** The source workbook covers **1 December 2009–9 December 2011**. RetailPulse is an analytical case study, not a live retailer feed. Its reported revenue is not profit, historical customer spend and cohort revenue yield are not projected customer lifetime value, and the inactivity model is not a production churn score.
 
@@ -22,7 +22,8 @@
 | Product and market analytics | Merchandise classification, SKU Pareto, country concentration, basket associations (support/confidence/lift) |
 | Decision intelligence | Transparent business insight rules, threshold evidence, recommended actions and guardrails |
 | Commercial scenario planning | Interactive repeat-purchase scenarios, sensitivity analysis and assumption-driven gross-revenue calculations |
-| Experiment design | Equal-allocation two-proportion sample-size planning, MDE sensitivity and post-test evaluation with confidence intervals |
+| Experiment design | Two-proportion sample-size planning, MDE sensitivity and post-test evaluation with confidence intervals |
+| Experiment quality | Expected-versus-observed allocation diagnostics, configurable allocation ratios, conservative sample-ratio-mismatch alerting and low-count warnings |
 | Historical model | Random Forest, chronological holdout, 90-day embargo |
 | Dashboard | Streamlit, Plotly (ten sections), custom visual design system |
 | Quality | schema and finite-value contracts, pytest, reconciliation validator, temporal and cohort regression tests |
@@ -88,7 +89,7 @@ The Professional Edition dashboard has ten sections:
 7. **Scenario Lab** — conservative, base and stretch repeat-purchase scenarios, configurable conversion uplift and average-order-value assumptions, and a gross-revenue sensitivity curve.
 8. **Inactivity Model** — historical 90-day inactivity backtest, monthly holdout AUC, feature importance and interpretation limits.
 9. **Data Quality** — row classification, revenue reconciliation, definitions and reproducibility instructions.
-10. **Experiment Studio** — two-proportion conversion sample-size planning, minimum-detectable-effect sensitivity, duration estimates from user-entered traffic, and confidence-interval/p-value readouts for completed tests.
+10. **Experiment Studio** — two-proportion conversion sample-size planning, minimum-detectable-effect sensitivity, duration estimates from user-entered traffic, post-test confidence intervals and p-values, plus sample-ratio-mismatch and allocation-integrity diagnostics.
 
 Overview charts respond to the sidebar filters. The advanced Phase 3 panels use the full source period and are labelled accordingly; they do not silently change with the overview filters.
 

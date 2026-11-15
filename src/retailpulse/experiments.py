@@ -87,6 +87,78 @@ def plan_two_proportion_experiment(
     }
 
 
+def evaluate_sample_ratio_mismatch(
+    *,
+    control_trials: int,
+    variant_trials: int,
+    expected_control_share: float = 0.5,
+    significance_level: float = 0.001,
+) -> dict[str, Any]:
+    """Compare observed arm sizes with the pre-specified allocation.
+
+    Uses Pearson's chi-square goodness-of-fit statistic with one degree of
+    freedom. Expected arm counts below five are explicitly marked as too small
+    for a dependable chi-square approximation.
+    """
+    alpha = _validate_significance_level(significance_level)
+    expected_share = _finite_number("expected_control_share", expected_control_share)
+    if not 0 < expected_share < 1:
+        raise ValueError("expected_control_share must be greater than 0 and less than 1")
+    for name, value in (
+        ("control_trials", control_trials),
+        ("variant_trials", variant_trials),
+    ):
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise ValueError(f"{name} must be an integer")
+        if value <= 0:
+            raise ValueError(f"{name} must be greater than zero")
+
+    total = control_trials + variant_trials
+    expected_control = total * expected_share
+    expected_variant = total * (1 - expected_share)
+    statistic = (
+        (control_trials - expected_control) ** 2 / expected_control
+        + (variant_trials - expected_variant) ** 2 / expected_variant
+    )
+    p_value = min(1.0, max(0.0, math.erfc(math.sqrt(statistic / 2))))
+    minimum_expected = min(expected_control, expected_variant)
+    approximation_adequate = minimum_expected >= 5
+    mismatch = p_value < alpha
+    if not approximation_adequate:
+        status = "LOW_EXPECTED_COUNT"
+    elif mismatch:
+        status = "SAMPLE_RATIO_MISMATCH"
+    else:
+        status = "OK"
+
+    actual_control_share = control_trials / total
+    return {
+        "status": status,
+        "sample_ratio_mismatch": mismatch,
+        "approximation_adequate": approximation_adequate,
+        "expected_control_share_pct": expected_share * 100,
+        "expected_variant_share_pct": (1 - expected_share) * 100,
+        "observed_control_share_pct": actual_control_share * 100,
+        "observed_variant_share_pct": (1 - actual_control_share) * 100,
+        "allocation_deviation_pp": (actual_control_share - expected_share) * 100,
+        "expected_control_count": expected_control,
+        "expected_variant_count": expected_variant,
+        "observed_control_count": control_trials,
+        "observed_variant_count": variant_trials,
+        "minimum_expected_arm_count": minimum_expected,
+        "chi_square_statistic": statistic,
+        "degrees_of_freedom": 1,
+        "p_value": p_value,
+        "significance_level": alpha,
+        "method": "Pearson chi-square goodness-of-fit test with one degree of freedom",
+        "limitations": [
+            "This checks arm-size allocation only; it cannot verify assignment randomness, exposure logging, eligibility rules, or outcome instrumentation.",
+            "The chi-square approximation can be unreliable when either expected arm count is below five.",
+            "Investigate a flagged imbalance before interpreting the conversion comparison; the diagnostic does not identify a specific failure cause.",
+        ],
+    }
+
+
 def evaluate_two_proportion_experiment(
     *,
     control_successes: int,
@@ -94,6 +166,8 @@ def evaluate_two_proportion_experiment(
     variant_successes: int,
     variant_trials: int,
     significance_level: float = 0.05,
+    expected_control_share: float = 0.5,
+    sample_ratio_alpha: float = 0.001,
 ) -> dict[str, Any]:
     """Evaluate an independent two-arm binary outcome with a two-sided z-test.
 
@@ -118,6 +192,12 @@ def evaluate_two_proportion_experiment(
     if not 0 <= variant_successes <= variant_trials:
         raise ValueError("variant_successes must be between zero and variant_trials")
 
+    sample_ratio_diagnostic = evaluate_sample_ratio_mismatch(
+        control_trials=control_trials,
+        variant_trials=variant_trials,
+        expected_control_share=expected_control_share,
+        significance_level=sample_ratio_alpha,
+    )
     p_control = control_successes / control_trials
     p_variant = variant_successes / variant_trials
     difference = p_variant - p_control
@@ -164,9 +244,10 @@ def evaluate_two_proportion_experiment(
         "control_trials": control_trials,
         "variant_successes": variant_successes,
         "variant_trials": variant_trials,
+        "sample_ratio_diagnostic": sample_ratio_diagnostic,
         "method": "Two-sided two-proportion z-test with pooled null standard error",
         "limitations": [
-            "Statistical significance does not verify random assignment, instrumentation, exposure integrity, or absence of sample-ratio mismatch.",
+            "Statistical significance does not verify random assignment, instrumentation or exposure integrity. Review the allocation diagnostic separately.",
             "The confidence interval uses a normal approximation; very small samples or extreme rates may require exact methods.",
             "Repeated peeking, multiple outcomes, or multiple variants require an appropriate sequential or multiplicity adjustment.",
             "The result estimates a difference for the supplied experiment sample; it is not automatically a long-term business impact estimate.",

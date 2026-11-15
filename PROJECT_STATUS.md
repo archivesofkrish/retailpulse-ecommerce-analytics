@@ -1,7 +1,8 @@
 # RetailPulse — Project Status
 
-**Version:** 1.5.0  
-**Merged to main:** 15 November 2026  
+**Version:** 1.6.0 (development candidate)  
+**Latest merged release:** 1.5.0 (15 November 2026)  
+**Current development branch:** `feat/experiment-integrity-1.6`  
 **Repository:** [archivesofkrish/retailpulse-ecommerce-analytics](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics)  
 **Feature PR:** [#19 — Experiment Studio and dashboard tab](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/pull/19)  
 **Release merge commit:** `86b61c8d34286d4a9886b887ae1b2d47cd7105e6`  
@@ -12,6 +13,16 @@
 **Post-merge CodeQL:** [Run 43745056629](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43745056629) — passed  
 **Post-merge dependency audit:** [Run 43745056442](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43745056442) — passed  
 **Status:** v1.5.0 is merged to main. Experiment Studio passed the full pre-merge and post-merge quality/security checks.
+
+## What is planned for v1.6.0
+
+### Experiment integrity diagnostics
+
+- Add an allocation check against the pre-declared control/variant split using Pearson's chi-square goodness-of-fit test with one degree of freedom.
+- Support non-equal allocation ratios rather than assuming all experiments are 50/50.
+- Use p < 0.001 as the default mismatch alert threshold and flag expected arm counts below five as unsuitable for a dependable chi-square approximation.
+- Display expected versus observed arm shares next to the conversion effect, confidence interval and p-value.
+- Explain that an allocation mismatch is a diagnostic signal, not proof of faulty randomisation or instrumentation.
 
 ## What changed in v1.5.0
 
@@ -58,7 +69,7 @@
 - Output-level SHA-256 manifests for generated core exports and Phase 3 tables, reports, summaries and figures.
 - Standalone scripts/verify_outputs.py command for machine-readable checksum and cross-manifest validation.
 - Phase 3 rejects modified core exports; the dashboard verifies both output manifests before enabling advanced panels.
-- Nine-section Streamlit dashboard, including the evidence-based Decision Brief, repeat-purchase Scenario Lab and Customer Value Studio.
+- Ten-section Streamlit dashboard, including the evidence-based Decision Brief, repeat-purchase Scenario Lab, Customer Value Studio and Experiment Studio.
 - Non-root Docker deployment with read-only data mounts and health-check CI.
 - DuckDB SQL examples, notebook walkthrough, executive report and 11-slide presentation.
 
@@ -100,7 +111,7 @@ The repository's main branch remains unprotected and has no configured rulesets.
 
 A number of historical feature branches remain. Their changes are represented in the main history; pruning old branch references is a separate GitHub repository-maintenance task.
 
-No GitHub Release or version tag has been published for v1.4.0. The version and changelog are committed to main.
+No GitHub Release or version tag has been published for v1.5.0. The version and changelog are committed to main.
 
 ## Reliability hardening retained from earlier releases
 
