@@ -29,3 +29,11 @@ updates:
         update-types:
           - minor
           - patch
+  - package-ecosystem: docker
+    directory: "/"
+    schedule:
+      interval: monthly
+      day: "15"
+      time: "07:30"
+      timezone: Asia/Kolkata
+    open-pull-requests-limit: 3
