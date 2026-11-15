@@ -1,18 +1,19 @@
 # RetailPulse — Project Status
 
 **Version:** 1.5.0  
-**Branch target:** `feat/experiment-studio-1.5` → `main`
-**Release candidate:** 1.5.0
-**Development status:** PR #19 contains the v1.5.0 Experiment Studio release candidate; merge and release evidence will be updated after validation.  
+**Merged to main:** 15 November 2026  
 **Repository:** [archivesofkrish/retailpulse-ecommerce-analytics](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics)  
 **Feature PR:** [#19 — Experiment Studio and dashboard tab](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/pull/19)  
-**Release merge commit:** 193e450274ec40543e1e2a51a0d49462be402787  
-**Post-merge CI:** [Run 43742136506](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43742136506) — passed  
-**Post-merge CodeQL:** [Run 43742136498](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43742136498) — passed  
-**Post-merge dependency audit:** [Run 43742136522](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43742136522) — passed  
-**Previous release status:** v1.4.0 is merged to main. The Customer Value Studio, cohort-value export and dashboard visual refresh passed the Python 3.11–3.14 matrix, synthetic end-to-end generation, six output-integrity checks, Docker dashboard health, CodeQL and dependency audit.
+**Release merge commit:** `86b61c8d34286d4a9886b887ae1b2d47cd7105e6`  
+**Pre-merge CI:** [Run 43744875767](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43744875767) — passed  
+**Pre-merge CodeQL:** [Run 43744875760](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43744875760) — passed  
+**Pre-merge dependency audit:** [Run 43744875879](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43744875879) — passed  
+**Post-merge CI:** [Run 43745056436](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43745056436) — passed  
+**Post-merge CodeQL:** [Run 43745056629](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43745056629) — passed  
+**Post-merge dependency audit:** [Run 43745056442](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/actions/runs/43745056442) — passed  
+**Status:** v1.5.0 is merged to main. Experiment Studio passed the full pre-merge and post-merge quality/security checks.
 
-## What is new in v1.5.0
+## What changed in v1.5.0
 
 ### Experiment Studio
 
@@ -63,23 +64,24 @@
 
 ## Validation evidence
 
-The v1.4.0 release merge commit 193e450274ec40543e1e2a51a0d49462be402787 passed the following post-merge checks:
+The v1.5.0 release merge commit `86b61c8d34286d4a9886b887ae1b2d47cd7105e6` passed the following post-merge checks:
 
 | Validation | Result |
 |---|---|
-| Python 3.11 | 87 passed |
-| Python 3.12 | 87 passed |
-| Python 3.13 | 87 passed |
-| Python 3.14 | 87 passed |
-| Synthetic Phase 3 pipeline | Passed; generated the cohort-value export and summary |
-| Output verification | 6 checks passed; 13 core and 28 Phase 3 artifacts verified |
-| Docker build and dashboard health | Passed |
+| Python 3.11 | 107 passed |
+| Python 3.12 | 107 passed |
+| Python 3.13 | 107 passed |
+| Python 3.14 | 107 passed |
+| Python 3.14 package build | Source distribution and wheel built successfully |
+| Synthetic Phase 3 pipeline | Passed; generated the experiment-compatible dashboard inputs |
+| Output verification | 6 checks passed; 13 core and 28 Phase 3 artifacts verified against SHA-256 manifests |
+| Docker build and dashboard health | Passed; Streamlit health endpoint responded successfully |
 | CodeQL Python analysis | Passed |
 | Dependency vulnerability audit | Passed |
 
-The matrix jobs retain JUnit artifacts in GitHub Actions. The Phase 3 validator verified the new customer_cohort_value.csv as part of its manifest-covered output set.
+The pre-merge PR checks and the post-merge `main` checks both passed. The Python matrix jobs retain JUnit artifacts in GitHub Actions. The full UCI workbook is not stored in GitHub; GitHub Actions therefore validates the synthetic pipeline, while the separate full-workbook validation remains an operator-run check.
 
-The full UCI workbook validator was previously run by the project owner against a local workbook. The workbook is not stored in GitHub, so GitHub Actions does not freshly rerun that full-data validation.
+The previous v1.4.0 release validation is retained in the repository history and its merge commit was separately validated on Python 3.11–3.14, synthetic Phase 3 generation, Docker health, CodeQL and dependency audit.
 
 ## Data and model boundaries
 

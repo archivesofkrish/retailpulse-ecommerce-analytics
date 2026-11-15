@@ -33,7 +33,7 @@ n = ceil(
 )
 ```
 
-The total target sample is `2 * n`, before any allowance for attrition or ineligible observations. Enrollment duration is estimated as total sample divided by the user-entered number of eligible participants available per day. That traffic input is never inferred from the historical workbook.
+Here, `z_q` is the standard-normal quantile whose cumulative probability is `q`. The total target sample is `2 * n`, before any allowance for attrition or ineligible observations. Enrollment duration is estimated as total sample divided by the user-entered number of eligible participants available per day. That traffic input is never inferred from the historical workbook.
 
 ## Post-test readout
 
