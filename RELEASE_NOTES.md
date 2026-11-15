@@ -12,6 +12,7 @@
 - Preserved the seven-section Streamlit dashboard, evidence-backed Decision Brief, invoice-level product affinity and resilient handling of datasets without customer IDs or merchandise SKUs.
 - Retained Python 3.11–3.14 CI, per-runtime JUnit artifacts, CodeQL, strict dependency auditing, Dependabot, non-root Docker and the dashboard health smoke test.
 - Modernized package metadata to the PEP 639 SPDX license string and a current setuptools build requirement.
+- Added `python scripts/verify_outputs.py` to independently verify core/Phase 3 manifests, artifact hashes and cross-run lineage with machine-readable JSON output and a failing exit code when integrity checks do not pass.
 
 ## Validation
 
