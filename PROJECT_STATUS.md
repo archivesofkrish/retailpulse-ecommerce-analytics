@@ -1,9 +1,10 @@
 # RetailPulse — Project Status
 
-**Version:** 1.2.0 release candidate  
-**Updated:** 15 November 2026  
-**Repository:** https://github.com/archivesofkrish/retailpulse-ecommerce-analytics  
-**Status:** The v1.2.0 integrity feature is merged to main; release metadata and validation records are being aligned in this release-candidate change.
+**Version:** 1.2.0  
+**Merged to main:** 15 November 2026  
+**Repository:** [archivesofkrish/retailpulse-ecommerce-analytics](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics)  
+**Main commit:** `be1ac79d2f81f10e587366be292f5281973ed1b5`  
+**Status:** v1.2.0 code and package metadata are merged to the default branch. The automated release validation has passed. A GitHub Release/tag has not yet been published.
 
 ## Delivered capabilities
 
@@ -19,7 +20,7 @@
 - Historical 90-day inactivity backtest with chronological split, temporal embargo and interpretation limits.
 - Source SHA-256, pipeline run IDs and core/Phase 3 manifest consistency checks.
 - Output-level SHA-256 manifests for generated core exports and Phase 3 tables, reports, summaries and figures.
-- Standalone `scripts/verify_outputs.py` command for machine-readable checksum and cross-manifest validation; the Python 3.14 CI job runs it after a fresh synthetic core + Phase 3 build.
+- Standalone `scripts/verify_outputs.py` command for machine-readable checksum and cross-manifest validation.
 - Phase 3 rejects modified core exports; the dashboard verifies both output manifests before enabling advanced panels.
 - Seven-section Streamlit dashboard, including an evidence-based Decision Brief.
 - Non-root Docker deployment with read-only data mounts and health-check CI.
@@ -27,20 +28,31 @@
 
 ## Engineering controls
 
-- Python package metadata and supported-runtime configuration.
 - Python 3.11–3.14 CI matrix, strict deprecation-warning tests, package build and dependency consistency checks.
-- 45 automated tests passing on each supported Python version in the v1.2.0 release candidate (180 test executions across Python 3.11–3.14).
+- 45 automated tests passing on each supported Python version (180 test executions).
 - Synthetic end-to-end analytics tests, including anonymous-only and operational-only data.
-- Docker image build and Streamlit health smoke test.
+- CI runs the synthetic core pipeline, generates Phase 3 outputs and executes the public output-verification CLI.
 - JUnit test-result artifacts retained in GitHub Actions.
 - CodeQL static analysis, pip-audit vulnerability scanning, and Dependabot proposals for Python, GitHub Actions and Docker.
+- GitHub Actions updated to Node 24-compatible checkout and artifact-upload releases.
 - Documented security boundaries and data-handling rules.
 
 ## Validation evidence
 
-- PR #12 passed all eight checks before merge. PR #13 release validation passed 45 tests on each of Python 3.11–3.14, the synthetic CLI integrity run, Docker health, CodeQL and dependency audit.
-- The complete UCI workbook validator was previously run by the project owner against a local workbook. The workbook is not stored in GitHub, so GitHub Actions does not freshly rerun that full-data validation.
-- The latest merged main-branch workflows are rerunning after the merge; consult GitHub Actions for final default-branch results.
+The merged `main` commit `be1ac79` passed all checks:
+
+| Validation | Result |
+|---|---|
+| Python 3.11 | 45 passed |
+| Python 3.12 | 45 passed |
+| Python 3.13 | 45 passed |
+| Python 3.14 | 45 passed; source and wheel distributions built |
+| Synthetic output-verification CLI | 6 checks passed; 13 core and 27 Phase 3 artifacts verified |
+| Docker build and dashboard health | Passed |
+| CodeQL Python analysis | Passed |
+| Dependency vulnerability audit | Passed |
+
+The full UCI workbook validator was previously run by the project owner against a local workbook. The workbook is not stored in GitHub, so GitHub Actions does not freshly rerun that full-data validation.
 
 ## Data and model boundaries
 
@@ -50,8 +62,8 @@
 - SHA-256 output manifests detect accidental or uncoordinated changes; they are not signed attestations and do not protect against an actor who can alter both the artifact and its manifest.
 - Existing outputs created before v1.2.0 must be rebuilt once to generate the new checksum manifests.
 
-## Remaining repository-administrator actions
+## Remaining administrator actions
 
-The GitHub main branch is not yet protected and repository rulesets are empty. An administrator should enable branch protection requiring pull requests and the Tests (Python 3.11), Tests (Python 3.12), Tests (Python 3.13), Tests (Python 3.14), Docker health, CodeQL and dependency-audit checks. Block force-pushes and branch deletion. Enable private vulnerability reporting in repository security settings.
+The repository's `main` branch is still unprotected and has no configured rulesets. [Issue #14](https://github.com/archivesofkrish/retailpulse-ecommerce-analytics/issues/14) tracks the recommended branch protection, required status checks, blocked force pushes/deletions and private vulnerability reporting.
 
-Several historical feature branches remain after their work was merged. They are not required for the current main branch; prune them through GitHub after confirming they are no longer needed for audit/history.
+A number of historical feature branches remain. Their changes are represented in the main history; pruning old branch references is a separate GitHub repository-maintenance task.

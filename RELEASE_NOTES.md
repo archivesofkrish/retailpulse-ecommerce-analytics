@@ -1,6 +1,10 @@
 # RetailPulse v1.2.0 — Release Notes
 
-**Release candidate date:** 15 November 2026
+**Merged to main:** 15 November 2026
+
+**Package version:** 1.2.0
+
+**GitHub Release/tag:** Not yet published
 
 ## Highlights
 
@@ -22,7 +26,7 @@ Pull request #12 passed all eight required checks before merge:
 - CodeQL Python analysis passed.
 - Dependency vulnerability audit passed.
 
-The v1.2.0 release-candidate CI matrix passed 45 tests on each of Python 3.11, 3.12, 3.13 and 3.14 (180 executions). On Python 3.14, CI runs the full synthetic core pipeline and Phase 3 flow, then executes `python scripts/verify_outputs.py`: all six checks passed, covering 13 core artifacts and 27 Phase 3 artifacts. Docker health, CodeQL and dependency audit also passed.
+The v1.2.0 PR and subsequent default-branch CI runs passed 45 tests on each of Python 3.11, 3.12, 3.13 and 3.14 (180 executions per run). On Python 3.14, CI runs the synthetic core pipeline and Phase 3 flow, then executes `python scripts/verify_outputs.py`: all six checks passed, covering 13 core artifacts and 27 Phase 3 artifacts. Docker health, CodeQL and dependency audit also passed on the merged main commit.
 
 See the release validation record for exact run links, validation scope and historical full-workbook evidence.
 
