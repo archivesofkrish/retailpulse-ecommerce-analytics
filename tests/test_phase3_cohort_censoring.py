@@ -6,7 +6,7 @@ import scripts.run_phase3_analysis as phase3
 def test_phase3_cohort_matrix_distinguishes_observed_zero_from_unobserved(tmp_path, monkeypatch):
     monkeypatch.setattr(phase3, "OUT", tmp_path)
     sales = pd.DataFrame({
-        "customer_id_num": [1, 1, 2, 3],
+        "customer_id_key": [1, 1, 2, 3],
         "invoice": ["1001", "1002", "1003", "1004"],
         "invoice_date": pd.to_datetime([
             "2011-03-10", "2011-05-10", "2011-04-12", "2011-05-15"

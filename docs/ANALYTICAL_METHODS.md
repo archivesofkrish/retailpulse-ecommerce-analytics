@@ -70,7 +70,7 @@ A cohort's Month 0 is the first observed purchase month and has 100% retention. 
 
 The ingestion layer rejects blank invoice and stock-code identifiers, unparseable dates, missing numeric transaction values, non-finite quantities or prices, negative unit prices, and line values that overflow to a non-finite result. This prevents malformed numeric data from contaminating revenue aggregates.
 
-Header names are normalised against explicit aliases. If two input columns map to the same canonical field, ingestion fails with an actionable error rather than silently selecting one. Customer identifiers are optional for sales reporting. Numeric integral identifiers are normalised consistently across common Excel/CSV representations, digit-only string identifiers retain leading zeroes, non-integral numeric identifiers are treated as unavailable, and non-numeric identifiers are preserved as strings.
+Header names are normalised against explicit aliases. If two input columns map to the same canonical field, ingestion fails with an actionable error rather than silently selecting one. Customer identifiers are optional for sales reporting. Numeric integral identifiers are normalised consistently across common Excel/CSV representations, digit-only string identifiers retain leading zeroes, non-integral numeric identifiers are treated as unavailable, and non-numeric identifiers are preserved as strings. Phase 3 reads exported customer IDs as strings and uses an opaque customer key for grouping; it does not convert identifiers to numbers, so `00123`, `123` and `CUST-A` remain three distinct customers throughout customer, repeat-purchase, cohort and inactivity analyses.
 
 ## 8. Product affinity and market-basket analysis
 
@@ -85,6 +85,8 @@ For merchandise items (A) and (B):
 A lift above 1 indicates the two items co-occur more frequently than expected under independence in this dataset. The association is descriptive, not causal. It does not demonstrate that displaying, bundling or discounting one product will increase the sales or profit of another.
 
 To reduce unstable one-off patterns, a pair must occur in at least `max(5, ceil(0.01% × merchandise invoice count))` distinct invoices. Both rule directions are reported because (A → B) and (B → A) have different confidence values. Revenue, gross margin, stock availability, promotion exposure and randomised experiment results are not part of the association calculation.
+
+Merchandise diagnostics use the **invoice + stock-code grain** before computing per-invoice maxima. Repeated source lines for the same SKU in one invoice are summed before calculating maximum units and revenue on a single invoice. Distinct invoice counts are also derived from this grain, avoiding double-counts when a stock code has multiple source descriptions.
 
 ## 9. Business insight rules
 
