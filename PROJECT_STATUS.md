@@ -19,6 +19,7 @@
 - Historical 90-day inactivity backtest with chronological split, temporal embargo and interpretation limits.
 - Source SHA-256, pipeline run IDs and core/Phase 3 manifest consistency checks.
 - Output-level SHA-256 manifests for generated core exports and Phase 3 tables, reports, summaries and figures.
+- Standalone `scripts/verify_outputs.py` command for machine-readable checksum and cross-manifest validation.
 - Phase 3 rejects modified core exports; the dashboard verifies both output manifests before enabling advanced panels.
 - Seven-section Streamlit dashboard, including an evidence-based Decision Brief.
 - Non-root Docker deployment with read-only data mounts and health-check CI.
