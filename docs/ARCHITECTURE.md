@@ -51,7 +51,7 @@ reports/phase3/ (local tables + figures + report + matching phase3_manifest.json
 
 - `src/retailpulse/analysis.py` contains reusable transaction, KPI, RFM and cohort logic.
 - `scripts/` orchestrates download, the core pipeline, source validation, SQL and Phase 3 analytics.
-- `dashboard/app.py` reads the local raw workbook through the shared analysis functions and reads generated Phase 3 outputs for the full-period intelligence tabs.
+- `dashboard/app.py` reads the local raw workbook through the shared analysis functions and reads generated Phase 3 outputs for the full-period intelligence tabs, including the assumption-driven Scenario Lab.
 - `tests/` checks transaction rules, reconciliations, RFM tie handling, cohort right-censoring, temporal embargo logic, and a synthetic core-to-Phase-3 integration run.
 - `reports/` and `presentations/` contain aggregated portfolio artefacts. Raw data, processed transaction rows, customer-level tables and local validation JSON are excluded from Git.
 
@@ -87,7 +87,7 @@ The source's absolute path is retained for audit traceability but is not require
 
 ## Business decision intelligence
 
-Phase 3 feeds validated KPI and analytical summaries into `src/retailpulse/insights.py`. This deterministic rules layer does not call an LLM or infer a recommendation from free-form prompts. It evaluates version-controlled thresholds, emits a structured finding with the exact evidence, trigger rule, recommended action and guardrail, and writes `reports/phase3/business_insights.csv` plus a JSON representation in `phase3_summary.json`. The dashboard renders those records in a dedicated Decision Brief tab. Rule definitions are documented in `docs/BUSINESS_INSIGHTS.md` and covered by unit and end-to-end tests.
+Phase 3 feeds validated KPI and analytical summaries into `src/retailpulse/insights.py`. This deterministic rules layer does not call an LLM or infer a recommendation from free-form prompts. It evaluates version-controlled thresholds, emits a structured finding with the exact evidence, trigger rule, recommended action and guardrail, and writes `reports/phase3/business_insights.csv` plus a JSON representation in `phase3_summary.json`. The dashboard renders those records in a dedicated Decision Brief tab. `src/retailpulse/scenarios.py` is a separate deterministic calculation layer for the repeat-purchase Scenario Lab. It consumes the eligible 90-day customer base, observed repeat rate and identified-customer average order value from Phase 3 summaries, then computes user-assumption scenarios without mutating source metrics. Rule definitions are documented in `docs/BUSINESS_INSIGHTS.md` and covered by unit and end-to-end tests.
 
 
 ## Generated-artifact integrity
