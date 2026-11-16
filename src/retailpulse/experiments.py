@@ -219,8 +219,25 @@ def evaluate_two_proportion_experiment(
     critical_value = NormalDist().inv_cdf(1 - alpha / 2)
     lower = difference - critical_value * unpooled_se
     upper = difference + critical_value * unpooled_se
-    significant = p_value < alpha
-    if significant and difference > 0:
+    # The pooled null rate defines the four expected success/failure cells.
+    # A normal-approximation z-test is not a dependable decision rule when any
+    # expected cell is sparse, even if the nominal p-value looks small.
+    expected_outcome_cells = (
+        control_trials * pooled,
+        control_trials * (1 - pooled),
+        variant_trials * pooled,
+        variant_trials * (1 - pooled),
+    )
+    minimum_expected_outcome_cell = min(expected_outcome_cells)
+    normal_approximation_adequate = minimum_expected_outcome_cell >= 5
+    nominally_significant = p_value < alpha
+    significant = normal_approximation_adequate and nominally_significant
+    if not normal_approximation_adequate:
+        decision = (
+            "Inconclusive: at least one expected success/failure count is below five; "
+            "the normal approximation may be unreliable. Use an exact method or collect more data."
+        )
+    elif significant and difference > 0:
         decision = "Evidence of a higher conversion rate in the variant"
     elif significant and difference < 0:
         decision = "Evidence of a lower conversion rate in the variant"
@@ -239,6 +256,9 @@ def evaluate_two_proportion_experiment(
         "p_value": p_value,
         "significance_level": alpha,
         "statistically_significant": significant,
+        "nominally_significant": nominally_significant,
+        "normal_approximation_adequate": normal_approximation_adequate,
+        "minimum_expected_outcome_cell_count": minimum_expected_outcome_cell,
         "decision": decision,
         "control_successes": control_successes,
         "control_trials": control_trials,

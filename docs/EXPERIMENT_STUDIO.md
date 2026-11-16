@@ -40,7 +40,7 @@ Here, `z_q` is the standard-normal quantile whose cumulative probability is `q`.
 
 The evaluator accepts successes and total participants for each arm. It reports observed conversion rates, absolute difference (variant minus control) in percentage points, relative lift when the control rate is non-zero, a two-sided p-value from a pooled-standard-error two-proportion z-test, and a two-sided confidence interval for the difference using the unpooled standard error.
 
-The evaluator labels a result statistically significant when the p-value is below the selected alpha. A non-significant result is described as inconclusive—not proof that the variants are equivalent.
+The evaluator also computes the four expected success/failure cells under the pooled null rate. If any expected cell is below five, it marks the normal approximation as inadequate and forces the decision to **Inconclusive**, even when the nominal z-test p-value is below alpha. The nominal p-value remains visible for transparency but must not be interpreted as dependable in that case. A non-significant result is described as inconclusive—not proof that the variants are equivalent.
 
 ## Sample-ratio mismatch diagnostic
 
@@ -63,7 +63,7 @@ A mismatch is a signal to investigate assignment, eligibility, exposure logging 
 - There is one pre-specified binary primary outcome and one consistent observation window.
 - The planning calculation uses a normal approximation and does not model clustering, repeated exposure, non-compliance or attrition. The separate sample-ratio diagnostic checks observed arm sizes only.
 - The post-test readout is not adjusted for repeated interim peeking, multiple metrics or multiple variants. Use an appropriate sequential or multiplicity-control method when these apply.
-- The confidence interval is also a normal approximation; very small samples and extreme rates may require exact or alternative interval methods.
+- The confidence interval is also a normal (Wald) approximation and is shown as a diagnostic when expected cells are sparse; it is not a reliable substitute for an exact or score-based interval. A follow-up should add exact-test and Wilson/Newcombe interval options for small or extreme samples.
 - Statistical significance does not establish randomisation quality, instrumentation correctness, absence of selection bias or long-term business impact.
 - A non-flagged sample-ratio diagnostic does not certify randomisation, event logging, eligibility or outcome instrumentation.
 - UCI Online Retail II covers 1 December 2009–9 December 2011. Its 90-day repeat-purchase rate can appear as a labelled historical reference only; it is not a current conversion baseline and does not supply present-day traffic.

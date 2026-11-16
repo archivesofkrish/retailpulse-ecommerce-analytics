@@ -106,6 +106,10 @@ The original workbook is **not included** in this repository. Use `scripts/downl
 
 The repository includes a small **synthetic demonstration sample** for smoke tests and offline exploration. Synthetic results must never be presented as UCI retailer findings.
 
+## Engineering audit
+
+The current source-level review, statistical findings, mitigations and follow-up priorities are recorded in [the engineering audit](docs/ENGINEERING_AUDIT_2026-11-16.md). The audit distinguishes historical observations, statistical estimates and assumption-driven scenarios.
+
 ## Quick start
 
 Requires Python 3.11 or newer. The full ten-section Professional Edition uses the full UCI workbook.

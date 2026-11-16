@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+- Prevent Experiment Studio from presenting a normal-approximation conversion result as statistically significant when any pooled-null expected success/failure cell is below five; retain the nominal p-value but mark the decision inconclusive.
+- Expose expected-cell adequacy diagnostics and add regression coverage for an apparently significant sparse-count comparison.
+- Record the source-level audit, dashboard deployment boundary and statistical-method follow-up priorities.
+
+
 ## 1.6.0 - 2026-11-16
 
 - Add a sample-ratio-mismatch diagnostic using a one-degree-of-freedom Pearson chi-square goodness-of-fit test against the pre-declared allocation.
