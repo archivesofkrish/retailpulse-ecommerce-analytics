@@ -3,6 +3,7 @@ import math
 import pytest
 
 from retailpulse.experiments import (
+    evaluate_sample_ratio_mismatch,
     evaluate_two_proportion_experiment,
     plan_two_proportion_experiment,
 )
