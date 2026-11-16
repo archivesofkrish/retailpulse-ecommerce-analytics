@@ -1,7 +1,9 @@
 """Planning and analysis utilities for binary A/B experiments.
 
-These functions use normal-approximation two-proportion methods. They do not
-randomise participants, monitor a live experiment, or establish causal validity.
+Planning uses a documented normal approximation. Evaluation selects a
+two-proportion z-test or a two-sided Fisher exact test based on expected
+outcome counts and reports a Newcombe-Wilson score interval. These functions
+do not randomise participants, monitor a live experiment, or establish causal validity.
 """
 from __future__ import annotations
 
@@ -392,7 +394,7 @@ def evaluate_two_proportion_experiment(
         "variant_successes": variant_successes,
         "variant_trials": variant_trials,
         "sample_ratio_diagnostic": sample_ratio_diagnostic,
-        "method": "Two-sided two-proportion z-test with pooled null standard error",
+        "method": inference_method,
         "limitations": [
             "Statistical significance does not verify random assignment, instrumentation or exposure integrity. Review the allocation diagnostic separately.",
             "The confidence interval uses a normal approximation; very small samples or extreme rates may require exact methods.",
