@@ -6,7 +6,7 @@ Experiment Studio is a planning and post-test analysis aid for controlled experi
 
 1. Estimating the participant count needed in two equal-sized arms to detect a specified minimum absolute conversion-rate difference.
 2. Inspecting how the required sample changes as the minimum detectable effect changes.
-3. Evaluating observed control and variant counts with a two-sided two-proportion z-test and a confidence interval for the absolute difference.
+3. Evaluating observed control and variant counts with an adaptive z-test or Fisher exact test and a score-based confidence interval for the absolute difference.
 4. Checking whether observed control/variant sample sizes match the allocation ratio declared before the experiment.
 
 It does not assign participants, record exposures, monitor a running experiment, or prove that an experiment was randomised correctly.
@@ -38,9 +38,9 @@ Here, `z_q` is the standard-normal quantile whose cumulative probability is `q`.
 
 ## Post-test readout
 
-The evaluator accepts successes and total participants for each arm. It reports observed conversion rates, absolute difference (variant minus control) in percentage points, relative lift when the control rate is non-zero, a two-sided p-value from a pooled-standard-error two-proportion z-test, and a two-sided confidence interval for the difference using the unpooled standard error.
+The evaluator accepts successes and total participants for each arm. It reports observed conversion rates, absolute difference (variant minus control) in percentage points, relative lift when the control rate is non-zero, a two-sided p-value, and a Newcombe hybrid score confidence interval based on Wilson score limits.
 
-The evaluator also computes the four expected success/failure cells under the pooled null rate. If any expected cell is below five, it marks the normal approximation as inadequate and forces the decision to **Inconclusive**, even when the nominal z-test p-value is below alpha. The nominal p-value remains visible for transparency but must not be interpreted as dependable in that case. A non-significant result is described as inconclusive—not proof that the variants are equivalent.
+The evaluator computes the four expected success/failure cells under the pooled null rate. When all are at least five, it uses the pooled two-proportion z-test. When any is below five, it switches to a two-sided, probability-ordered Fisher exact test. The exact calculation is bounded to 100,000 possible tables; if that limit is exceeded, the p-value is not computed and the decision is **Inconclusive** rather than silently falling back to an unreliable normal approximation. The nominal z-test p-value is separately exposed for diagnostic transparency. A non-significant result is described as inconclusive—not proof that the variants are equivalent.
 
 ## Sample-ratio mismatch diagnostic
 
@@ -63,7 +63,7 @@ A mismatch is a signal to investigate assignment, eligibility, exposure logging 
 - There is one pre-specified binary primary outcome and one consistent observation window.
 - The planning calculation uses a normal approximation and does not model clustering, repeated exposure, non-compliance or attrition. The separate sample-ratio diagnostic checks observed arm sizes only.
 - The post-test readout is not adjusted for repeated interim peeking, multiple metrics or multiple variants. Use an appropriate sequential or multiplicity-control method when these apply.
-- The confidence interval is also a normal (Wald) approximation and is shown as a diagnostic when expected cells are sparse; it is not a reliable substitute for an exact or score-based interval. A follow-up should add exact-test and Wilson/Newcombe interval options for small or extreme samples.
+- The confidence interval uses the Newcombe hybrid score method built from Wilson score limits. It is bounded to the valid difference range [-100, 100] percentage points and behaves better than a Wald interval near extreme conversion rates. The confidence interval remains an approximation; small samples and sparse outcomes should be interpreted with the inference method and assumptions shown.
 - Statistical significance does not establish randomisation quality, instrumentation correctness, absence of selection bias or long-term business impact.
 - A non-flagged sample-ratio diagnostic does not certify randomisation, event logging, eligibility or outcome instrumentation.
 - UCI Online Retail II covers 1 December 2009–9 December 2011. Its 90-day repeat-purchase rate can appear as a labelled historical reference only; it is not a current conversion baseline and does not supply present-day traffic.
