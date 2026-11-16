@@ -53,7 +53,7 @@ p_value = erfc(sqrt(chi_square / 2))
 
 This is the Pearson goodness-of-fit test with one degree of freedom. The default alert threshold is **p < 0.001**, a conservative diagnostic threshold distinct from the conversion test's usual alpha. A lower p-value raises a sample-ratio-mismatch warning.
 
-The diagnostic accepts a pre-declared non-50/50 allocation, so a planned 90/10 split is not incorrectly flagged as imbalanced. If either expected arm count is below five, the UI warns that the chi-square approximation is not dependable. Collect more data or use a suitable exact allocation test for small expected counts.
+The diagnostic accepts a pre-declared non-50/50 allocation, so a planned 90/10 split is not incorrectly flagged as imbalanced. When either expected arm count is below five, the diagnostic switches to a two-sided, probability-ordered exact binomial test of the observed control count under the pre-declared control share. The exact support is bounded to 100,000 possible counts; if that limit is exceeded, no p-value is reported and the UI explicitly displays Not computed rather than substituting the unreliable chi-square approximation. Sparse counts that fit the exact-test budget show the selected exact method and its p-value.
 
 A mismatch is a signal to investigate assignment, eligibility, exposure logging and instrumentation before interpreting the conversion result. It does not identify which process failed, and a clean allocation check does not prove that the experiment was randomised correctly.
 

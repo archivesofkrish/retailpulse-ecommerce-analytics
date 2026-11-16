@@ -11,6 +11,8 @@ import math
 from statistics import NormalDist
 from typing import Any
 
+MAX_EXACT_TABLES = 100_000
+
 
 def _finite_number(name: str, value: Any) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
@@ -96,11 +98,12 @@ def evaluate_sample_ratio_mismatch(
     expected_control_share: float = 0.5,
     significance_level: float = 0.001,
 ) -> dict[str, Any]:
-    """Compare observed arm sizes with the pre-specified allocation.
+    """Compare observed arm sizes with the allocation declared before the test.
 
-    Uses Pearson's chi-square goodness-of-fit statistic with one degree of
-    freedom. Expected arm counts below five are explicitly marked as too small
-    for a dependable chi-square approximation.
+    Use Pearson's chi-square test when both expected arm counts are at least
+    five. For sparse expected counts, use a bounded, probability-ordered exact
+    binomial test. If its support exceeds the computation budget, return no
+    p-value rather than substituting an unreliable approximation.
     """
     alpha = _validate_significance_level(significance_level)
     expected_share = _finite_number("expected_control_share", expected_control_share)
@@ -118,20 +121,36 @@ def evaluate_sample_ratio_mismatch(
     total = control_trials + variant_trials
     expected_control = total * expected_share
     expected_variant = total * (1 - expected_share)
+    minimum_expected = min(expected_control, expected_variant)
+    approximation_adequate = minimum_expected >= 5
     statistic = (
         (control_trials - expected_control) ** 2 / expected_control
         + (variant_trials - expected_variant) ** 2 / expected_variant
     )
-    p_value = min(1.0, max(0.0, math.erfc(math.sqrt(statistic / 2))))
-    minimum_expected = min(expected_control, expected_variant)
-    approximation_adequate = minimum_expected >= 5
-    mismatch = p_value < alpha
-    if not approximation_adequate:
-        status = "LOW_EXPECTED_COUNT"
-    elif mismatch:
-        status = "SAMPLE_RATIO_MISMATCH"
+
+    if approximation_adequate:
+        p_value = min(1.0, max(0.0, math.erfc(math.sqrt(statistic / 2))))
+        inference_method = (
+            "Pearson chi-square goodness-of-fit test with one degree of freedom"
+        )
+        inference_status = "PEARSON_CHI_SQUARE"
+        mismatch: bool | None = p_value < alpha
+        status = "SAMPLE_RATIO_MISMATCH" if mismatch else "OK"
     else:
-        status = "OK"
+        p_value = _probability_ordered_binomial_test(
+            successes=control_trials,
+            trials=total,
+            probability=expected_share,
+        )
+        inference_method = "Two-sided probability-ordered exact binomial test"
+        if p_value is None:
+            inference_status = "EXACT_TABLE_LIMIT"
+            mismatch = None
+            status = "EXACT_TABLE_LIMIT"
+        else:
+            inference_status = "EXACT_BINOMIAL"
+            mismatch = p_value < alpha
+            status = "SAMPLE_RATIO_MISMATCH" if mismatch else "LOW_EXPECTED_COUNT"
 
     actual_control_share = control_trials / total
     return {
@@ -148,19 +167,20 @@ def evaluate_sample_ratio_mismatch(
         "observed_control_count": control_trials,
         "observed_variant_count": variant_trials,
         "minimum_expected_arm_count": minimum_expected,
-        "chi_square_statistic": statistic,
-        "degrees_of_freedom": 1,
+        "chi_square_statistic": statistic if approximation_adequate else None,
+        "degrees_of_freedom": 1 if approximation_adequate else None,
         "p_value": p_value,
         "significance_level": alpha,
-        "method": "Pearson chi-square goodness-of-fit test with one degree of freedom",
+        "method": inference_method,
+        "inference_method": inference_method,
+        "inference_status": inference_status,
+        "exact_test_table_limit": MAX_EXACT_TABLES,
         "limitations": [
             "This checks arm-size allocation only; it cannot verify assignment randomness, exposure logging, eligibility rules, or outcome instrumentation.",
-            "The chi-square approximation can be unreliable when either expected arm count is below five.",
+            "Sparse expected arm counts use an exact binomial test; its computation fails closed if the outcome support exceeds the configured limit.",
             "Investigate a flagged imbalance before interpreting the conversion comparison; the diagnostic does not identify a specific failure cause.",
         ],
     }
-
-
 
 def _log_combination(n: int, k: int) -> float:
     """Return log(n choose k), using lgamma to avoid integer overflow."""
@@ -168,6 +188,50 @@ def _log_combination(n: int, k: int) -> float:
         return -math.inf
     return math.lgamma(n + 1) - math.lgamma(k + 1) - math.lgamma(n - k + 1)
 
+
+
+
+def _probability_ordered_binomial_test(
+    *,
+    successes: int,
+    trials: int,
+    probability: float,
+    max_tables: int = MAX_EXACT_TABLES,
+) -> float | None:
+    """Calculate a bounded two-sided probability-ordered exact binomial p-value.
+
+    Outcomes whose null probability is no greater than the observed outcome's
+    probability are included. None means the support exceeds the configured
+    computation budget; callers must not substitute an asymptotic p-value.
+    """
+    if trials + 1 > max_tables:
+        return None
+
+    log_probability = math.log(probability)
+    log_complement = math.log1p(-probability)
+    observed_log_probability = (
+        _log_combination(trials, successes)
+        + successes * log_probability
+        + (trials - successes) * log_complement
+    )
+
+    included_log_probabilities = []
+    for candidate in range(trials + 1):
+        candidate_log_probability = (
+            _log_combination(trials, candidate)
+            + candidate * log_probability
+            + (trials - candidate) * log_complement
+        )
+        if candidate_log_probability <= observed_log_probability + 1e-12:
+            included_log_probabilities.append(candidate_log_probability)
+
+    maximum = max(included_log_probabilities)
+    log_p_value = maximum + math.log(
+        math.fsum(math.exp(value - maximum) for value in included_log_probabilities)
+    )
+    if log_p_value < math.log(math.ulp(0.0)):
+        return math.ulp(0.0)
+    return min(1.0, max(0.0, math.exp(log_p_value)))
 
 def _fisher_exact_two_sided(
     *,

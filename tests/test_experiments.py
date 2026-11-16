@@ -3,6 +3,7 @@ import math
 import pytest
 
 from retailpulse.experiments import (
+    evaluate_sample_ratio_mismatch,
     evaluate_two_proportion_experiment,
     plan_two_proportion_experiment,
 )
@@ -243,3 +244,42 @@ def test_exact_test_computation_limit_fails_closed():
     assert result["p_value"] is None
     assert result["statistically_significant"] is False
     assert result["decision"].startswith("Inconclusive:")
+
+
+
+def test_sparse_sample_ratio_uses_exact_binomial_and_flags_imbalance():
+    result = evaluate_sample_ratio_mismatch(
+        control_trials=10,
+        variant_trials=10,
+        expected_control_share=0.1,
+    )
+
+    assert result["status"] == "SAMPLE_RATIO_MISMATCH"
+    assert result["approximation_adequate"] is False
+    assert result["inference_status"] == "EXACT_BINOMIAL"
+    assert result["method"].startswith("Two-sided probability-ordered exact binomial")
+    assert result["chi_square_statistic"] is None
+    assert result["p_value"] == pytest.approx(7.150904021083821e-06)
+    assert result["sample_ratio_mismatch"] is True
+
+
+def test_sparse_balanced_sample_ratio_uses_exact_binomial_without_mismatch():
+    result = evaluate_sample_ratio_mismatch(control_trials=2, variant_trials=1)
+
+    assert result["status"] == "LOW_EXPECTED_COUNT"
+    assert result["inference_status"] == "EXACT_BINOMIAL"
+    assert result["p_value"] == pytest.approx(1.0)
+    assert result["sample_ratio_mismatch"] is False
+
+
+def test_exact_sample_ratio_test_fails_closed_above_support_limit():
+    result = evaluate_sample_ratio_mismatch(
+        control_trials=1,
+        variant_trials=100_000,
+        expected_control_share=1e-8,
+    )
+
+    assert result["status"] == "EXACT_TABLE_LIMIT"
+    assert result["inference_status"] == "EXACT_TABLE_LIMIT"
+    assert result["p_value"] is None
+    assert result["sample_ratio_mismatch"] is None

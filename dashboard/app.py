@@ -1484,8 +1484,15 @@ with tab_experiments:
                 st.markdown("### Experiment integrity · allocation check")
                 integrity_left, integrity_right = st.columns([1, 1.35])
                 with integrity_left:
-                    srm_p_value = "<0.0001" if srm["p_value"] < 0.0001 else f"{srm['p_value']:.4f}"
-                    st.metric("Sample-ratio diagnostic p-value", srm_p_value)
+                    if srm["p_value"] is None:
+                        srm_p_value = "Not computed"
+                    else:
+                        srm_p_value = (
+                            "<0.0001" if srm["p_value"] < 0.0001
+                            else f"{srm['p_value']:.4f}"
+                        )
+                    st.metric("Allocation-test p-value", srm_p_value)
+                    st.caption(f"Method: {srm['inference_method']}")
                     st.caption(
                         f"Observed control share: {srm['observed_control_share_pct']:.1f}% "
                         f"vs expected {srm['expected_control_share_pct']:.1f}% "
@@ -1497,9 +1504,15 @@ with tab_experiments:
                             "and event instrumentation before interpreting the conversion result."
                         )
                     elif srm["status"] == "LOW_EXPECTED_COUNT":
+                        st.info(
+                            "Expected arm counts are sparse. A probability-ordered exact binomial test "
+                            "was used instead of the chi-square approximation."
+                        )
+                    elif srm["status"] == "EXACT_TABLE_LIMIT":
                         st.warning(
-                            "Expected arm counts are below five. The chi-square approximation is not dependable; "
-                            "collect more observations or use an appropriate exact allocation test."
+                            "The exact allocation-test support exceeds the configured computation limit. "
+                            "No approximate p-value is substituted; collect more observations or use "
+                            "a separately validated exact-test implementation."
                         )
                     else:
                         st.success(
