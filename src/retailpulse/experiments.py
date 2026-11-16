@@ -11,6 +11,8 @@ import math
 from statistics import NormalDist
 from typing import Any
 
+MAX_EXACT_TABLES = 100_000
+
 
 def _finite_number(name: str, value: Any) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
