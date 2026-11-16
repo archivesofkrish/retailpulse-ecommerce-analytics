@@ -6,7 +6,7 @@ Experiment Studio is a planning and post-test analysis aid for controlled experi
 
 1. Estimating the participant count needed in two equal-sized arms to detect a specified minimum absolute conversion-rate difference.
 2. Inspecting how the required sample changes as the minimum detectable effect changes.
-3. Evaluating observed control and variant counts with a two-sided two-proportion z-test and a confidence interval for the absolute difference.
+3. Evaluating observed control and variant counts with an adaptive z-test or Fisher exact test and a score-based confidence interval for the absolute difference.
 4. Checking whether observed control/variant sample sizes match the allocation ratio declared before the experiment.
 
 It does not assign participants, record exposures, monitor a running experiment, or prove that an experiment was randomised correctly.
