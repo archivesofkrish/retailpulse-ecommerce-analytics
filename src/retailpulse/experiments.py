@@ -159,6 +159,109 @@ def evaluate_sample_ratio_mismatch(
     }
 
 
+
+def _log_combination(n: int, k: int) -> float:
+    """Return log(n choose k), using lgamma to avoid integer overflow."""
+    if k < 0 or k > n:
+        return -math.inf
+    return math.lgamma(n + 1) - math.lgamma(k + 1) - math.lgamma(n - k + 1)
+
+
+def _fisher_exact_two_sided(
+    *,
+    control_successes: int,
+    control_trials: int,
+    variant_successes: int,
+    variant_trials: int,
+    max_tables: int = 100_000,
+) -> float | None:
+    """Probability-ordered two-sided Fisher exact p-value.
+
+    Conditioning on both arm sizes and the total success count gives a
+    hypergeometric distribution for the control-arm success count. Return
+    None rather than silently falling back to an untrusted approximation if
+    the exact support exceeds the bounded computation budget.
+    """
+    total_trials = control_trials + variant_trials
+    total_successes = control_successes + variant_successes
+    lower = max(0, total_successes - variant_trials)
+    upper = min(control_trials, total_successes)
+    support_size = upper - lower + 1
+    if support_size > max_tables:
+        return None
+
+    log_denominator = _log_combination(total_trials, control_trials)
+    observed_log_probability = (
+        _log_combination(total_successes, control_successes)
+        + _log_combination(total_trials - total_successes,
+                           control_trials - control_successes)
+        - log_denominator
+    )
+
+    probabilities = []
+    for candidate in range(lower, upper + 1):
+        log_probability = (
+            _log_combination(total_successes, candidate)
+            + _log_combination(total_trials - total_successes,
+                               control_trials - candidate)
+            - log_denominator
+        )
+        # Probability ordering defines the conventional two-sided Fisher
+        # test. The tolerance absorbs tiny lgamma rounding differences for
+        # tables that are mathematically tied with the observed table.
+        if log_probability <= observed_log_probability + 1e-12:
+            probabilities.append(math.exp(log_probability))
+
+    return min(1.0, max(0.0, math.fsum(probabilities)))
+
+
+def _wilson_score_interval(
+    successes: int, trials: int, critical_value: float
+) -> tuple[float, float]:
+    """Wilson score interval for one binomial proportion."""
+    proportion = successes / trials
+    z_squared = critical_value * critical_value
+    denominator = 1 + z_squared / trials
+    centre = (proportion + z_squared / (2 * trials)) / denominator
+    half_width = (
+        critical_value
+        / denominator
+        * math.sqrt(
+            proportion * (1 - proportion) / trials
+            + z_squared / (4 * trials * trials)
+        )
+    )
+    return max(0.0, centre - half_width), min(1.0, centre + half_width)
+
+
+def _newcombe_difference_interval(
+    *,
+    control_successes: int,
+    control_trials: int,
+    variant_successes: int,
+    variant_trials: int,
+    confidence_level: float,
+) -> tuple[float, float]:
+    """Newcombe hybrid score interval for variant minus control."""
+    critical_value = NormalDist().inv_cdf(0.5 + confidence_level / 2)
+    control = control_successes / control_trials
+    variant = variant_successes / variant_trials
+    control_lower, control_upper = _wilson_score_interval(
+        control_successes, control_trials, critical_value
+    )
+    variant_lower, variant_upper = _wilson_score_interval(
+        variant_successes, variant_trials, critical_value
+    )
+    difference = variant - control
+    lower = difference - math.sqrt(
+        (variant - variant_lower) ** 2 + (control_upper - control) ** 2
+    )
+    upper = difference + math.sqrt(
+        (variant_upper - variant) ** 2 + (control - control_lower) ** 2
+    )
+    return max(-1.0, lower), min(1.0, upper)
+
+
 def evaluate_two_proportion_experiment(
     *,
     control_successes: int,
@@ -169,11 +272,13 @@ def evaluate_two_proportion_experiment(
     expected_control_share: float = 0.5,
     sample_ratio_alpha: float = 0.001,
 ) -> dict[str, Any]:
-    """Evaluate an independent two-arm binary outcome with a two-sided z-test.
+    """Evaluate an independent two-arm binary outcome.
 
-    The difference and confidence interval are variant minus control. The
-    confidence interval uses the unpooled standard error; the test uses the
-    pooled standard error under the null hypothesis of equal proportions.
+    Use a pooled two-proportion z-test when all four expected outcome cells
+    are at least five; otherwise use a probability-ordered two-sided Fisher
+    exact test when its support fits the bounded computation budget. The
+    difference interval is a Newcombe hybrid score interval based on Wilson
+    score limits.
     """
     alpha = _validate_significance_level(significance_level)
     counts = {
@@ -207,21 +312,13 @@ def evaluate_two_proportion_experiment(
     )
     if pooled_se == 0:
         z_score = 0.0
-        p_value = 1.0
+        nominal_p_value = 1.0
     else:
         z_score = difference / pooled_se
-        p_value = min(1.0, max(0.0, 2 * (1 - NormalDist().cdf(abs(z_score)))))
+        nominal_p_value = min(
+            1.0, max(0.0, 2 * (1 - NormalDist().cdf(abs(z_score))))
+        )
 
-    unpooled_se = math.sqrt(
-        p_control * (1 - p_control) / control_trials
-        + p_variant * (1 - p_variant) / variant_trials
-    )
-    critical_value = NormalDist().inv_cdf(1 - alpha / 2)
-    lower = difference - critical_value * unpooled_se
-    upper = difference + critical_value * unpooled_se
-    # The pooled null rate defines the four expected success/failure cells.
-    # A normal-approximation z-test is not a dependable decision rule when any
-    # expected cell is sparse, even if the nominal p-value looks small.
     expected_outcome_cells = (
         control_trials * pooled,
         control_trials * (1 - pooled),
@@ -230,12 +327,38 @@ def evaluate_two_proportion_experiment(
     )
     minimum_expected_outcome_cell = min(expected_outcome_cells)
     normal_approximation_adequate = minimum_expected_outcome_cell >= 5
-    nominally_significant = p_value < alpha
-    significant = normal_approximation_adequate and nominally_significant
-    if not normal_approximation_adequate:
+
+    if normal_approximation_adequate:
+        p_value = nominal_p_value
+        inference_method = "Two-sided two-proportion z-test (pooled null standard error)"
+        inference_status = "NORMAL_APPROXIMATION"
+    else:
+        exact_p_value = _fisher_exact_two_sided(
+            control_successes=control_successes,
+            control_trials=control_trials,
+            variant_successes=variant_successes,
+            variant_trials=variant_trials,
+        )
+        p_value = exact_p_value
+        inference_method = "Two-sided Fisher exact test (probability-ordered)"
+        inference_status = "FISHER_EXACT" if exact_p_value is not None else "EXACT_TABLE_LIMIT"
+
+    confidence_level = 1 - alpha
+    lower, upper = _newcombe_difference_interval(
+        control_successes=control_successes,
+        control_trials=control_trials,
+        variant_successes=variant_successes,
+        variant_trials=variant_trials,
+        confidence_level=confidence_level,
+    )
+    significant = p_value is not None and p_value < alpha
+    nominally_significant = nominal_p_value < alpha
+
+    if p_value is None:
         decision = (
-            "Inconclusive: at least one expected success/failure count is below five; "
-            "the normal approximation may be unreliable. Use an exact method or collect more data."
+            "Inconclusive: the exact-test table support exceeds the configured "
+            "computation limit. Use a validated exact-test implementation or "
+            "collect more data."
         )
     elif significant and difference > 0:
         decision = "Evidence of a higher conversion rate in the variant"
@@ -249,16 +372,20 @@ def evaluate_two_proportion_experiment(
         "variant_conversion_rate_pct": p_variant * 100,
         "absolute_difference_pp": difference * 100,
         "relative_lift_pct": (difference / p_control * 100) if p_control > 0 else None,
-        "confidence_level_pct": (1 - alpha) * 100,
+        "confidence_level_pct": confidence_level * 100,
         "difference_ci_lower_pp": lower * 100,
         "difference_ci_upper_pp": upper * 100,
+        "confidence_interval_method": "Newcombe hybrid score interval based on Wilson limits",
         "z_score": z_score,
         "p_value": p_value,
+        "nominal_z_test_p_value": nominal_p_value,
         "significance_level": alpha,
         "statistically_significant": significant,
         "nominally_significant": nominally_significant,
         "normal_approximation_adequate": normal_approximation_adequate,
         "minimum_expected_outcome_cell_count": minimum_expected_outcome_cell,
+        "inference_method": inference_method,
+        "inference_status": inference_status,
         "decision": decision,
         "control_successes": control_successes,
         "control_trials": control_trials,

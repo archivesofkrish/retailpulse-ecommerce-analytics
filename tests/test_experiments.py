@@ -200,7 +200,7 @@ def test_two_proportion_evaluator_includes_sample_ratio_diagnostic():
 
 
 
-def test_small_expected_conversion_cells_force_inconclusive_decision():
+def test_sparse_expected_cells_use_two_sided_fisher_exact_test():
     result = evaluate_two_proportion_experiment(
         control_successes=0,
         control_trials=5,
@@ -208,10 +208,38 @@ def test_small_expected_conversion_cells_force_inconclusive_decision():
         variant_trials=5,
     )
 
-    assert result["p_value"] < 0.05
-    assert result["nominally_significant"] is True
     assert result["normal_approximation_adequate"] is False
     assert result["minimum_expected_outcome_cell_count"] == pytest.approx(2.5)
+    assert result["inference_status"] == "FISHER_EXACT"
+    assert result["inference_method"].startswith("Two-sided Fisher exact")
+    assert result["p_value"] == pytest.approx(2 / 252)
+    assert result["statistically_significant"] is True
+    assert result["decision"].startswith("Evidence of a higher")
+    assert result["difference_ci_lower_pp"] <= 100
+    assert result["difference_ci_upper_pp"] == pytest.approx(100)
+
+
+def test_newcombe_interval_is_bounded_and_contains_observed_difference():
+    result = evaluate_two_proportion_experiment(
+        control_successes=0, control_trials=20,
+        variant_successes=20, variant_trials=20,
+    )
+    assert result["confidence_interval_method"].startswith("Newcombe")
+    assert -100 <= result["difference_ci_lower_pp"] <= 100
+    assert -100 <= result["difference_ci_upper_pp"] <= 100
+    assert result["difference_ci_lower_pp"] <= result["absolute_difference_pp"]
+    assert result["difference_ci_upper_pp"] >= result["absolute_difference_pp"]
+
+
+def test_exact_test_computation_limit_fails_closed():
+    result = evaluate_two_proportion_experiment(
+        control_successes=2_000_000,
+        control_trials=100_000_000,
+        variant_successes=2_000_000,
+        variant_trials=100_000_000_000_000,
+    )
+    assert result["normal_approximation_adequate"] is False
+    assert result["inference_status"] == "EXACT_TABLE_LIMIT"
+    assert result["p_value"] is None
     assert result["statistically_significant"] is False
     assert result["decision"].startswith("Inconclusive:")
-    assert "exact method" in result["decision"]

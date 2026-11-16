@@ -1446,7 +1446,12 @@ with tab_experiments:
                 o1.metric("Control conversion", f"{outcome['control_conversion_rate_pct']:.2f}%")
                 o2.metric("Variant conversion", f"{outcome['variant_conversion_rate_pct']:.2f}%")
                 o3.metric("Absolute difference", f"{outcome['absolute_difference_pp']:+.2f} pp")
-                o4.metric("Two-sided p-value", f"{outcome['p_value']:.4f}")
+                p_value_display = (
+                    f"{outcome['p_value']:.4f}"
+                    if outcome["p_value"] is not None
+                    else "Not computed"
+                )
+                o4.metric("Two-sided p-value", p_value_display)
                 ci_text = (
                     f"{outcome['confidence_level_pct']:.0f}% CI for variant − control: "
                     f"[{outcome['difference_ci_lower_pp']:+.2f}, "
@@ -1459,6 +1464,10 @@ with tab_experiments:
                 st.markdown(
                     f'<div class="{result_class}"><strong>{outcome["decision"]}</strong><br>{ci_text}</div>',
                     unsafe_allow_html=True,
+                )
+                st.caption(
+                    f"Inference: {outcome['inference_method']}. "
+                    f"Confidence interval: {outcome['confidence_interval_method']}."
                 )
                 if outcome["statistically_significant"]:
                     st.success(

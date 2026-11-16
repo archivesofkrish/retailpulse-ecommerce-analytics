@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- Use a two-sided probability-ordered Fisher exact test when any pooled-null expected conversion outcome cell is below five; fail closed when the bounded exact-table budget is exceeded.
+- Replace the unpooled Wald difference interval with a Newcombe hybrid score interval based on Wilson limits.
+- Expose the selected inference method/status and keep the nominal z-test p-value separate from the inferential p-value.
+- Add sparse-count, extreme-rate, interval-boundary and exact-computation-budget regression tests; update the Experiment Studio readout.
+
+
+## Unreleased
+
 - Prevent Experiment Studio from presenting a normal-approximation conversion result as statistically significant when any pooled-null expected success/failure cell is below five; retain the nominal p-value but mark the decision inconclusive.
 - Expose expected-cell adequacy diagnostics and add regression coverage for an apparently significant sparse-count comparison.
 - Record the source-level audit, dashboard deployment boundary and statistical-method follow-up priorities.
