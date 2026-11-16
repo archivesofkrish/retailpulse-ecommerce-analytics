@@ -197,3 +197,21 @@ def test_two_proportion_evaluator_includes_sample_ratio_diagnostic():
         expected_control_share=0.5,
     )
     assert result["sample_ratio_diagnostic"]["status"] == "SAMPLE_RATIO_MISMATCH"
+
+
+
+def test_small_expected_conversion_cells_force_inconclusive_decision():
+    result = evaluate_two_proportion_experiment(
+        control_successes=0,
+        control_trials=5,
+        variant_successes=5,
+        variant_trials=5,
+    )
+
+    assert result["p_value"] < 0.05
+    assert result["nominally_significant"] is True
+    assert result["normal_approximation_adequate"] is False
+    assert result["minimum_expected_outcome_cell_count"] == pytest.approx(2.5)
+    assert result["statistically_significant"] is False
+    assert result["decision"].startswith("Inconclusive:")
+    assert "exact method" in result["decision"]
