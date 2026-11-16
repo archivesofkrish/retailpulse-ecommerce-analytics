@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Refresh the engineering audit to reflect merged exact conversion inference, Newcombe-Wilson intervals, sparse allocation exact tests and current CI evidence.
+
+## Unreleased
+
 - Use a two-sided probability-ordered exact binomial allocation test when either expected sample-ratio arm count is below five; retain Pearson chi-square inference for adequate expected counts.
 - Fail closed with no p-value when exact allocation support exceeds 100,000 outcomes, and render the selected method or not-computed state explicitly in the dashboard.
 - Add sparse-allocation, exact-imbalance and computation-budget regression tests; update Experiment Studio methodology.
